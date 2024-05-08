@@ -2,9 +2,9 @@
 
 namespace App\Contracts;
 
-interface CountryInterface
+interface LocationInterface
 {
-    public function all();
+    public function all(string $modelName);
     public function findById(string $modelName ,int $id);
     public function store(string $modelName ,array $data);
     public function update(string $modelName ,array $data,int $id);
