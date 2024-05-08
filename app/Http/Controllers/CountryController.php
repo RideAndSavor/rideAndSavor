@@ -62,8 +62,9 @@ class CountryController extends Controller
             ],401);
         }
         $country = $this->locationInterface->delete('Country',$id);
-        return response()->json([
-            'message'=>"Country Deleted Successfully"
-        ]);
+        return $country? response(status: 204) : response(status: 500);
+        // return response()->json([
+        //     'message'=>"Country Deleted Successfully"
+        // ]);
     }
 }

@@ -35,25 +35,25 @@ class CountryTest extends TestCase
         $response->assertStatus(422);
     }
 
-    // public function test_api_returns_all_countries_list(): void
-    // {
-    //     $response = $this->actingAs($this->user)->getJson(route('country.index'))
-    //         ->assertOk();
-    //     // dd($response->json()['data'][0]['name']);
-    //     $response->assertExactJson($response->json());
-    //     $response->assertSee($response->json()['data'][0]['name']);
-    //     $this->assertEquals(1, count($response->json()['data']));
-    //     $this->assertEquals($this->country->name, $response->json()['data'][0]['name']);
-    // }
-
-    public function test_api_returns_single_country_list(): void
+    public function test_api_returns_all_countries_list(): void
     {
-        $response = $this->actingAs($this->user)->getJson(route('country.show', $this->country->id))
+        $response = $this->actingAs($this->user)->getJson(route('country.index'))
             ->assertOk();
+        // dd($response->json()['data'][0]['name']);
         $response->assertExactJson($response->json());
-        $response->assertSee($response->json()['data']['name']);
-        $this->assertEquals($this->country->name, $response->json()['data']['name']);
+        $response->assertSee($response->json()['data'][0]['name']);
+        $this->assertEquals(1, count($response->json()['data']));
+        $this->assertEquals($this->country->name, $response->json()['data'][0]['name']);
     }
+
+    // public function test_api_returns_single_country_list(): void
+    // {
+    //     $response = $this->actingAs($this->user)->getJson(route('country.show', $this->country->id))
+    //         ->assertOk();
+    //     $response->assertExactJson($response->json());
+    //     $response->assertSee($response->json()['data']['name']);
+    //     $this->assertEquals($this->country->name, $response->json()['data']['name']);
+    // }
 
     public function test_api_country_store_successful(): void
     {
@@ -84,8 +84,7 @@ class CountryTest extends TestCase
 
     public function test_api_country_delete_successful(): void
     {
-        $response = $this->actingAs($this->user)->deleteJson(route('ward.destroy', $this->country->id));
-
+        $response = $this->actingAs($this->user)->deleteJson(route('country.destroy', $this->country->id));
         $response->assertStatus(204);
         $this->assertDatabaseMissing('countries', ['id' => $this->country->id]);
     }
