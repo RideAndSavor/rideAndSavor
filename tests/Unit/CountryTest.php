@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Unit;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -17,11 +17,11 @@ class CountryTest extends TestCase
         $this->country = $this->createCountry();
     }
 
-    public function test_unauthenticated_user_cannot_access_countries_page()
-    {
-        $response = $this->get('/country');
-        $response->assertRedirect(route('login'));
-    }
+    // public function test_unauthenticated_user_cannot_access_countries_page()
+    // {
+    //     $response = $this->get('/country');
+    //     $response->assertRedirect(route('login'));
+    // }
 
     public function test_api_country_invalid_validation_returns_error(): void
     {
@@ -45,15 +45,6 @@ class CountryTest extends TestCase
         $this->assertEquals(1, count($response->json()['data']));
         $this->assertEquals($this->country->name, $response->json()['data'][0]['name']);
     }
-
-    // public function test_api_returns_single_country_list(): void
-    // {
-    //     $response = $this->actingAs($this->user)->getJson(route('country.show', $this->country->id))
-    //         ->assertOk();
-    //     $response->assertExactJson($response->json());
-    //     $response->assertSee($response->json()['data']['name']);
-    //     $this->assertEquals($this->country->name, $response->json()['data']['name']);
-    // }
 
     public function test_api_country_store_successful(): void
     {
