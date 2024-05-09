@@ -12,14 +12,14 @@ class State extends Model
 {
     use HasFactory;
 
-    public function saveableFields(): array
+
+ public function saveableFields(): array
      {
          return [
              'name' => StringField::new(),
              'country_id'=>IntegerField::new()
          ];
      }
-
      public function country():BelongsTo
      {
         return $this->belongsTo(Country::class);
