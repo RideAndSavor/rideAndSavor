@@ -70,6 +70,6 @@ class CityController extends Controller
         $country = $this->locationInterface->delete('City',$id);
         return response()->json([
             'message'=>Config::get('variable.CITY_DELETED_SUCCESSFULLY')
-        ]);
+        ],Config::get('variable.NO_CONTENT'));
     }
 }

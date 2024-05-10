@@ -69,7 +69,7 @@ class TownshipController extends Controller
         $country = $this->locationInterface->delete('Township',$id);
         return response()->json([
             'message'=>Config::get('variable.TDS')
-        ]);
+        ],Config::get('variable.NO_CONTENT'));
     }
 
 }
