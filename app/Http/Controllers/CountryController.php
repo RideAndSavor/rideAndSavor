@@ -93,7 +93,7 @@ public function store(CountryRequest $request)
         $country = $this->locationInterface->delete('Country',$id);
         return response()->json([
             'message'=>Config::get('variable.CDF')
-        ]);
+        ],Config::get('variable.NO_CONTENT'));
     }
 
 }

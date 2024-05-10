@@ -70,6 +70,6 @@ public function destroy(string $id)
     $country = $this->locationInterface->delete('State',$id);
     return response()->json([
         'message'=>Config::get('variable.SDF')
-    ]);
+    ],Config::get('variable.NO_CONTENT'));
 }
 }
