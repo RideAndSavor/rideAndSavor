@@ -2,70 +2,98 @@
 
 namespace App\Http\Controllers;
 
-use App\Contracts\CountryInterface;
+use Illuminate\Http\Request;
+use App\Contracts\LocationInterface;
+use App\Helpers\ResponseHelper;
 use App\Http\Requests\CountryRequest;
 use App\Http\Resources\CountryResource;
-use Illuminate\Http\Request;
+use App\Models\Country;
+use Illuminate\Support\Facades\Config;
 
 class CountryController extends Controller
 {
-   private $countryInterface;
+   private $locationInterface;
 
-   public function __construct(CountryInterface $countryInterface ) {
-    $this->countryInterface = $countryInterface;
+   public function __construct(LocationInterface $locationInterface ) {
+    $this->locationInterface = $locationInterface;
    }
-    public function index()
-    {
-        $country = $this->countryInterface->all();
-        return CountryResource::collection($country);
+   public function index()
+   {
+    try {
+        $countries = $this->locationInterface->all('Country');
 
+        return CountryResource::collection($countries);
+    } catch (\Exception $e) {
+        return ResponseHelper::jsonResponseWithConfigError($e);
     }
+}
 
-    public function create()
-    {
-        //
-    }
+public function store(CountryRequest $request)
+{
+    try {
+        $validatedData = $request->validated();
 
-    public function store(CountryRequest $request)
-    {
-        $validateData = $request->validated();
-        // dd($validateData);
-        $country = $this->countryInterface->store('Country',$validateData);
-        // dd($country);
-        if(!$country){
+        $country = $this->locationInterface->store('Country', $validatedData);
+        if (!$country) {
             return response()->json([
-                'message'=>'Country Not Found'
-            ],401);
+                'message' => Config::get("variable.CNF")
+            ], Config::get('variable.CLIENT_ERROR'));
         }
         return new CountryResource($country);
+    } catch (\Exception $e) {
+        return ResponseHelper::jsonResponseWithClientError($e);
+    }
+}
+
+    public function update(CountryRequest $request, string $id)
+    {
+       try {
+            $validateData = $request->validated();
+            $country = $this->locationInterface->findById('Country',$id);
+         if(!$country){
+            return response()->json([
+                'message'=>Config::get('variable.CNF')
+            ],Config::get('variable.CLIENT_ERROR'));
+            }
+            $country = $this->locationInterface->update('Country',$validateData,$id);
+            return new CountryResource($country);
+        } catch (\Exception $e) {
+        return ResponseHelper::jsonResponseWithConfigError($e);
+     }
     }
 
-    public function show(string $id)
+    // public function destroy(string $id)
+    // {
+    //     try {
+    //         $country = $this->locationInterface->findById('Country', $id);
+    //         if (!$country) {
+    //             return response()->json([
+    //                 'message' => Config::get('variable.CNF')
+    //             ], Config::get('variable.CLIENT_ERROR'));
+    //         }
+    //         $deleted = $this->locationInterface->delete('Country', $id);
+    //         if ($deleted) {
+    //             return response()->noContent();
+    //         } else {
+    //             throw new \Exception(Config::get('variable.FTDC'));
+    //         }
+    //     } catch (\Exception $e) {
+    //         return ResponseHelper::jsonResponseWithClientError($e);
+    //     }
+    // }
+
+      public function destroy(string $id)
     {
-        //
+        $country = $this->locationInterface->findById('Country',$id);
+        if(!$country){
+            return response()->json([
+                'message'=>Config::get('variable.CNF')
+            ],401);
+        }
+        $country = $this->locationInterface->delete('Country',$id);
+        return response()->json([
+            'message'=>Config::get('variable.CDF')
+        ],Config::get('variable.NO_CONTENT'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }

@@ -43,6 +43,7 @@ class Crud
 
     public function execute(): mixed
     {
+        // dd($this->data);
         try {
 
             if ($this->editMode) {

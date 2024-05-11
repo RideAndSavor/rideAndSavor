@@ -13,9 +13,8 @@ class RepositoryServiceProvider extends ServiceProvider
     {
         //Bind the contracts and repositories
         $this->app->bind(
-            'App\Contracts\CountryInterface',
-            'App\Repositories\CountryRepository'
-
+            'App\Contracts\LocationInterface',
+            'App\Repositories\LocationRepository'
         );
         $this->app->bind(
             'App\Contracts\UserInterface',
