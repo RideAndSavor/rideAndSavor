@@ -10,10 +10,11 @@ return[
     "THIRTY_ONE" => 31, "THIRTY_TWO" => 32, "THIRTY_THREE" => 33, "THIRTY_FOUR" => 34,
     "THIRTY_FIVE" => 35, "USER" => "user", "ADMIN" => "admin", "OWNER" => "shop_owner",
     "RIDER" => "rider", "DRIVER" => "driver",
-    
+
+    'NO_CONTENT'=>'204',
+    'OK'=>'200',
     'CLIENT_ERROR'=> '401',
     'SEVER_ERROR'=> '500',
-    'NO_CONTENT'=>'204',
 
     'ISE'=>'Internal Server Error',
 
@@ -39,8 +40,17 @@ return[
 
     "STREET_NOT_FOUND"=>'Street Not Found',
     'FAIL_TO_DELETED_STREET'=>'Falied To Deleted Street',
-    'STREET_DELETED_SUCCESSFULLY'=>'Street Deleted Successfully'
+    'STREET_DELETED_SUCCESSFULLY'=>'Street Deleted Successfully',
 
+    'USER_EMAIL_ALREADY_EXIT'=>'User Email is Already Exist',
+    'INVALID_USERNAME_ADN_PASSWORD'=>'Invalid UserName And Password',
+    'LOGIN_SUCCESSFULLY'=>'Login successfully',
+    'NO_AUTHENTICATED_USER'=>'No authenticated user',
+    'LOGGED_OUT_SUCCESSFULLY'=>'Logged out successfully',
+
+    'FAILED_TO_CREATE_PAYMENT_PROVIDER'=>'Failed to create the payment provider',
+    'PAYMENT_PROVIDER_NOT_FOUND'=>'Payment Provider not found',
+    'PAYMENT_PROVIDER_DELETED_SUCCESSFULLY'=>'PaymentProvider deleted successfully'
 
 
 ];
