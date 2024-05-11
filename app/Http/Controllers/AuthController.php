@@ -26,7 +26,7 @@ class AuthController extends Controller
         $userEamil = User::where('email', $request->email)->first();
         if ($userEamil) {
             return response()->json([
-                'message' => 'User Email is Already Exist'
+                'message' => Config::get('variable.USER_EMAIL_ALREADY_EXIT')
             ]);
         }
         switch (strtolower($request->role)) {
