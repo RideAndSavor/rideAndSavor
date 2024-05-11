@@ -17,7 +17,14 @@ class RepositoryServiceProvider extends ServiceProvider
             'App\Repositories\CountryRepository'
 
         );
-
+        $this->app->bind(
+            'App\Contracts\UserInterface',
+            'App\Repositories\UserRepository'
+        );
+        $this->app->bind(
+            'App\Contracts\PaymentProviderInterface',
+            'App\Repositories\PaymentProviderRepository'
+        );
     }
 
     /**
