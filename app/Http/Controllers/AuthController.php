@@ -62,25 +62,29 @@ class AuthController extends Controller
             $user = User::find(auth()->user()->id);
             $token = $user->createToken('rideandsavor')->plainTextToken;
             return response()->json([
-                'message' => 'Login successful',
+                'message' => Config::get('variable.LOGIN_SUCCESSFULLY'),
                 'access_token' => $token,
                 'token_type' => 'Bearer',
             ]);
         }
         return response()->json([
-            'message' => 'Invalid UserName And Password'
-        ], 401);
+            'message' => Config::get('variable.INVALID_USERNAME_ADN_PASSWORD')
+        ], Config::get('variable.CLIENT_ERROR'));
     }
 
     public function logout(Request $request)
     {
         $user = User::find(auth()->user()->id);
         if (!$user) {
-            return response()->json(['message' => 'No authenticated user'], 401);
+            return response()->json([
+                'message' => Config::get('variable.NO_AUTHENTICATED_USER')
+            ], Config::get('variable.CLIENT_ERROR'));
         }
         $user->tokens->each(function ($token) {
             $token->delete();
         });
-        return response()->json(['message' => 'Logged out successfully'], 200);
+        return response()->json([
+            'message' => Config::get('variable.LOGGED_OUT_SUCCESSFULLY')
+        ], Config::get('variable.OK'));
     }
 }
