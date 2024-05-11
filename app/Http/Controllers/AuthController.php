@@ -30,20 +30,20 @@ class AuthController extends Controller
             ]);
         }
         switch (strtolower($request->role)) {
-            case Config::get('variables.ADMIN'):
-                $validatedUserData['role'] = Config::get('variables.TWO');
+            case Config::get('variable.ADMIN'):
+                $validatedUserData['role'] = Config::get('variable.TWO');
                 break;
-            case Config::get('variables.OWNER'):
-                $validatedUserData['role'] = Config::get('variables.THREE');
+            case Config::get('variable.OWNER'):
+                $validatedUserData['role'] = Config::get('variable.THREE');
                 break;
-            case Config::get('variables.RIDER'):
-                $validatedUserData['role'] = Config::get('variables.FOUR');
+            case Config::get('variable.RIDER'):
+                $validatedUserData['role'] = Config::get('variable.FOUR');
                 break;
-            case Config::get('variables.DRIVER'):
-                $validatedUserData['role'] = Config::get('variables.FIVE');
+            case Config::get('variable.DRIVER'):
+                $validatedUserData['role'] = Config::get('variable.FIVE');
                 break;
             default:
-                $validatedUserData['role'] = Config::get('variables.ONE');
+                $validatedUserData['role'] = Config::get('variable.ONE');
                 break;
         }
         $user = $this->userInterface->store('User', $validatedUserData);
