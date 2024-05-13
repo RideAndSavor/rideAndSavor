@@ -7,6 +7,7 @@ use App\DB\Core\IntegerField;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Township extends Model
 {
@@ -16,12 +17,17 @@ class Township extends Model
     {
         return [
             'name' => StringField::new(),
-            'city_id'=>IntegerField::new()
+            'city_id' => IntegerField::new()
         ];
     }
 
-    public function city():BelongsTo
+    public function city(): BelongsTo
     {
         return $this->belongsTo(City::class);
+    }
+
+    public function ward(): HasMany
+    {
+        return $this->hasMany(Ward::class);
     }
 }

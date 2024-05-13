@@ -16,12 +16,17 @@ class Street extends Model
     {
         return [
             'name' => StringField::new(),
-            'ward_id'=>IntegerField::new()
+            'ward_id' => IntegerField::new()
         ];
     }
 
-    public function ward():BelongsTo
+    public function ward(): BelongsTo
     {
         return $this->belongsTo(Ward::class);
+    }
+
+    public function address()
+    {
+        return $this->hasMany(Address::class);
     }
 }
