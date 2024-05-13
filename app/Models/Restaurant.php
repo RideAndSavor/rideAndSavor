@@ -4,20 +4,23 @@ namespace App\Models;
 
 use App\DB\Core\StringField;
 use App\DB\Core\IntegerField;
+use App\DB\Core\DateTimeField;
 use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class SubCategory extends Model
+class Restaurant extends Model
 {
     use HasFactory;
-
     public function saveableFields($column): object
     {
         $arr = [
+            'address_id' => IntegerField::new(),
             'name' => StringField::new(),
-            'category_id'=>IntegerField::new()
+            'open_time'=>DateTimeField::new(),
+            'close_time'=>DateTimeField::new(),
+            'phone_number'=>StringField::new()
         ];
         if (!array_key_exists($column, $arr)) {
             throw CrudException::missingAttributeException();
@@ -26,8 +29,9 @@ class SubCategory extends Model
         return  $arr[$column];
     }
 
-    public function category():BelongsTo
+    public function address():BelongsTo
     {
-       return $this->belongsTo(Category::class);
+        return $this->belongsTo(Address::class);
     }
+
 }

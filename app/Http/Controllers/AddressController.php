@@ -43,7 +43,7 @@ class AddressController extends Controller
         $address = $this->locationInterface->store('Address', $vaildatedData);
         if (!$address) {
             return response()->json([
-                'message' => 'Something wrong and please try again!'
+                'message' => 'Something wrong and pleae try again!'
             ], 401);
         }
         $address->users()->attach(auth()->user()->id, ['created_at' => now(), 'updated_at' => now()]);
