@@ -21,6 +21,15 @@ class WardTest extends TestCase
         $this->ward = $this->createWard();
     }
 
+    public function test_api_ward_invalid_validation_return_error()
+    {
+        $ward = [
+            'township_id' => '',
+            'name' => '',
+        ];
+        $response = $this->actingAs($this->user)->postJson(route('ward.store'), $ward);
+        $response->assertJsonValidationErrors(['township_id', 'name']);
+    }
     public function test_api_return_all_wards()
     {
         $response = $this->actingAs($this->user)->getJson(route('ward.index'))
@@ -39,12 +48,11 @@ class WardTest extends TestCase
             'name' => $this->ward->name,
         ];
         $response = $this->actingAs($this->user)->postJson(route('ward.store'), $ward)
-            ;
+            ->assertCreated();
         $response->assertExactJson($response->json());
-        dd($response->json());
         $response->assertSee($this->ward->name, $response->json()['data']['name']);
 
-        $this->assertEquals($ward, $response->json()['data']);
+        $this->assertEquals($ward['name'], $response->json()['data']['name']);
         $this->assertDatabaseHas('wards', $ward);
     }
 
@@ -55,9 +63,16 @@ class WardTest extends TestCase
             'name' => 'Update Ward'
         ];
         $response = $this->actingAs($this->user)->putJson(route('ward.update', $this->ward->id), $ward)
-            ;
+            ->assertOk();
         $response->assertExactJson($response->json());
         $this->assertDatabaseHas('wards', $ward);
-        $this->assertEquals($ward, $response->json()['data']);
+        $this->assertEquals($ward['name'], $response->json()['data']['name']);
+    }
+
+    public function test_api_ward_delete_successful()
+    {
+        $response = $this->actingAs($this->user)->deleteJson(route('ward.destroy', $this->ward->id))
+            ->assertNoContent();
+        $this->assertDatabaseMissing('wards', [$this->ward->id, $this->ward->name]);
     }
 }

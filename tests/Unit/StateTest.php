@@ -18,7 +18,7 @@ class StateTest extends TestCase
         $this->state = $this->createState();
     }
 
-    public function test_api_state_invalid_validation_returns_error(): void
+    public function test_api_state_invalid_validation_return_error(): void
     {
         $country = [
             'country_id' => '',
