@@ -3,6 +3,7 @@
 namespace App\DB\Core;
 
 use App\Db\Core\Crud;
+use App\Exceptions\CrudException;
 use Illuminate\Support\Facades\Config;
 
 class ImageField extends Field
@@ -17,10 +18,9 @@ class ImageField extends Field
 
   public function execute()
   {
+
     if (!$this->value) {
-      return response()->json([
-        "message" => "No Data Found"
-      ]);
+      throw CrudException::emptyData();
     }
 
     if ($this->tableName === Config::get('variables.IMAGE')) {

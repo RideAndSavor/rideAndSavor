@@ -29,8 +29,6 @@ class CountryTest extends TestCase
             'name' => '',
         ];
         $response = $this->actingAs($this->user)->postJson(route('country.store'), $country);
-
-        // $response->assertJsonValidationErrorFor('ward_name');
         $response->assertJsonValidationErrors(['name']);
         $response->assertStatus(422);
     }
@@ -39,7 +37,6 @@ class CountryTest extends TestCase
     {
         $response = $this->actingAs($this->user)->getJson(route('country.index'))
             ->assertOk();
-        // dd($response->json()['data'][0]['name']);
         $response->assertExactJson($response->json());
         $response->assertSee($response->json()['data'][0]['name']);
         $this->assertEquals(1, count($response->json()['data']));
