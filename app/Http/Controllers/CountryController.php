@@ -4,62 +4,62 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Contracts\LocationInterface;
+use App\Exceptions\CrudException;
+use App\Exceptions\CustomException;
 use App\Helpers\ResponseHelper;
 use App\Http\Requests\CountryRequest;
 use App\Http\Resources\CountryResource;
 use App\Models\Country;
+use ArgumentCountError;
+use Exception;
 use Illuminate\Support\Facades\Config;
 
 class CountryController extends Controller
 {
-   private $locationInterface;
+    private $locationInterface;
 
-   public function __construct(LocationInterface $locationInterface ) {
-    $this->locationInterface = $locationInterface;
-   }
-   public function index()
-   {
-    try {
-        $countries = $this->locationInterface->all('Country');
-
-        return CountryResource::collection($countries);
-    } catch (\Exception $e) {
-        return ResponseHelper::jsonResponseWithConfigError($e);
+    public function __construct(LocationInterface $locationInterface)
+    {
+        $this->locationInterface = $locationInterface;
     }
-}
+    public function index()
+    {
+        try {
+            $countries = $this->locationInterface->all('Country');
 
-public function store(CountryRequest $request)
-{
-    try {
-        $validatedData = $request->validated();
-
-        $country = $this->locationInterface->store('Country', $validatedData);
-        if (!$country) {
-            return response()->json([
-                'message' => Config::get("variable.CNF")
-            ], Config::get('variable.CLIENT_ERROR'));
+            return CountryResource::collection($countries);
+        } catch (\Exception $e) {
+            return ResponseHelper::jsonResponseWithConfigError($e);
         }
-        return new CountryResource($country);
-    } catch (\Exception $e) {
-        return ResponseHelper::jsonResponseWithClientError($e);
     }
-}
+
+    public function store(CountryRequest $request)
+    {
+        $validatedData = $request->validated();
+        try {
+            $country = $this->locationInterface->store('Country', $validatedData);
+            // throw CustomException::created();
+            return new CountryResource($country);
+        } catch (ArgumentCountError $e) {
+            throw CrudException::argumentCountError();
+        }
+    }
 
     public function update(CountryRequest $request, string $id)
     {
-       try {
+        try {
             $validateData = $request->validated();
-            $country = $this->locationInterface->findById('Country',$id);
-         if(!$country){
-            return response()->json([
-                'message'=>Config::get('variable.CNF')
-            ],Config::get('variable.CLIENT_ERROR'));
+            $country = $this->locationInterface->findById('Country', $id);
+            if (!$country) {
+                return response()->json([
+                    'message' => Config::get('variable.CNF')
+                ], Config::get('variable.CLIENT_ERROR'));
             }
-            $country = $this->locationInterface->update('Country',$validateData,$id);
+            $country = $this->locationInterface->update('Country', $validateData, $id);
             return new CountryResource($country);
         } catch (\Exception $e) {
-        return ResponseHelper::jsonResponseWithConfigError($e);
-     }
+            return ResponseHelper::jsonResponseWithConfigError($e);
+        }
     }
 
     // public function destroy(string $id)
@@ -82,7 +82,7 @@ public function store(CountryRequest $request)
     //     }
     // }
 
-      public function destroy(string $id)
+    public function destroy(Country $country)
     {
         $country = $this->locationInterface->findById('Country',$id);
         if(!$country){
