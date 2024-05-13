@@ -82,18 +82,17 @@ class CountryController extends Controller
     //     }
     // }
 
-    public function destroy(Country $country)
+    public function destroy(String $id)
     {
-        $country = $this->locationInterface->findById('Country',$id);
-        if(!$country){
+        $country = $this->locationInterface->findById('Country', $id);
+        if (!$country) {
             return response()->json([
-                'message'=>Config::get('variable.CNF')
-            ],401);
+                'message' => Config::get('variable.CNF')
+            ], 401);
         }
-        $country = $this->locationInterface->delete('Country',$id);
+        $country = $this->locationInterface->delete('Country', $id);
         return response()->json([
-            'message'=>Config::get('variable.CDF')
-        ],Config::get('variable.NO_CONTENT'));
+            'message' => Config::get('variable.CDF')
+        ], Config::get('variable.NO_CONTENT'));
     }
-
 }

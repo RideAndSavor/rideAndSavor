@@ -67,4 +67,11 @@ abstract class TestCase extends BaseTestCase
             'city_id' => $this->city->id
         ]);
     }
+
+    protected function createWard(): Ward
+    {
+        return Ward::factory()->create([
+            'township_id' => $this->township->id
+        ]);
+    }
 }
