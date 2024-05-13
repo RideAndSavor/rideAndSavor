@@ -6,6 +6,7 @@ use App\Contracts\PaymentProviderInterface;
 use App\Http\Requests\PaymentProviderRequest;
 use App\Http\Resources\PaymentProviderResource;
 use App\Models\PaymentProvider;
+use Illuminate\Support\Facades\Config;
 
 class PaymentProviderController extends Controller
 {
@@ -26,8 +27,8 @@ class PaymentProviderController extends Controller
         $paymentProviderData = $this->paymentModeInterface->store('PaymentProvider', $validatedData);
         if (!$paymentProviderData) {
             return response()->json([
-                'message' => 'Failed to create the payment provider.'
-            ], 422);
+                'message' => Config::get('variable.FAILED_TO_CREATE_PAYMENT_PROVIDER')
+            ], Config::get('variable.CLIENT_ERROR'));
         }
         return new PaymentProviderResource($paymentProviderData);
     }
@@ -38,8 +39,8 @@ class PaymentProviderController extends Controller
         $paymentProvider = $this->paymentModeInterface->findByID('PaymentProvider', $id);
         if (!$paymentProvider) {
             return response()->json([
-                'message' => 'Payment Provider not found'
-            ], 401);
+                'message' =>Config::get('variable.PAYMENT_PROVIDER_NOT_FOUND')
+            ], Config::get('variable.SEVER_ERROR'));
         }
         $paymentProviderData = $this->paymentModeInterface->update('PaymentProvider', $validatedData, $id);
         return new PaymentProviderResource($paymentProviderData);
@@ -51,12 +52,12 @@ class PaymentProviderController extends Controller
         $paymentProvider = $this->paymentModeInterface->findByID('PaymentProvider', $id);
         if (!$paymentProvider) {
             return response()->json([
-                'message' => 'Payment Provider not found'
-            ], 401);
+                'message' => Config::get('variable.PAYMENT_PROVIDER_NOT_FOUND')
+            ], Config::get('variable.SEVER_ERROR'));
         }
         $this->paymentModeInterface->delete('PaymentProvider', $id);
         return response()->json([
-            'message' => 'PaymentProvider deleted successfully'
-        ], 204);
+            'message' =>Config::get('variable.PAYMENT_PROVIDER_DELETED_SUCCESSFULLY')
+        ], Config::get('variable.NO_CONTENT'));
     }
 }
