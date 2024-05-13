@@ -1,10 +1,12 @@
 <?php
 
 namespace App\Repositories;
+
 use App\Db\Core\Crud;
 use App\Models\Country;
 use App\Contracts\CountryInterface;
 use App\Contracts\LocationInterface;
+use App\Exceptions\CrudException;
 
 class LocationRepository implements LocationInterface
 {
@@ -22,21 +24,25 @@ class LocationRepository implements LocationInterface
 
     public function store(string $modelName, array $data)
     {
+        if (empty($data)) {
+            throw CrudException::emptyData();
+        }
         $model = app("App\Models\\{$modelName}");
-        return (new Crud($model,$data,null,false,false))->execute();
+        return (new Crud($model, $data, null, false, false))->execute();
     }
 
     public function update(string $modelName, array $data, int $id)
     {
+        if (empty($data)) {
+            throw CrudException::emptyData();
+        }
         $model = app("App\Models\\{$modelName}");
-
-        return (new Crud($model,$data,$id,true,false))->execute();
+        return (new Crud($model, $data, $id, true, false))->execute();
     }
 
     public function delete(string $modelName, int $id)
     {
         $model = app("App\Models\\{$modelName}");
-
-        return (new Crud($model,null,$id,false,true))->execute();
+        return (new Crud($model, null, $id, false, true))->execute();
     }
 }

@@ -21,7 +21,9 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call([
-            CountrySeeder::class
+            CountrySeeder::class,
+            RoleSeeder::class,
+            SalarySeeder::class,
         ]);
     }
 }
