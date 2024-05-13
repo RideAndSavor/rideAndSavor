@@ -22,7 +22,7 @@ class CrudException extends CustomException
 
   public static function emptyData(): self
   {
-    return new self('The data should not be null!', 404);
+    return new self('The data should not be null!', 422); // contains invalid data
   }
 
 }
