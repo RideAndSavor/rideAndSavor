@@ -14,13 +14,23 @@ class Address extends Model
     public function saveableFields(): array
     {
         return [
-            'street_id'=>IntegerField::new(),
+            'street_id' => IntegerField::new(),
             'name' => StringField::new(),
-            'block_no'=>StringField::new(),
-            'floor'=>StringField::new(),
-            'description'=>StringField::new(),
+            'block_no' => StringField::new(),
+            'floor' => StringField::new(),
+            'description' => StringField::new(),
+            'latitude' => StringField::new(),
+            'longitude' => StringField::new()
         ];
     }
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
 
+    public function street()
+    {
+        return $this->belongsTo(Street::class);
+    }
 }

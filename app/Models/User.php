@@ -60,4 +60,9 @@ class User extends Authenticatable
             'role' => StringField::new()
         ];
     }
+
+    public function addressess()
+    {
+        return $this->belongsToMany(Address::class);
+    }
 }
