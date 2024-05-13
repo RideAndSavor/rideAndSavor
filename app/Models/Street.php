@@ -11,14 +11,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Street extends Model
 {
     use HasFactory;
-
-    public function saveableFields(): array
+ public function saveableFields(): array
     {
         return [
             'name' => StringField::new(),
             'ward_id' => IntegerField::new()
         ];
     }
+
 
     public function ward(): BelongsTo
     {
