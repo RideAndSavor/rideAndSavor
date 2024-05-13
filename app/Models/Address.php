@@ -6,6 +6,8 @@ use App\DB\Core\StringField;
 use App\DB\Core\IntegerField;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Address extends Model
 {
@@ -15,10 +17,10 @@ class Address extends Model
     {
         return [
             'street_id' => IntegerField::new(),
-            'name' => StringField::new(),
+            // 'name' => StringField::new(),
             'block_no' => StringField::new(),
             'floor' => StringField::new(),
-            'description' => StringField::new(),
+            // 'description' => StringField::new(),
             'latitude' => StringField::new(),
             'longitude' => StringField::new()
         ];
@@ -32,5 +34,10 @@ class Address extends Model
     public function street()
     {
         return $this->belongsTo(Street::class);
+    }
+
+    public function restaurant():HasOne
+    {
+        return $this->hasOne(Restaurant::class);
     }
 }

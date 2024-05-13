@@ -50,7 +50,10 @@ return[
 
     'FAILED_TO_CREATE_PAYMENT_PROVIDER'=>'Failed to create the payment provider',
     'PAYMENT_PROVIDER_NOT_FOUND'=>'Payment Provider not found',
-    'PAYMENT_PROVIDER_DELETED_SUCCESSFULLY'=>'PaymentProvider deleted successfully'
+    'PAYMENT_PROVIDER_DELETED_SUCCESSFULLY'=>'PaymentProvider deleted successfully',
+
+    'RESTAURANT_NOT_FOUND'=>'Restaurant Not Found',
+    
 
 
 ];
