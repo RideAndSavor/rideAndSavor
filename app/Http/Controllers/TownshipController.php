@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Township;
 use Illuminate\Http\Request;
 use App\Helpers\ResponseHelper;
+use App\Exceptions\CrudException;
 use App\Contracts\LocationInterface;
 use App\Http\Requests\TownshipRequest;
-use App\Http\Resources\TownshipResource;
 use Illuminate\Support\Facades\Config;
+use App\Http\Resources\TownshipResource;
 
 class TownshipController extends Controller
 {
@@ -28,17 +29,13 @@ class TownshipController extends Controller
     }
     public function store(TownshipRequest $request)
     {
-       try {
         $validateData = $request->validated();
+       try {
         $township = $this->locationInterface->store('Township',$validateData);
-        if(!$township){
-            return response()->json([
-                'message'=>Config::get('variable.TNF')
-            ],Config::get('variable.CLIENT_ERROR'));
-        }
         return new TownshipResource($township);
        } catch (\Exception $e) {
-        return ResponseHelper::jsonResponseWithClientError($e);
+        throw CrudException::argumentCountError();
+
        }
     }
     public function update(TownshipRequest $request, string $id)
