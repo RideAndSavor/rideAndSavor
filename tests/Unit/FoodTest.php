@@ -52,7 +52,7 @@ class FoodTest extends TestCase
         $food = [
             'name' => $this->food->name,
             'quantity' => $this->food->quantity,
-            'sub_category_id' => $this->food->sub_category_id
+            'sub_category_id' => $this->subCategory->id
         ];
 
         $response = $this->actingAs($this->user)->postJson(route('foods.store'), $food)
@@ -67,8 +67,11 @@ class FoodTest extends TestCase
     public function test_api_food_update_successful(): void
     {
         $food = [
-            'name' => 'Update food',
+            'name' => 'Update Food',
+            'quantity' => $this->food->quantity,
+            'sub_category_id' => $this->food->sub_category_id
         ];
+        
         $response = $this->actingAs($this->user)->putJson(route('foods.update', $this->food->id), $food)
             ->assertOk();
         $response->assertExactJson($response->json());
