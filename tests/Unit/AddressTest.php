@@ -44,10 +44,10 @@ class AddressTest extends TestCase
         $response = $this->actingAs($this->user)->getJson(route('address.index'))
             ->assertOk();
         $response->assertExactJson($response->json());
-        $response->assertSee($response->json()['data'][0]['name']);
+        $response->assertSee($response->json()['data'][0]['street_id']);
 
         $this->assertEquals(1, count($response->json()['data']));
-        $this->assertEquals($this->address->name, $response->json()['data'][0]['name']);
+        $this->assertEquals($this->address->street_id, $response->json()['data'][0]['street_id']);
     }
 
     public function test_api_address_store_successful(): void

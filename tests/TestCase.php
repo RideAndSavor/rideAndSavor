@@ -6,6 +6,7 @@ use App\Models\Address;
 use App\Models\Category;
 use App\Models\City;
 use App\Models\Country;
+use App\Models\Food;
 use App\Models\Ingredient;
 use App\Models\Restaurant;
 use App\Models\Role;
@@ -33,6 +34,7 @@ abstract class TestCase extends BaseTestCase
     protected SubCategory $subCategory;
     protected Restaurant $restaurant;
     protected Ingredient $ingredient;
+    protected Food $food;
 
     protected function createAdmin(): User
     {
@@ -108,5 +110,12 @@ abstract class TestCase extends BaseTestCase
     protected function createIngredient(): Ingredient
     {
         return Ingredient::factory()->create();
+    }
+
+    protected function createFood(): Food
+    {
+        return Food::factory()->create([
+            'sub_category_id' => $this->subCategory->id
+        ]);
     }
 }
