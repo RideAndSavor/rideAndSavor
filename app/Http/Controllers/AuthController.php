@@ -47,6 +47,7 @@ class AuthController extends Controller
                 break;
         }
         $user = $this->userInterface->store('User', $validatedUserData);
+
         if (request()->expectsJson()) {
             return new AuthResource($user);
         }

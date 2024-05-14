@@ -17,11 +17,11 @@ class CountryTest extends TestCase
         $this->country = $this->createCountry();
     }
 
-    // public function test_unauthenticated_user_cannot_access_countries_page()
-    // {
-    //     $response = $this->get('/country');
-    //     $response->assertRedirect(route('login'));
-    // }
+    public function test_unauthenticated_user_cannot_access_countries_page()
+    {
+        $response = $this->get('/country');
+        $response->assertRedirect(route('login'));
+    }
 
     public function test_api_country_invalid_validation_returns_error(): void
     {
