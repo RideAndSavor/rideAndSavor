@@ -20,8 +20,7 @@ class CategoryTest extends TestCase
 
     public function test_unauthenticated_user_cannot_access_categories_page()
     {
-        $response = $this->get('/category');
-        $response->assertRedirect(route('login'));
+        $response = $this->getJson(route('category.index'))->assertStatus(401);
     }
 
     public function test_api_category_invalid_validation_errors(): void
