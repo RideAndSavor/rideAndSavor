@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PaymentProviderController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\CountryController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\StreetController;
+use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\TownshipController;
 use App\Http\Controllers\WardController;
 use Illuminate\Http\Request;
