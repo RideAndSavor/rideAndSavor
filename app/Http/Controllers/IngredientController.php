@@ -62,6 +62,6 @@ class IngredientController extends Controller
         $this->ingredientInterface->delete('Ingredient',$id);
         return response()->json([
             'message'=>Config::get('variable.INGREDIENT_DELETED_SUCCESSFULLY')
-        ]);
+        ],Config::get('variable.NO_CONTENT'));
     }
 }
