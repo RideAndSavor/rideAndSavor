@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Contracts\LocationInterface;
 use App\Helpers\ResponseHelper;
+use App\Exceptions\CrudException;
 use App\Http\Requests\CityRequest;
+use App\Contracts\LocationInterface;
 use App\Http\Resources\CityResource;
 use Illuminate\Support\Facades\Config;
 
@@ -28,17 +29,12 @@ class CityController extends Controller
 
     public function store(CityRequest $request)
     {
+        $validateData = $request->validated();
         try {
-            $validateData = $request->validated();
             $city = $this->locationInterface->store('City',$validateData);
-            if(!$city){
-                return response()->json([
-                    'message'=>Config::get('variable.CITY_NOT_FOUND')
-                ],Config::get('variable.CLIENT_ERROR'));
-            }
         return new CityResource($city);
         } catch (\Exception $e) {
-            return ResponseHelper::jsonResponseWithClientError($e);
+            return throw CrudException::argumentCountError();
         }
     }
 

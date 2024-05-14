@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\IngredientResource;
 use Illuminate\Http\Request;
+use App\Exceptions\CrudException;
 use App\Contracts\LocationInterface;
-use App\Http\Requests\IngredientRequest;
 use Illuminate\Support\Facades\Config;
+use App\Http\Requests\IngredientRequest;
+use App\Http\Resources\IngredientResource;
 
 class IngredientController extends Controller
 {
@@ -26,13 +27,12 @@ class IngredientController extends Controller
     public function store(IngredientRequest $request)
     {
         $validateData = $request->validated();
+       try {
         $ingredient = $this->ingredientInterface->store('Ingredient',$validateData);
-        if(!$ingredient){
-            return response()->json([
-                'message'=>Config::get('variable.INGREDIENTS_NOT_FOUND')
-            ],Config::get('variable.CLIENT_ERROR'));
-        }
         return new IngredientResource($ingredient);
+       } catch (\Throwable $th) {
+        throw CrudException::argumentCountError();
+       }
     }
 
 

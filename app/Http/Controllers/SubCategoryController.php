@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\SubCategoryResource;
 use Illuminate\Http\Request;
+use App\Exceptions\CrudException;
 use App\Contracts\LocationInterface;
-use App\Http\Requests\SubCategoryRequest;
 use Illuminate\Support\Facades\Config;
+use App\Http\Requests\SubCategoryRequest;
+use App\Http\Resources\SubCategoryResource;
 
 class SubCategoryController extends Controller
 {
@@ -25,14 +26,12 @@ class SubCategoryController extends Controller
     public function store(SubCategoryRequest $request)
     {
         $validateData = $request->validated();
-        // dd($validateData);
+      try {
         $subcategory = $this->subcategoryInterface->store('SubCategory',$validateData);
-        if(!$subcategory){
-            return response()->json([
-                'message'=>Config::get('variable.SUBCATEGORY_NOT_FOUND')
-            ],Config::get('variable.CLIENT_ERROR'));
-        }
         return new SubCategoryResource($subcategory);
+      } catch (\Throwable $th) {
+        throw CrudException::argumentCountError();
+      }
     }
 
     public function update(SubCategoryRequest $request, string $id)

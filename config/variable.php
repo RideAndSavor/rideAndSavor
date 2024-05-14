@@ -1,4 +1,4 @@
-~<?php
+<?php
 
 return[
     "ONE" => 1, "TWO" => 2, "THREE" => 3, "FOUR" => 4, "FIVE" => 5, "SIX" => 6,
@@ -70,5 +70,11 @@ return[
     'FOOD_NOT_FOUND'=>'Food Not Found',
     'FAIL_TO_DELTEDE_FOOD'=>'Fail To Deleted Food',
     'FOOD_DELETED_SUCCESSFULLY'=>'Food Deleted Successfully',
+
+    'FAILED_TO_DELETED_SALARY'=>'Fail To Deleted Salary',
+    'SALARY_DELETED_SUCCESSFULLY'=>'Salary Deleted Successfully',
+
+    'FAIL_TO_DELETED_STATUS'=>'Fail To Deleted Status',
+    'STATUS_DELTED_SUCCESSFULLY'=>'Status Deleted Successfully',
 
 ];

@@ -7,7 +7,7 @@ class CrudException extends CustomException
 
   public static function missingAttributeException(): self
   {
-    return new self('Key and value does not match!', 404);
+return new self('Key and value does not match!', 404);
   }
 
   public static function prepareDataFormat(): self

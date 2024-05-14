@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Exceptions\CrudException;
 use App\Contracts\LocationInterface;
 use App\Http\Requests\StreetRequest;
 use App\Http\Resources\StreetResource;
@@ -25,13 +26,12 @@ class StreetController extends Controller
     public function store(StreetRequest $request)
     {
         $validateData = $request->validated();
-        $street =$this->streetInterface->store('Street',$validateData);
-        if(!$street){
-            return response()->json([
-                'message'=>Config::get('variable.STREET_NOT_FOUND')
-            ],Config::get('variable.CLIENT_ERROR'));
+        try {
+            $street =$this->streetInterface->store('Street',$validateData);
+            return new StreetResource($street);
+        } catch (\Throwable $th) {
+            throw CrudException::argumentCountError();
         }
-        return new StreetResource($street);
     }
     public function update(StreetRequest $request, string $id)
     {
