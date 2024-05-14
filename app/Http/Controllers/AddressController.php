@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\LocationInterface;
+use App\Exceptions\CrudException;
+use App\Helpers\ResponseHelper;
 use App\Http\Requests\AddressRequest;
 use App\Http\Resources\AddressResource;
 use App\Models\Street;
@@ -19,8 +21,12 @@ class AddressController extends Controller
 
     public function index()
     {
-        $addressData = $this->locationInterface->relationData('Address', 'users');
-        return AddressResource::collection($addressData);
+        try {
+            $addressData = $this->locationInterface->relationData('Address', 'users');
+            return AddressResource::collection($addressData);
+        } catch (\Exception $e) {
+            return CrudException::emptyData();
+        }
     }
 
     public function store(AddressRequest $addressRequest)
