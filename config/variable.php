@@ -1,4 +1,4 @@
-~<?php
+<?php
 
     return [
         "ONE" => 1, "TWO" => 2, "THREE" => 3, "FOUR" => 4, "FIVE" => 5, "SIX" => 6,
@@ -55,8 +55,25 @@
         'FAILED_TO_CREATE_ADDRESS' => 'Failed to create the address',
         'ADDRESS_NOT_FOUND' => 'Address not found',
         'ADDRESS_DELETED_SUCCESSFULLY' => 'Address deleted successfully',
-        'YOUR_STREET_CAN_NOT_CHANGE' => 'Your Street can not change you can create a new address'
+        'YOUR_STREET_CAN_NOT_CHANGE' => 'Your Street can not change you can create a new address',
 
+    'RESTAURANT_NOT_FOUND'=>'Restaurant Not Found',
+
+    'INGREDIENTS_NOT_FOUND'=>'Ingredients Not Found',
+    'FAIL_TO_DELETED_INGREDIENT'=>'Fail To Deleted Ingredient',
+    'INGREDIENT_DELETED_SUCCESSFULLY'=>'Ingredient Deleted Successfully',
+
+    'CATEGORY_NOT_FOUND'=>'Category Not Found',
+    'FAIL_TO_DELETED_CATEGORY'=>"Fail To Deleted Category",
+    'CATEGORY_DELETED_SUCCESSFULLY'=>'Category Deleted Successfully',
+
+    'SUBCATEGORY_NOT_FOUND'=>'SubCategory Not Found',
+    'FAIL_TO_DELETED_SUBCATEGORY'=>'Fail To Deleted SubCategory',
+    'SUBCATEGORY_DELETED_SUCCESSFULLY'=>'SubCategory Deleted Successfully',
+
+    'FOOD_NOT_FOUND'=>'Food Not Found',
+    'FAIL_TO_DELTEDE_FOOD'=>'Fail To Deleted Food',
+    'FOOD_DELETED_SUCCESSFULLY'=>'Food Deleted Successfully',
 
 
     ];

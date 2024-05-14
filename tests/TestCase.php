@@ -2,9 +2,18 @@
 
 namespace Tests;
 
+use App\Models\Address;
+use App\Models\Category;
+use App\Models\City;
 use App\Models\Country;
+use App\Models\Role;
+use App\Models\Salary;
 use App\Models\State;
+use App\Models\Street;
+use App\Models\SubCategory;
+use App\Models\Township;
 use App\Models\User;
+use App\Models\Ward;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
@@ -13,6 +22,13 @@ abstract class TestCase extends BaseTestCase
     protected User $user;
     protected Country $country;
     protected State $state;
+    protected City $city;
+    protected Township $township;
+    protected Ward $ward;
+    protected Street $street;
+    protected Address $address;
+    protected Category $category;
+    protected SubCategory $subCategory;
 
     protected function createAdmin(): User
     {
@@ -31,10 +47,50 @@ abstract class TestCase extends BaseTestCase
         ]);
     }
 
-    protected function createCity()
+    protected function createCity(): City
     {
-        // return City::factory()->create([
-        //     'state_id' => $this->country->id
-        // ]);
+        return City::factory()->create([
+            'state_id' => $this->country->id
+        ]);
+    }
+
+    protected function createTownship(): Township
+    {
+        return Township::factory()->create([
+            'city_id' => $this->city->id
+        ]);
+    }
+
+    protected function createWard(): Ward
+    {
+        return Ward::factory()->create([
+            'township_id' => $this->township->id
+        ]);
+    }
+
+    protected function creatStreet(): Street
+    {
+        return Street::factory()->create([
+            'ward_id' => $this->ward->id
+        ]);
+    }
+
+    protected function createAddress(): Address
+    {
+        return Address::factory()->create([
+            'street_id' => $this->ward->id
+        ]);
+    }
+
+    protected function createCategory(): Category
+    {
+        return Category::factory()->create();
+    }
+
+    protected function createSubCategory(): SubCategory
+    {
+        return SubCategory::factory()->create([
+            'category_id' => $this->category->id
+        ]);
     }
 }

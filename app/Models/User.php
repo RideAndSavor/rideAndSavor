@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\DB\Core\StringField;
+use App\Exceptions\CrudException;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -47,9 +48,9 @@ class User extends Authenticatable
         ];
     }
 
-    public function saveableFields(): array|StringField
+    public function saveableFields($column): object
     {
-        return [
+        $arr = [
             'name' => StringField::new(),
             'email' => StringField::new(),
             'password' => StringField::new(),
@@ -59,6 +60,12 @@ class User extends Authenticatable
             'age' => StringField::new(),
             'role' => StringField::new()
         ];
+
+        if (!array_key_exists($column, $arr)) {
+            throw CrudException::missingAttributeException();
+        }
+
+        return  $arr[$column];
     }
 
     public function addressess()
