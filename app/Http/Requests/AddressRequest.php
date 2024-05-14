@@ -22,8 +22,6 @@ class AddressRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // 'name' => 'string',
-            // 'description' => 'string',
             'street_id' => 'required',
             'block_no' => 'required',
             'floor' => 'required',
