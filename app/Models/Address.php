@@ -15,7 +15,6 @@ class Address extends Model
     {
         return [
             'street_id' => IntegerField::new(),
-            'name' => StringField::new(),
             'block_no' => StringField::new(),
             'floor' => StringField::new(),
             'description' => StringField::new(),
@@ -26,7 +25,7 @@ class Address extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class)->withTimestamps();
     }
 
     public function street()

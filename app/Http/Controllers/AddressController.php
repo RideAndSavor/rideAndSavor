@@ -6,7 +6,7 @@ use App\Contracts\LocationInterface;
 use App\Http\Requests\AddressRequest;
 use App\Http\Resources\AddressResource;
 use App\Models\Street;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 
 class AddressController extends Controller
 {
@@ -19,7 +19,7 @@ class AddressController extends Controller
 
     public function index()
     {
-        $addressData = $this->locationInterface->all('Address');
+        $addressData = $this->locationInterface->relationData('Address', 'users');
         return AddressResource::collection($addressData);
     }
 
@@ -43,19 +43,46 @@ class AddressController extends Controller
         $address = $this->locationInterface->store('Address', $vaildatedData);
         if (!$address) {
             return response()->json([
-                'message' => 'Something wrong and please try again!'
-            ], 401);
+                'message' => Config::get('variable.FAILED_TO_CREATE_ADDRESS')
+            ], Config::get('variable.CLIENT_ERROR'));
         }
-        $address->users()->attach(auth()->user()->id, ['created_at' => now(), 'updated_at' => now()]);
+        $address->users()->attach(auth()->user()->id);
         return new AddressResource($address);
     }
 
-    public function update(Request $request, string $id)
+    public function update(AddressRequest $addressRequest, string $id)
     {
-    }
+        $validatedData = $addressRequest->validated();
+        $addressData = $this->locationInterface->findById('Address', $id);
+        if (!$addressData) {
+            return response()->json([
+                'message' => 'Address Not Found'
+            ], 401);
+        }
+        $addressData->street_id = $validatedData['street_id'];
 
+        if ($addressData->isDirty('street_id')) { // This will be shown if the street_id has changed
+            return response()->json([
+                'message' => Config::get('variable.YOUR_STREET_CAN_NOT_CHANGE')
+            ], Config::get('variable.SEVER_ERROR'));
+        }
+
+        $address = $this->locationInterface->update('Address', $validatedData, $id);
+        return new AddressResource($address);
+    }
 
     public function destroy(string $id)
     {
+        $address = $this->locationInterface->findById('Address', $id);
+        if (!$address) {
+            return response()->json([
+                'message' => Config::get('variable.ADDRESS_NOT_FOUND')
+            ], Config::get('variable.SEVER_ERROR'));
+        }
+        $this->locationInterface->delete('Address', $id);
+        $address->users()->detach(auth()->user()->id);
+        return response()->json([
+            'message' => Config::get('variable.ADDRESS_DELETED_SUCCESSFULLY')
+        ], Config::get('variable.NO_CONTENT'));
     }
 }
