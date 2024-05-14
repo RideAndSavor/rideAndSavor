@@ -20,7 +20,6 @@ class AddressResource extends JsonResource
             'floor' => $this->floor,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
-            'description' => $this->description
 
         ];
     }
