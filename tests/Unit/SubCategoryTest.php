@@ -18,10 +18,9 @@ class SubCategoryTest extends TestCase
         $this->subCategory = $this->createSubCategory();
     }
 
-    public function test_unauthenticated_user_cannot_access_sub_categories_page()
+    public function test_unauthenticated_user_cannot_access_subCategory_page()
     {
-        $response = $this->get('/subcategory');
-        $response->assertRedirect(route('login'));
+        $response = $this->getJson(route('subcategory.index'))->assertStatus(401);
     }
 
     public function test_api_subCategory_invalid_validation_errors(): void

@@ -19,6 +19,11 @@ class TownshipTest extends TestCase
         $this->township = $this->createTownship();
     }
 
+    public function test_unauthenticated_user_cannot_access_township_page()
+    {
+        $response = $this->getJson(route('township.index'))->assertStatus(401);
+    }
+
     public function test_api_township_invalid_validation_error(): void
     {
         $township = [

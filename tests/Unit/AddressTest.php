@@ -22,10 +22,9 @@ class AddressTest extends TestCase
         $this->address = $this->createAddress();
     }
 
-    public function test_unauthenticated_user_cannot_access_addressess_page()
+    public function test_unauthenticated_user_cannot_access_addresses_page()
     {
-        $response = $this->get('/address');
-        $response->assertRedirect(route('login'));
+        $response = $this->getJson(route('address.index'))->assertStatus(401);
     }
 
     public function test_api_address_invalid_validation_errors(): void
