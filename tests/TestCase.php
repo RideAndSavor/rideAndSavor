@@ -26,17 +26,6 @@ abstract class TestCase extends BaseTestCase
     protected Street $street;
     protected Address $address;
 
-
-    protected function createRole(): Role
-    {
-        return Role::factory()->create();
-    }
-
-    protected function createSalary(): Salary
-    {
-        return Salary::factory()->create();
-    }
-
     protected function createAdmin(): User
     {
         return User::factory()->create();
@@ -79,6 +68,13 @@ abstract class TestCase extends BaseTestCase
     {
         return Street::factory()->create([
             'ward_id' => $this->ward->id
+        ]);
+    }
+
+    protected function createAddress(): Address
+    {
+        return Address::factory()->create([
+            'street_id' => $this->ward->id
         ]);
     }
 }
