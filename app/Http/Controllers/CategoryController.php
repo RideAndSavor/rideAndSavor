@@ -60,6 +60,6 @@ class CategoryController extends Controller
        $this->categoryInterface->delete('Category',$id);
         return response()->json([
             'message'=>Config::get('variable.CATEGORY_DELETED_SUCCESSFULLY')
-        ]);
+        ],Config::get('variable.NO_CONTENT'));
     }
 }

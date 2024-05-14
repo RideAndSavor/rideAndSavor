@@ -31,7 +31,7 @@ class SubCategoryTest extends TestCase
         ];
         $response = $this->actingAs($this->user)->postJson(route('subcategory.store'), $subCategory)
             ->assertStatus(422);
-        $response->assertJsonValidationErrors(['name','category_id']);
+        $response->assertJsonValidationErrors(['name', 'category_id']);
     }
 
     public function test_api_all_subCategories(): void
@@ -48,7 +48,8 @@ class SubCategoryTest extends TestCase
     public function test_api_subCategory_store_successful(): void
     {
         $subCategory = [
-            'name' => $this->subCategory->name
+            'name' => $this->subCategory->name,
+            'category_id' => $this->category->id,
         ];
         $response = $this->actingAs($this->user)->postJson(route('subcategory.store'), $subCategory)
             ->assertCreated();
@@ -62,7 +63,8 @@ class SubCategoryTest extends TestCase
     public function test_api_subCategory_update_successful(): void
     {
         $subCategory = [
-            'name' => 'Update SubCategory'
+            'category_id' => $this->category->id,
+            'name' => 'Update SubCategory',
         ];
         $response = $this->actingAs($this->user)->putJson(route('subcategory.update', $this->subCategory->id), $subCategory)
             ->assertOk();
