@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Contracts\LocationInterface;
-use App\Http\Requests\WardRequest;
-use App\Http\Resources\WardResource;
 use Illuminate\Http\Request;
+use App\Exceptions\CrudException;
+use App\Http\Requests\WardRequest;
+use App\Contracts\LocationInterface;
+use App\Http\Resources\WardResource;
 use Illuminate\Support\Facades\Config;
 
 class WardController extends Controller
@@ -26,14 +27,12 @@ class WardController extends Controller
     public function store(WardRequest $request)
     {
        $validateData = $request->validated();
-       $ward =$this->wardInterface->store('Ward',$validateData);
-       if(!$ward){
-        return response()->json([
-            'message'=>Config::get('variable.WARD_NOT_FOUND')
-        ],Config::get('variable.CLIENT_ERROR'));
-       }
-
-       return new WardResource($ward);
+      try {
+         $ward =$this->wardInterface->store('Ward',$validateData);
+          return new WardResource($ward);
+      } catch (\Throwable $th) {
+        throw CrudException::argumentCountError();
+      }
     }
 
 
