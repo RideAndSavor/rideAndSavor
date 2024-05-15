@@ -17,7 +17,7 @@ class SalaryFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => "3000"
+            'name' => '1000'
         ];
     }
 }

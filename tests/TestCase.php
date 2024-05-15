@@ -8,6 +8,7 @@ use App\Models\City;
 use App\Models\Country;
 use App\Models\Food;
 use App\Models\Ingredient;
+use App\Models\Price;
 use App\Models\Restaurant;
 use App\Models\Role;
 use App\Models\Salary;
@@ -35,6 +36,9 @@ abstract class TestCase extends BaseTestCase
     protected Restaurant $restaurant;
     protected Ingredient $ingredient;
     protected Food $food;
+    protected Price $price;
+    protected Role $role;
+    protected Salary $salary;
 
     protected function createAdmin(): User
     {
@@ -117,5 +121,20 @@ abstract class TestCase extends BaseTestCase
         return Food::factory()->create([
             'sub_category_id' => $this->subCategory->id
         ]);
+    }
+
+    protected function createPrice(): Price
+    {
+        return Price::factory()->create();
+    }
+
+    protected function createRole(): Role
+    {
+        return Role::factory()->create();
+    }
+
+    protected function createSalary(): Salary
+    {
+        return Salary::factory()->create();
     }
 }
