@@ -62,6 +62,6 @@ class SalaryController extends Controller
         $this->salaryInterface->delete('Salary',$id);
         return response()->json([
             'message'=>Config::get('variable.SALARY_DELETED_SUCCESSFULLY')
-        ],Config::get('variable.OK'));
+        ],Config::get('variable.NO_CONTENT'));
     }
 }
