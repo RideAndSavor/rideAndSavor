@@ -34,7 +34,7 @@ class FoodController extends Controller
         try {
             $food = $this->foodInterface->store('Food',$validateData);
             return new FoodResource($food);
-        } catch (\Throwable $th) {
+        } catch (\Exception $e) {
             throw CrudException::argumentCountError();
         }
     }
@@ -62,6 +62,6 @@ class FoodController extends Controller
         $country = $this->foodInterface->delete('Food', $id);
         return response()->json([
             'message' => Config::get('variable.FOOD_DELETED_SUCCESSFULLY')
-        ], Config::get('variable.OK'));
+        ], Config::get('variable.NO_CONTENT'));
     }
 }
