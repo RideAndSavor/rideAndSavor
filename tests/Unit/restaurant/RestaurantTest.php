@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\restaurant;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

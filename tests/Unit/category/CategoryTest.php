@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\category;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SebastianBergmann\Type\VoidType;
