@@ -21,6 +21,11 @@ class WardTest extends TestCase
         $this->ward = $this->createWard();
     }
 
+    public function test_unauthenticated_user_cannot_access_ward_page()
+    {
+        $response = $this->getJson(route('ward.index'))->assertStatus(401);
+    }
+
     public function test_api_ward_invalid_validation_return_error()
     {
         $ward = [

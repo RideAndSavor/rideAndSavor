@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\LocationInterface;
+use App\Exceptions\CrudException;
 use App\Helpers\ResponseHelper;
 use Illuminate\Http\Request;
 use App\Http\Requests\StateRequest;
@@ -28,17 +29,12 @@ class StateController extends Controller
 
    public function store(StateRequest $request)
 {
+    $validatedData = $request->validated();
     try {
-        $validatedData = $request->validated();
         $state = $this->locationInterface->store('State', $validatedData);
-        if (!$state) {
-            return response()->json([
-                'message' => Config::get('variable.SNF'),
-            ],Config::get('variable.CLIENT_ERROR'));
-        }
         return new StateResource($state);
     } catch (\Exception $e) {
-        return ResponseHelper::jsonResponseWithClientError($e);
+        throw CrudException::argumentCountError();
     }
 }
 

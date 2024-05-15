@@ -47,6 +47,7 @@ class AuthController extends Controller
                 break;
         }
         $user = $this->userInterface->store('User', $validatedUserData);
+
         if (request()->expectsJson()) {
             return new AuthResource($user);
         }
@@ -62,6 +63,7 @@ class AuthController extends Controller
             $user = User::find(auth()->user()->id);
             $token = $user->createToken('rideandsavor')->plainTextToken;
             return response()->json([
+                'email' => $user->email,
                 'message' => Config::get('variable.LOGIN_SUCCESSFULLY'),
                 'access_token' => $token,
                 'token_type' => 'Bearer',

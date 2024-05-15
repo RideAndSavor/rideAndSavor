@@ -19,6 +19,11 @@ class TownshipTest extends TestCase
         $this->township = $this->createTownship();
     }
 
+    public function test_unauthenticated_user_cannot_access_township_page()
+    {
+        $response = $this->getJson(route('township.index'))->assertStatus(401);
+    }
+
     public function test_api_township_invalid_validation_error(): void
     {
         $township = [
@@ -29,6 +34,7 @@ class TownshipTest extends TestCase
             ->assertStatus(422);
         $response->assertJsonValidationErrors(['city_id', 'name']);
     }
+
     public function test_api_return_all_townships_list(): void
     {
         $response = $this->actingAs($this->user)->getJson(route('township.index'))
@@ -50,6 +56,21 @@ class TownshipTest extends TestCase
         $response->assertExactJson($response->json());
         $this->assertDatabaseHas('townships', $township);
         $this->assertEquals($this->township->name, $response->json()['data']['name']);
+    }
+
+    public function test_api_township_update_successful():void{
+        $township = [
+            'city_id' => $this->city->id,
+            'name' => 'Update township',
+        ];
+
+        $response = $this->actingAs($this->user)->putJson(route('township.update',$this->township),$township)
+        ->assertOk();
+        $response->assertExactJson($response->json());
+        $response->assertSee($response->json()['data']['name']);
+
+        $this->assertEquals($township['name'], $response->json()['data']['name']);
+        $this->assertDatabaseHas('townships', $township);
     }
 
     public function test_api_township_delete_successful(): void

@@ -65,6 +65,11 @@ class User extends Authenticatable
             throw CrudException::missingAttributeException();
         }
        
+
+        if (!array_key_exists($column, $arr)) {
+            throw CrudException::missingAttributeException();
+        }
+
         return  $arr[$column];
     }
 

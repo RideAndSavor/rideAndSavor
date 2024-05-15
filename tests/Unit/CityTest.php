@@ -19,6 +19,11 @@ class CityTest extends TestCase
         $this->city = $this->createCity();
     }
 
+    public function test_unauthenticated_user_cannot_access_cities_page()
+    {
+        $response = $this->getJson(route('city.index'))->assertStatus(401);
+    }
+
     public function test_api_city_invalid_validation_returns_error(): void
     {
         $city = [

@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Salary>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Food>
  */
-class SalaryFactory extends Factory
+class FoodFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +17,8 @@ class SalaryFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => '1000'
+            'name' => fake()->word(),
+            'quantity' => "3",
         ];
     }
 }

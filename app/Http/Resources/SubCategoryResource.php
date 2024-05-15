@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AddressResource extends JsonResource
+class SubCategoryResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,21 +15,17 @@ class AddressResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'street_id' => $this->street_id,
-            'block_no' => $this->block_no,
-            'floor' => $this->floor,
-            'latitude' => $this->latitude,
-            'longitude' => $this->longitude,
-
+            'category_id'=>$this->category_id,
+            'name'=>$this->name
         ];
     }
 
     public function with(Request $request)
     {
-        return [
+        return[
             'version' => '1.0.0',
-            'api_url' => url('http://127.0.0.1:8000/api/address'),
-            'message' => "You are action is successful!"
+            'api_url' => url('http://127.0.0.1:8000/api/subcategory'),
+            'message' => 'Your action is successful'
         ];
     }
 }

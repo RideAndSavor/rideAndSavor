@@ -1,4 +1,4 @@
-~<?php
+<?php
 
 return[
     "ONE" => 1, "TWO" => 2, "THREE" => 3, "FOUR" => 4, "FIVE" => 5, "SIX" => 6,
@@ -12,46 +12,51 @@ return[
     "USER" => "user", "ADMIN" => "admin", "OWNER" => "shop_owner",
     "RIDER" => "rider", "DRIVER" => "driver",
 
-    'NO_CONTENT'=>'204',
-    'OK'=>'200',
-    'CLIENT_ERROR'=> '401',
-    'SEVER_ERROR'=> '500',
+        'NO_CONTENT' => '204',
+        'OK' => '200',
+        'CLIENT_ERROR' => '401',
+        'SEVER_ERROR' => '500',
 
-    'ISE'=>'Internal Server Error',
+        'ISE' => 'Internal Server Error',
 
-    "CNF"=> 'Country Not Found',
-    'FTDC'=>"Failed to delete Country",
-    'CDF'=> "Country Deleted Successfully",
+        "CNF" => 'Country Not Found',
+        'FTDC' => "Failed to delete Country",
+        'CDF' => "Country Deleted Successfully",
 
-    "SNF"=>  'State Not Found',
-    'FTDS'=> 'Fail To Deleted State',
-    'SDF'=> "State Deleted Successfully",
+        "SNF" =>  'State Not Found',
+        'FTDS' => 'Fail To Deleted State',
+        'SDF' => "State Deleted Successfully",
 
-    'CITY_NOT_FOUND'=> "City Not Found",
-    'FAIL_TO_DELETED_CITY'=> 'Failed To Deleted City',
-    'CITY_DELETED_SUCCESSFULLY'=> "State Deleted Successfully",
+        'CITY_NOT_FOUND' => "City Not Found",
+        'FAIL_TO_DELETED_CITY' => 'Failed To Deleted City',
+        'CITY_DELETED_SUCCESSFULLY' => "State Deleted Successfully",
 
-    'TNF'=>'Township Not Found',
-    'FTDT'=>'Failed To Deleted Township',
-    'TDS'=> "Township Deleted Successfully",
+        'TNF' => 'Township Not Found',
+        'FTDT' => 'Failed To Deleted Township',
+        'TDS' => "Township Deleted Successfully",
 
-    'WARD_NOT_FOUND'=>'Ward Not Found',
-    'FAIL_TO_DELETED_WARD'=>'Failed To Deleted Ward',
-    'WARD_DELETED_SUCCESSFULLY'=>'Ward Deleted Successfully',
+        'WARD_NOT_FOUND' => 'Ward Not Found',
+        'FAIL_TO_DELETED_WARD' => 'Failed To Deleted Ward',
+        'WARD_DELETED_SUCCESSFULLY' => 'Ward Deleted Successfully',
 
-    "STREET_NOT_FOUND"=>'Street Not Found',
-    'FAIL_TO_DELETED_STREET'=>'Falied To Deleted Street',
-    'STREET_DELETED_SUCCESSFULLY'=>'Street Deleted Successfully',
+        "STREET_NOT_FOUND" => 'Street Not Found',
+        'FAIL_TO_DELETED_STREET' => 'Falied To Deleted Street',
+        'STREET_DELETED_SUCCESSFULLY' => 'Street Deleted Successfully',
 
-    'USER_EMAIL_ALREADY_EXIT'=>'User Email is Already Exist',
-    'INVALID_USERNAME_ADN_PASSWORD'=>'Invalid UserName And Password',
-    'LOGIN_SUCCESSFULLY'=>'Login successfully',
-    'NO_AUTHENTICATED_USER'=>'No authenticated user',
-    'LOGGED_OUT_SUCCESSFULLY'=>'Logged out successfully',
+        'USER_EMAIL_ALREADY_EXIT' => 'User Email is Already Exist',
+        'INVALID_USERNAME_ADN_PASSWORD' => 'Invalid UserName And Password',
+        'LOGIN_SUCCESSFULLY' => 'Login successfully',
+        'NO_AUTHENTICATED_USER' => 'No authenticated user',
+        'LOGGED_OUT_SUCCESSFULLY' => 'Logged out successfully',
 
-    'FAILED_TO_CREATE_PAYMENT_PROVIDER'=>'Failed to create the payment provider',
-    'PAYMENT_PROVIDER_NOT_FOUND'=>'Payment Provider not found',
-    'PAYMENT_PROVIDER_DELETED_SUCCESSFULLY'=>'PaymentProvider deleted successfully',
+        'FAILED_TO_CREATE_PAYMENT_PROVIDER' => 'Failed to create the payment provider',
+        'PAYMENT_PROVIDER_NOT_FOUND' => 'Payment Provider not found',
+        'PAYMENT_PROVIDER_DELETED_SUCCESSFULLY' => 'PaymentProvider deleted successfully',
+
+        'FAILED_TO_CREATE_ADDRESS' => 'Failed to create the address',
+        'ADDRESS_NOT_FOUND' => 'Address not found',
+        'ADDRESS_DELETED_SUCCESSFULLY' => 'Address deleted successfully',
+        'YOUR_STREET_CAN_NOT_CHANGE' => 'Your Street can not change you can create a new address',
 
     'RESTAURANT_NOT_FOUND'=>'Restaurant Not Found',
 
@@ -63,5 +68,22 @@ return[
     'FTDSZ'=>"Failed to delete Size",
     'SZDS'=> "Size Deleted Successfully",
 
+    'CATEGORY_NOT_FOUND'=>'Category Not Found',
+    'FAIL_TO_DELETED_CATEGORY'=>"Fail To Deleted Category",
+    'CATEGORY_DELETED_SUCCESSFULLY'=>'Category Deleted Successfully',
+
+    'SUBCATEGORY_NOT_FOUND'=>'SubCategory Not Found',
+    'FAIL_TO_DELETED_SUBCATEGORY'=>'Fail To Deleted SubCategory',
+    'SUBCATEGORY_DELETED_SUCCESSFULLY'=>'SubCategory Deleted Successfully',
+
+    'FOOD_NOT_FOUND'=>'Food Not Found',
+    'FAIL_TO_DELTEDE_FOOD'=>'Fail To Deleted Food',
+    'FOOD_DELETED_SUCCESSFULLY'=>'Food Deleted Successfully',
+
+    'FAILED_TO_DELETED_SALARY'=>'Fail To Deleted Salary',
+    'SALARY_DELETED_SUCCESSFULLY'=>'Salary Deleted Successfully',
+
+    'FAIL_TO_DELETED_STATUS'=>'Fail To Deleted Status',
+    'STATUS_DELTED_SUCCESSFULLY'=>'Status Deleted Successfully',
 
 ];

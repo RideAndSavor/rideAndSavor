@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Config;
 
 class Address extends Model
 {
@@ -32,7 +33,7 @@ class Address extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class)->withTimestamps();
     }
 
     public function street()
@@ -40,7 +41,7 @@ class Address extends Model
         return $this->belongsTo(Street::class);
     }
 
-    public function restaurant():HasOne
+    public function restaurant(): HasOne
     {
         return $this->hasOne(Restaurant::class);
     }

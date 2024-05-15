@@ -22,6 +22,11 @@ class StreetTest extends TestCase
         $this->street = $this->creatStreet();
     }
 
+    public function test_unauthenticated_user_cannot_access_street_page()
+    {
+        $response = $this->getJson(route('street.index'))->assertStatus(401);
+    }
+
     public function test_api_street_invalid_validation_return_error(): void
     {
         $street = [
