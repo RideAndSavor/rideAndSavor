@@ -8,7 +8,9 @@ use App\Http\Controllers\CityController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\IngredientController;
+use App\Http\Controllers\PercentageController;
 use App\Http\Controllers\RestaurantController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\StatusControlller;
@@ -44,4 +46,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('foods',FoodController::class);
     Route::resource('salary',SalaryController::class);
     Route::resource('status',StatusControlller::class);
+    Route::resource('role',RoleController::class);
+    Route::resource('percentage',PercentageController::class);
 });

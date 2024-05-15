@@ -81,4 +81,11 @@
     'FAIL_TO_DELETED_STATUS'=>'Fail To Deleted Status',
     'STATUS_DELTED_SUCCESSFULLY'=>'Status Deleted Successfully',
 
+    'FAIL_TO_DELETED_ROLE'=>'Fail To Deleted Role',
+    'ROLE_DELETED_SUCCESSFULLY'=>'Role Deleted Successfully',
+
+    'PERCENTAGE_NOT_FOUND'=>'Percentage Not Found',
+    'FAILE_TO_DELETED_PERCENTAGE'=>'Fail To Deleted Percentage',
+    'PERCENTAGE_DELETED_SUCCESSFULLY'=>'Percentage Deleted Successfully',
+
 ];
