@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Contracts\LocationInterface;
 use App\Models\Street;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Config;
 
 trait AddressTrait
@@ -90,5 +91,15 @@ trait AddressTrait
         }
         $this->locationInterface->delete('Address', $id);
         return $address;
+    }
+
+    public function dateFormat($validatedData)
+    {
+        $opentime = Carbon::createFromFormat('g:i A', $validatedData['open_time'])->format('g:i A');
+        $closetime = Carbon::createFromFormat('g:i A', $validatedData['close_time'])->format('g:i A');
+        $validatedData['open_time'] = $opentime;
+        $validatedData['close_time'] = $closetime;
+
+        return $validatedData;
     }
 }

@@ -21,12 +21,13 @@ class RestaurantRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
-            'address_id'=>'required|integer',
-            'name'=>'required|string',
-            'open_time'=>'required',
-            'close_time'=>'required',
-            'phone_number'=>'required|string'
+            'address_id' => 'required|integer',
+            'name' => 'required|string|max:255',
+            'open_time' => 'required|date_format:g:i A', // 12-hour format with AM/PM
+            'close_time' => 'required|date_format:g:i A', // 12-hour format with AM/PM
+            'phone_number' => 'required|string|max:20',
         ];
     }
 }
