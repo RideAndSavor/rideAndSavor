@@ -4,17 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Contracts\LocationInterface;
 use App\Exceptions\CrudException;
-use App\Helpers\ResponseHelper;
 use App\Http\Requests\AddressRequest;
 use App\Http\Resources\AddressResource;
-use App\Models\Street;
+use App\Models\Address;
 use App\Traits\AddressTrait;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 
-class AddressController extends Controller
+class RestaurantAddressController extends Controller
 {
     use AddressTrait;
+
     private $addressInterface;
 
     public function __construct(LocationInterface $locationInterface)
@@ -26,8 +27,8 @@ class AddressController extends Controller
     public function index()
     {
         try {
-            $addressData = $this->locationInterface->relationData('Address', 'users');
-            return AddressResource::collection($addressData);
+            $address = $this->locationInterface->all('Address');
+            return AddressResource::collection($address);
         } catch (\Exception $e) {
             return CrudException::emptyData();
         }
@@ -40,9 +41,9 @@ class AddressController extends Controller
         if ($address instanceof JsonResponse) {
             $address;
         }
-        $address->users()->attach(auth()->user()->id);
         return new AddressResource($address);
     }
+
 
     public function update(AddressRequest $addressRequest, string $id)
     {
@@ -54,10 +55,10 @@ class AddressController extends Controller
         return new AddressResource($address);
     }
 
+
     public function destroy(string $id)
     {
-        $address = $this->deleteAddress($id);
-        $address->users()->detach(auth()->user()->id);
+        $this->deleteAddress($id);
         return response()->json([
             'message' => Config::get('variable.ADDRESS_DELETED_SUCCESSFULLY')
         ], Config::get('variable.NO_CONTENT'));
