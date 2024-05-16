@@ -12,6 +12,7 @@ use App\Models\Price;
 use App\Models\Restaurant;
 use App\Models\Role;
 use App\Models\Salary;
+use App\Models\Size;
 use App\Models\State;
 use App\Models\Street;
 use App\Models\SubCategory;
@@ -39,6 +40,7 @@ abstract class TestCase extends BaseTestCase
     protected Price $price;
     protected Role $role;
     protected Salary $salary;
+    protected Size $size;
 
     protected function createAdmin(): User
     {
@@ -137,4 +139,10 @@ abstract class TestCase extends BaseTestCase
     {
         return Salary::factory()->create();
     }
+
+    protected function createSize(): Size
+    {
+        return Size::factory()->create();
+    }
+    
 }
