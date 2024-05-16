@@ -8,6 +8,7 @@ use App\Http\Controllers\FoodController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\WardController;
+use App\Http\Controllers\PriceController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\StreetController;
@@ -51,6 +52,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('role',RoleController::class);
     Route::resource('percentage',PercentageController::class);
     Route::resource('size', SizeController::class);
+    Route::resource('price', PriceController::class);
 
     Route::resource('restaurant', RestaurantController::class);
     Route::resource('category', CategoryController::class);
