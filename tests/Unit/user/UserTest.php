@@ -4,8 +4,9 @@ namespace Tests\Unit\user;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Tests\UnitTestCase;
 
-class UserTest extends TestCase
+class UserTest extends UnitTestCase
 {
     use RefreshDatabase;
     public function setUp(): void

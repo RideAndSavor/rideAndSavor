@@ -5,8 +5,9 @@ namespace Tests\Unit\price;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Tests\UnitTestCase;
 
-class PriceTest extends TestCase
+class PriceTest extends UnitTestCase
 {
     use RefreshDatabase;
     protected function setUp(): void

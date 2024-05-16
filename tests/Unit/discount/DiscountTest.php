@@ -2,14 +2,27 @@
 
 namespace Tests\Unit\discount;
 
-use Illuminate\Support\Number;
-use Tests\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\TestDox;
+use Tests\UnitTestCase;
 
-class DiscountTest extends TestCase
+class DiscountTest extends UnitTestCase
 {
-    public function test_discount_successful(float $price, $percent): void
+    // #[Test]
+    #[DataProvider('discountDataProvider')]
+    public function test_discount_successful($price, $discount, $expectedDiscountedPrice): void
     {
-        $discount_price = Number::format($price - ($price * $percent), 2);
-        $this->assertEquals(900, $discount_price);
+        $model = app("App\Models\\Percentage");
+        $discountPrice = $model->discount($price, $discount);
+        
+        $this->assertEquals($expectedDiscountedPrice, $discountPrice);
+    }
+
+    public static function discountDataProvider()
+    {
+        return [
+            [1000, 10, 900], 
+            [2000, 20, 1700], 
+        ];
     }
 }

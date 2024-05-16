@@ -5,8 +5,9 @@ namespace Tests\Unit\state;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Tests\UnitTestCase;
 
-class StateTest extends TestCase
+class StateTest extends UnitTestCase
 {
     use RefreshDatabase;
     protected function setUp(): void
