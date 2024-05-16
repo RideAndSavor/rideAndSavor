@@ -68,6 +68,10 @@ return[
     'FTDSZ'=>"Failed to delete Size",
     'SZDS'=> "Size Deleted Successfully",
 
+    "PNF"=> 'Price Not Found',
+    'FTDP'=>"Failed to delete Price",
+    'PDS'=> "Price Deleted Successfully",
+
     'CATEGORY_NOT_FOUND'=>'Category Not Found',
     'FAIL_TO_DELETED_CATEGORY'=>"Fail To Deleted Category",
     'CATEGORY_DELETED_SUCCESSFULLY'=>'Category Deleted Successfully',

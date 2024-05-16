@@ -34,7 +34,7 @@ class CityController extends Controller
             $city = $this->locationInterface->store('City',$validateData);
         return new CityResource($city);
         } catch (\Exception $e) {
-            return throw CrudException::argumentCountError();
+            throw CrudException::argumentCountError();
         }
     }
 
