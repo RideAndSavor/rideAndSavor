@@ -91,4 +91,44 @@ trait AddressTrait
         $this->locationInterface->delete('Address', $id);
         return $address;
     }
+
+
+    public function updateFoodIngredient($validateData, $id)
+    {
+        if($validateData['ingredient_id']){
+            $ingredient_id = $validateData['ingredient_id'];
+    }
+    $food = $this->foodInterface->findById('Food', $id);
+    if (!$food) {
+        return response()->json([
+            'message' => Config::get('variable.FOOD_NOT_FOUND')
+        ], Config::get('variable.SEVER_NOT_FOUND'));
+    }
+
+    unset($validateData['ingredient_id']);
+
+    $updatedFood = $this->foodInterface->update('Food', $validateData ,$id);
+    if (!$updatedFood) {
+        return response()->json([
+            'message' => Config::get('variable.FOOD_UPDATE_FAILED')
+        ], Config::get('variable.SEVER_ERROR'));
+    }
+    if (isset(request()->ingredient_id)) {
+        $food->ingredients()->sync($ingredient_id);
+    }
+    return $updatedFood;
 }
+    public function deletedFoodIngredient($id){
+        $food = $this->foodInterface->findById('Food', $id);
+
+        if (!$food) {
+            return response()->json([
+                'message' => Config::get('variable.FOOD_NOT_FOUND')
+            ], Config::get('variable.SEVER_ERROR'));
+        }
+        $food->ingredients()->detach();
+        $this->foodInterface->delete('Food', $id);
+        return $food;
+    }
+}
+

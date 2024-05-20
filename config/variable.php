@@ -15,6 +15,8 @@ return[
         'NO_CONTENT' => '204',
         'OK' => '200',
         'CLIENT_ERROR' => '401',
+        'SEVER_NOT_FOUND'=>'404',
+        'Unprocessable Entity'=>'422',
         'SEVER_ERROR' => '500',
 
         'ISE' => 'Internal Server Error',
@@ -63,7 +65,7 @@ return[
     'INGREDIENTS_NOT_FOUND'=>'Ingredients Not Found',
     'FAIL_TO_DELETED_INGREDIENT'=>'Fail To Deleted Ingredient',
     'INGREDIENT_DELETED_SUCCESSFULLY'=>'Ingredient Deleted Successfully',
-    
+
     "SZNF"=> 'Size Not Found',
     'FTDSZ'=>"Failed to delete Size",
     'SZDS'=> "Size Deleted Successfully",
@@ -79,6 +81,8 @@ return[
     'FOOD_NOT_FOUND'=>'Food Not Found',
     'FAIL_TO_DELTEDE_FOOD'=>'Fail To Deleted Food',
     'FOOD_DELETED_SUCCESSFULLY'=>'Food Deleted Successfully',
+    "FOOD_CAN'T_CHANGE"=>"Food can't change",
+    'FOOD_UPDATE_FAILED'=>'Food update failed',
 
     'FAILED_TO_DELETED_SALARY'=>'Fail To Deleted Salary',
     'SALARY_DELETED_SUCCESSFULLY'=>'Salary Deleted Successfully',

@@ -8,6 +8,7 @@ use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Food extends Model
 {
@@ -30,5 +31,10 @@ class Food extends Model
     public function subCategory():BelongsTo
     {
         return $this->belongsTo(SubCategory::class);
+    }
+
+    public function ingredients():BelongsToMany
+    {
+        return $this->belongsToMany(Ingredient::class,'food_ingredient')->withPivot('additional_field')->withTimestamps();
     }
 }

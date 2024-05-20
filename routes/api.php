@@ -53,8 +53,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('size', SizeController::class);
 
     Route::resource('restaurant', RestaurantController::class);
-    Route::resource('category', CategoryController::class);
-    Route::resource('subcategory', SubCategoryController::class);
     Route::resource('foods', FoodController::class);
     Route::resource('salary', SalaryController::class);
     Route::resource('status', StatusControlller::class);
