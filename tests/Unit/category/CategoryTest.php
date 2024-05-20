@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\category;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use SebastianBergmann\Type\VoidType;
-use Tests\TestCase;
+use Tests\UnitTestCase;
 
-class CategoryTest extends TestCase
+class CategoryTest extends UnitTestCase
 {
     use RefreshDatabase;
 

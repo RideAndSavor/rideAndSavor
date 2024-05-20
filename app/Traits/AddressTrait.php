@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Contracts\LocationInterface;
 use App\Models\Street;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Config;
 
 trait AddressTrait
@@ -92,7 +93,6 @@ trait AddressTrait
         return $address;
     }
 
-
     public function updateFoodIngredient($validateData, $id)
     {
         if($validateData['ingredient_id']){
@@ -117,7 +117,17 @@ trait AddressTrait
         $food->ingredients()->sync($ingredient_id);
     }
     return $updatedFood;
-}
+   }
+    public function dateFormat($validatedData)
+    {
+        $opentime = Carbon::createFromFormat('g:i A', $validatedData['open_time'])->format('g:i A');
+        $closetime = Carbon::createFromFormat('g:i A', $validatedData['close_time'])->format('g:i A');
+        $validatedData['open_time'] = $opentime;
+        $validatedData['close_time'] = $closetime;
+
+        return $validatedData;
+    }
+
     public function deletedFoodIngredient($id){
         $food = $this->foodInterface->findById('Food', $id);
 

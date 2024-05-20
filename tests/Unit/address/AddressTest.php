@@ -1,13 +1,15 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\address;
 
+use App\Enums\RoleType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+// use Tests\TestCase;
+use Tests\UnitTestCase;
 
-class AddressTest extends TestCase
+class AddressTest extends UnitTestCase
 {
-    use RefreshDatabase;
+    // use RefreshDatabase;
     public function setUp(): void
     {
         parent::setUp();

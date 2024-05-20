@@ -1,11 +1,12 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\food;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Tests\UnitTestCase;
 
-class FoodTest extends TestCase
+class FoodTest extends UnitTestCase
 {
     use RefreshDatabase;
 

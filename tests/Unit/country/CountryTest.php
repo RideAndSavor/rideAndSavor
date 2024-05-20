@@ -1,19 +1,20 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\country;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Tests\UnitTestCase;
 
-class CountryTest extends TestCase
+class CountryTest extends UnitTestCase
 {
     use RefreshDatabase;
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->user = $this->createAdmin();
+        $this->user = $this->createOwner();
         $this->country = $this->createCountry();
     }
 
@@ -45,7 +46,7 @@ class CountryTest extends TestCase
     public function test_api_country_store_successful(): void
     {
         $country = [
-            'name' => $this->country->name,
+            'name' => '::name::',
         ];
         $response = $this->actingAs($this->user)->postJson(route('country.store'), $country)
             ->assertStatus(201);
@@ -60,12 +61,12 @@ class CountryTest extends TestCase
     {
         $response = $this->actingAs($this->user)->putJson(
             route('country.update', $this->country->id),
-            ['name' => 'Burmese']
+            ['name' => '::Burmese::']
         )->assertStatus(200);
         $response->assertExactJson($response->json());
         $this->assertDatabaseHas(
             'countries',
-            ['name' => 'Burmese']
+            ['name' => '::Burmese::']
         );
     }
 

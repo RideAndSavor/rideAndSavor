@@ -2,25 +2,24 @@
 
 namespace App\Models;
 
+use App\DB\Core\DateTimeField;
+use App\DB\Core\IntegerField;
 use App\DB\Core\StringField;
 use App\Exceptions\CrudException;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Number;
+use Illuminate\Database\Eloquent\Model;
 
-class Percentage extends Model
+class DiscountItem extends Model
 {
     use HasFactory;
-
-    public function discount(float $price, int $percent): float
-    {
-        return ($price - (($price * $percent) / 100));
-    }
 
     public function saveableFields($column): object
     {
         $arr = [
-            'discount_percentage' => StringField::new(),
+            'percentage_id' => IntegerField::new(),
+            'name' => StringField::new(),
+            'start_date' => DateTimeField::new(),
+            'end_date' => DateTimeField::new()
         ];
         if (!array_key_exists($column, $arr)) {
             throw CrudException::missingAttributeException();
@@ -29,8 +28,8 @@ class Percentage extends Model
         return  $arr[$column];
     }
 
-    public function discountItems()
+    public function percentage()
     {
-        return $this->hasMany(DiscountItem::class);
+        return $this->belongsTo(Percentage::class);
     }
 }

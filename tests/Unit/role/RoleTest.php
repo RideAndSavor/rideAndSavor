@@ -1,12 +1,13 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\role;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Tests\UnitTestCase;
 
-class RoleTest extends TestCase
+class RoleTest extends UnitTestCase
 {
     use RefreshDatabase;
     protected function setUp(): void

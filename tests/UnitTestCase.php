@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\Enums\RoleType;
 use App\Models\Address;
 use App\Models\Category;
 use App\Models\City;
@@ -12,17 +13,20 @@ use App\Models\Price;
 use App\Models\Restaurant;
 use App\Models\Role;
 use App\Models\Salary;
+use App\Models\Size;
 use App\Models\State;
 use App\Models\Street;
 use App\Models\SubCategory;
 use App\Models\Township;
 use App\Models\User;
 use App\Models\Ward;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
-abstract class TestCase extends BaseTestCase
+abstract class UnitTestCase extends BaseTestCase
 {
+    use CreatesApplication, LazilyRefreshDatabase;
+
     protected User $user;
     protected Country $country;
     protected State $state;
@@ -39,10 +43,34 @@ abstract class TestCase extends BaseTestCase
     protected Price $price;
     protected Role $role;
     protected Salary $salary;
+    protected Size $size;
 
     protected function createAdmin(): User
     {
-        return User::factory()->create();
+        return User::factory()->create([
+            'role' => RoleType::Admin->value
+        ]);
+    }
+
+    protected function createDriver(): User
+    {
+        return User::factory()->create([
+            'role' => RoleType::Driver->value
+        ]);
+    }
+
+    protected function createRider(): User
+    {
+        return User::factory()->create([
+            'role' => RoleType::Rider->value
+        ]);
+    }
+
+    protected function createOwner(): User
+    {
+        return User::factory()->create([
+            'role' => RoleType::Owner->value
+        ]);
     }
 
     protected function createCountry(): Country
@@ -137,4 +165,10 @@ abstract class TestCase extends BaseTestCase
     {
         return Salary::factory()->create();
     }
+
+    protected function createSize(): Size
+    {
+        return Size::factory()->create();
+    }
+    
 }

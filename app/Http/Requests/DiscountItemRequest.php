@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RestaurantRequest extends FormRequest
+class DiscountItemRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,13 +21,11 @@ class RestaurantRequest extends FormRequest
      */
     public function rules(): array
     {
-
         return [
-            'address_id' => 'required|integer',
-            'name' => 'required|string|max:255',
-            'open_time' => 'required|date_format:g:i A', // 12-hour format with AM/PM
-            'close_time' => 'required|date_format:g:i A', // 12-hour format with AM/PM
-            'phone_number' => 'required|string|max:20',
+            'percentage_id' => 'required|integer',
+            'name' => 'required|string',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date'
         ];
     }
 }

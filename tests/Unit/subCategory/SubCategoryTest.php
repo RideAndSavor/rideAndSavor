@@ -1,11 +1,12 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\subCategory;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Tests\UnitTestCase;
 
-class SubCategoryTest extends TestCase
+class SubCategoryTest extends UnitTestCase
 {
     use RefreshDatabase;
 
