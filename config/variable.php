@@ -14,6 +14,8 @@ return [
     'NO_CONTENT' => '204',
     'OK' => '200',
     'CLIENT_ERROR' => '401',
+    'SEVER_NOT_FOUND'=>'404',
+    'Unprocessable Entity'=>'422',
     'SEVER_ERROR' => '500',
 
     'ISE' => 'Internal Server Error',
@@ -60,12 +62,13 @@ return [
     'ADDRESS_DELETED_SUCCESSFULLY' => 'Address deleted successfully',
     'YOUR_STREET_CAN_NOT_CHANGE' => 'Your Street can not change you can create a new address',
 
-    'RESTAURANT_NOT_FOUND' => 'Restaurant Not Found',
-    'RESTAURANT_DELETED_SUCCESSFULLY' => 'Restaurant Updated Successfully',
+    'INGREDIENTS_NOT_FOUND'=>'Ingredients Not Found',
+    'FAIL_TO_DELETED_INGREDIENT'=>'Fail To Deleted Ingredient',
+    'INGREDIENT_DELETED_SUCCESSFULLY'=>'Ingredient Deleted Successfully',
 
-    'INGREDIENTS_NOT_FOUND' => 'Ingredients Not Found',
-    'FAIL_TO_DELETED_INGREDIENT' => 'Fail To Deleted Ingredient',
-    'INGREDIENT_DELETED_SUCCESSFULLY' => 'Ingredient Deleted Successfully',
+    "SZNF"=> 'Size Not Found',
+    'FTDSZ'=>"Failed to delete Size",
+    'SZDS'=> "Size Deleted Successfully",
 
     "PNF" => 'Price Not Found',
     'FTDP' => "Failed to delete Price",

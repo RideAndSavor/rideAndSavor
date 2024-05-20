@@ -65,7 +65,7 @@ class PercentageController extends Controller
 
         $this->percentageInterface->delete('Percentage', $id);
         return response()->json([
-            'message' => Config::get('variable.PERCENTAGE_DELETED_SUCCESSFULLY')
-        ], Config::get('variable.OK'));
+            'message'=>Config::get('variable.PERCENTAGE_DELETED_SUCCESSFULLY')
+        ],Config::get('variable.OK'));
     }
 }
