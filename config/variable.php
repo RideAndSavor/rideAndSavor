@@ -66,17 +66,23 @@ return [
     'FAIL_TO_DELETED_INGREDIENT'=>'Fail To Deleted Ingredient',
     'INGREDIENT_DELETED_SUCCESSFULLY'=>'Ingredient Deleted Successfully',
 
+    'PNF'=> 'Price Not Found',
+    'FTDP'=>"Failed to delete Price",
+    'PDS'=> "Price Deleted Successfully",
+
+    'DPNF'=> 'Delivery Price Not Found',
+    'DPDS'=> 'Delivery Price Deleted Successfully',
+
+    'ONF'=> 'Order Not Found',
+    'ODS' => 'Order Deleted Successfully',
+
     "SZNF"=> 'Size Not Found',
     'FTDSZ'=>"Failed to delete Size",
     'SZDS'=> "Size Deleted Successfully",
 
-    "PNF" => 'Price Not Found',
-    'FTDP' => "Failed to delete Price",
-    'PDS' => "Price Deleted Successfully",
-
-    'CATEGORY_NOT_FOUND' => 'Category Not Found',
-    'FAIL_TO_DELETED_CATEGORY' => "Fail To Deleted Category",
-    'CATEGORY_DELETED_SUCCESSFULLY' => 'Category Deleted Successfully',
+    'CATEGORY_NOT_FOUND'=>'Category Not Found',
+    'FAIL_TO_DELETED_CATEGORY'=>"Fail To Deleted Category",
+    'CATEGORY_DELETED_SUCCESSFULLY'=>'Category Deleted Successfully',
 
     'SUBCATEGORY_NOT_FOUND' => 'SubCategory Not Found',
     'FAIL_TO_DELETED_SUBCATEGORY' => 'Fail To Deleted SubCategory',
