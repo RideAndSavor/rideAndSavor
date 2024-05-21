@@ -64,9 +64,15 @@
     'FAIL_TO_DELETED_INGREDIENT'=>'Fail To Deleted Ingredient',
     'INGREDIENT_DELETED_SUCCESSFULLY'=>'Ingredient Deleted Successfully',
 
-    "PNF"=> 'Price Not Found',
+    'PNF'=> 'Price Not Found',
     'FTDP'=>"Failed to delete Price",
     'PDS'=> "Price Deleted Successfully",
+
+    'DPNF'=> 'Delivery Price Not Found',
+    'DPDS'=> 'Delivery Price Deleted Successfully',
+
+    'ONF'=> 'Order Not Found',
+    'ODS' => 'Order Deleted Successfully',
 
     'CATEGORY_NOT_FOUND'=>'Category Not Found',
     'FAIL_TO_DELETED_CATEGORY'=>"Fail To Deleted Category",
