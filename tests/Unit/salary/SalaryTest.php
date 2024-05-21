@@ -5,8 +5,9 @@ namespace Tests\Unit\salary;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Tests\UnitTestCase;
 
-class SalaryTest extends TestCase
+class SalaryTest extends UnitTestCase
 {
     use RefreshDatabase;
     protected function setUp(): void

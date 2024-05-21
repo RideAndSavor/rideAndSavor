@@ -4,8 +4,9 @@ namespace Tests\Unit\township;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Tests\UnitTestCase;
 
-class TownshipTest extends TestCase
+class TownshipTest extends UnitTestCase
 {
     use RefreshDatabase;
 

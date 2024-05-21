@@ -5,8 +5,9 @@ namespace Tests\Unit\city;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Tests\UnitTestCase;
 
-class CityTest extends TestCase
+class CityTest extends UnitTestCase
 {
     use RefreshDatabase;
     protected function setUp(): void

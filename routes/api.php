@@ -17,6 +17,7 @@ use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\StatusControlller;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DiscountItemController;
 use App\Http\Controllers\TownshipController;
 use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\PercentageController;
@@ -26,6 +27,7 @@ use App\Http\Controllers\DeliverPriceController;
 use App\Http\Controllers\DeliveryPriceController;
 use App\Http\Controllers\PaymentProviderController;
 use App\Http\Controllers\RestaurantAddressController;
+use App\Models\DiscountItem;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -45,21 +47,19 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('ward', WardController::class);
     Route::resource('street', StreetController::class);
     Route::resource('address', AddressController::class);
-    Route::resource('restaurant',RestaurantController::class);
-    Route::resource('ingredients',IngredientController::class);
-    Route::resource('category',CategoryController::class);
-    Route::resource('subcategory',SubCategoryController::class);
-    Route::resource('foods',FoodController::class);
-    Route::resource('salary',SalaryController::class);
-    Route::resource('status',StatusControlller::class);
-    Route::resource('role',RoleController::class);
-    Route::resource('percentage',PercentageController::class);
+    Route::resource('restaurant', RestaurantController::class);
+    Route::resource('ingredients', IngredientController::class);
+    Route::resource('category', CategoryController::class);
+    Route::resource('subcategory', SubCategoryController::class);
+    Route::resource('foods', FoodController::class);
+    Route::resource('salary', SalaryController::class);
+    Route::resource('status', StatusControlller::class);
+    Route::resource('role', RoleController::class);
+    Route::resource('percentage', PercentageController::class);
     Route::resource('size', SizeController::class);
     Route::resource('price', PriceController::class);
 
     Route::resource('restaurant', RestaurantController::class);
-    Route::resource('category', CategoryController::class);
-    Route::resource('subcategory', SubCategoryController::class);
     Route::resource('foods', FoodController::class);
     Route::resource('salary', SalaryController::class);
     Route::resource('status', StatusControlller::class);

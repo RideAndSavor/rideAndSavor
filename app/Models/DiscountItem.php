@@ -2,22 +2,24 @@
 
 namespace App\Models;
 
-use App\Models\Food;
+use App\DB\Core\DateTimeField;
+use App\DB\Core\IntegerField;
 use App\DB\Core\StringField;
 use App\Exceptions\CrudException;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Model;
 
-class Ingredient extends Model
+class DiscountItem extends Model
 {
     use HasFactory;
 
     public function saveableFields($column): object
     {
         $arr = [
+            'percentage_id' => IntegerField::new(),
             'name' => StringField::new(),
-            'price' => StringField::new(),
+            'start_date' => DateTimeField::new(),
+            'end_date' => DateTimeField::new()
         ];
         if (!array_key_exists($column, $arr)) {
             throw CrudException::missingAttributeException();
@@ -26,8 +28,8 @@ class Ingredient extends Model
         return  $arr[$column];
     }
 
-    public function foods():BelongsToMany
+    public function percentage()
     {
-        return $this->belongsToMany(Food::class,'food_ingredient')->withPivot('additional_field')->withTimestamps();;
+        return $this->belongsTo(Percentage::class);
     }
 }

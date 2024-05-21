@@ -4,8 +4,9 @@ namespace Tests\Unit\ingredient;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Tests\UnitTestCase;
 
-class IngredientTest extends TestCase
+class IngredientTest extends UnitTestCase
 {
     use RefreshDatabase;
 

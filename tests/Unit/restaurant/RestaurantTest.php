@@ -4,8 +4,9 @@ namespace Tests\Unit\restaurant;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Tests\UnitTestCase;
 
-class RestaurantTest extends TestCase
+class RestaurantTest extends UnitTestCase
 {
     use RefreshDatabase;
 

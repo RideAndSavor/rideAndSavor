@@ -4,8 +4,9 @@ namespace Tests\Unit\ward;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Tests\UnitTestCase;
 
-class WardTest extends TestCase
+class WardTest extends UnitTestCase
 {
     use RefreshDatabase;
 
