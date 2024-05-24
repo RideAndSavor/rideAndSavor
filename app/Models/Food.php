@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Images;
 use App\DB\Core\StringField;
 use App\DB\Core\IntegerField;
 use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -36,5 +38,10 @@ class Food extends Model
     public function ingredients():BelongsToMany
     {
         return $this->belongsToMany(Ingredient::class,'food_ingredient')->withPivot('additional_field')->withTimestamps();
+    }
+
+    public function image():HasOne
+    {
+        return $this->hasOne(Images::class,'link_id');
     }
 }

@@ -18,6 +18,10 @@ return [
     'Unprocessable Entity'=>'422',
     'SEVER_ERROR' => '500',
 
+    "IMAGE_MODEL" => "App\Models\Images",
+    "IMAGES_TABLE" => "images",
+    'FOOD_IMAGE' => 'food_image',
+
     'ISE' => 'Internal Server Error',
 
     'DINF' => 'Discount Item Not Found',
