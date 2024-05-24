@@ -14,7 +14,13 @@ return [
     'NO_CONTENT' => '204',
     'OK' => '200',
     'CLIENT_ERROR' => '401',
+    'SEVER_NOT_FOUND'=>'404',
+    'Unprocessable Entity'=>'422',
     'SEVER_ERROR' => '500',
+
+    "IMAGE_MODEL" => "App\Models\Images",
+    "IMAGES_TABLE" => "images",
+    'FOOD_IMAGE' => 'food_image',
 
     'ISE' => 'Internal Server Error',
 
@@ -60,20 +66,27 @@ return [
     'ADDRESS_DELETED_SUCCESSFULLY' => 'Address deleted successfully',
     'YOUR_STREET_CAN_NOT_CHANGE' => 'Your Street can not change you can create a new address',
 
-    'RESTAURANT_NOT_FOUND' => 'Restaurant Not Found',
-    'RESTAURANT_DELETED_SUCCESSFULLY' => 'Restaurant Updated Successfully',
+    'INGREDIENTS_NOT_FOUND'=>'Ingredients Not Found',
+    'FAIL_TO_DELETED_INGREDIENT'=>'Fail To Deleted Ingredient',
+    'INGREDIENT_DELETED_SUCCESSFULLY'=>'Ingredient Deleted Successfully',
 
-    'INGREDIENTS_NOT_FOUND' => 'Ingredients Not Found',
-    'FAIL_TO_DELETED_INGREDIENT' => 'Fail To Deleted Ingredient',
-    'INGREDIENT_DELETED_SUCCESSFULLY' => 'Ingredient Deleted Successfully',
+    'PNF'=> 'Price Not Found',
+    'FTDP'=>"Failed to delete Price",
+    'PDS'=> "Price Deleted Successfully",
 
-    "PNF" => 'Price Not Found',
-    'FTDP' => "Failed to delete Price",
-    'PDS' => "Price Deleted Successfully",
+    'DPNF'=> 'Delivery Price Not Found',
+    'DPDS'=> 'Delivery Price Deleted Successfully',
 
-    'CATEGORY_NOT_FOUND' => 'Category Not Found',
-    'FAIL_TO_DELETED_CATEGORY' => "Fail To Deleted Category",
-    'CATEGORY_DELETED_SUCCESSFULLY' => 'Category Deleted Successfully',
+    'ONF'=> 'Order Not Found',
+    'ODS' => 'Order Deleted Successfully',
+
+    "SZNF"=> 'Size Not Found',
+    'FTDSZ'=>"Failed to delete Size",
+    'SZDS'=> "Size Deleted Successfully",
+
+    'CATEGORY_NOT_FOUND'=>'Category Not Found',
+    'FAIL_TO_DELETED_CATEGORY'=>"Fail To Deleted Category",
+    'CATEGORY_DELETED_SUCCESSFULLY'=>'Category Deleted Successfully',
 
     'SUBCATEGORY_NOT_FOUND' => 'SubCategory Not Found',
     'FAIL_TO_DELETED_SUBCATEGORY' => 'Fail To Deleted SubCategory',

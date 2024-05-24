@@ -8,6 +8,7 @@ use App\Http\Controllers\FoodController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\WardController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PriceController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\SalaryController;
@@ -22,6 +23,8 @@ use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\PercentageController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\SubCategoryController;
+use App\Http\Controllers\DeliverPriceController;
+use App\Http\Controllers\DeliveryPriceController;
 use App\Http\Controllers\PaymentProviderController;
 use App\Http\Controllers\RestaurantAddressController;
 use App\Http\Controllers\RestaurantFoodController;
@@ -58,12 +61,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('price', PriceController::class);
 
     Route::resource('restaurant', RestaurantController::class);
-    Route::resource('category', CategoryController::class);
-    Route::resource('subcategory', SubCategoryController::class);
     Route::resource('foods', FoodController::class);
     Route::resource('salary', SalaryController::class);
     Route::resource('status', StatusControlller::class);
     Route::resource('restaurantaddress', RestaurantAddressController::class);
     Route::resource('discontItem', DiscountItemController::class);
     Route::post('restaurants/{restaurant}/foods-with-ingredients', [RestaurantFoodController::class, 'storeFoodWithIngredients']);
+
+    Route::resource('order', OrderController::class);
+    Route::resource('delivery_price', DeliveryPriceController::class);
 });

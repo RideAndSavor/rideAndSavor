@@ -2,22 +2,21 @@
 
 namespace App\Models;
 
-use App\Models\Food;
-use App\DB\Core\StringField;
+use App\DB\Core\IntegerField;
 use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Ingredient extends Model
+class DeliveryPrice extends Model
 {
     use HasFactory;
 
     public function saveableFields($column): object
     {
         $arr = [
-            'name' => StringField::new(),
-            'price' => StringField::new(),
+            'township_id' => IntegerField::new(),
+            'price_id' => IntegerField::new()
         ];
         if (!array_key_exists($column, $arr)) {
             throw CrudException::missingAttributeException();
@@ -26,8 +25,13 @@ class Ingredient extends Model
         return  $arr[$column];
     }
 
-    public function foods():BelongsToMany
+    public function township(): BelongsTo
     {
-        return $this->belongsToMany(Food::class,'food_ingredient')->withPivot('additional_field')->withTimestamps();;
+        return $this->belongsTo(Township::class);
+    }
+
+    public function price(): BelongsTo
+    {
+        return $this->belongsTo(Price::class);
     }
 }

@@ -2,22 +2,24 @@
 
 namespace App\Models;
 
-use App\Models\Food;
+use App\DB\Core\ImageField;
 use App\DB\Core\StringField;
+use App\DB\Core\IntegerField;
 use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Ingredient extends Model
+class Images extends Model
 {
     use HasFactory;
 
     public function saveableFields($column): object
     {
         $arr = [
-            'name' => StringField::new(),
-            'price' => StringField::new(),
+            'link_id' => IntegerField::new(),
+            'gener' => StringField::new(),
+            'upload_url'=>ImageField::new(),
         ];
         if (!array_key_exists($column, $arr)) {
             throw CrudException::missingAttributeException();
@@ -26,8 +28,8 @@ class Ingredient extends Model
         return  $arr[$column];
     }
 
-    public function foods():BelongsToMany
+    public function food():BelongsTo
     {
-        return $this->belongsToMany(Food::class,'food_ingredient')->withPivot('additional_field')->withTimestamps();;
+        return $this->belongsTo(Food::class,'link_id');
     }
 }
