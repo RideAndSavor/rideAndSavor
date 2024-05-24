@@ -18,7 +18,7 @@ class Food extends Model
         $arr = [
             'name' => StringField::new(),
             'quantity' => StringField::new(),
-            'sub_category_id'=>IntegerField::new(),
+            'sub_category_id' => IntegerField::new(),
         ];
         if (!array_key_exists($column, $arr)) {
             throw CrudException::missingAttributeException();
@@ -27,8 +27,16 @@ class Food extends Model
         return  $arr[$column];
     }
 
-    public function subCategory():BelongsTo
+    public function subCategory(): BelongsTo
     {
         return $this->belongsTo(SubCategory::class);
+    }
+
+    public function restaurants()
+    {
+        return $this->belongsToMany(Restaurant::class, 'food_restaurant')
+            ->using(FoodRestaurant::class)
+            ->withPivot('price', 'size_id', 'discount_item_id')
+            ->withTimestamps();
     }
 }
