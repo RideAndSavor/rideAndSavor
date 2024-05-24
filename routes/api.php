@@ -8,6 +8,7 @@ use App\Http\Controllers\FoodController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\WardController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PriceController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\SalaryController;
@@ -22,6 +23,8 @@ use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\PercentageController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\SubCategoryController;
+use App\Http\Controllers\DeliverPriceController;
+use App\Http\Controllers\DeliveryPriceController;
 use App\Http\Controllers\PaymentProviderController;
 use App\Http\Controllers\RestaurantAddressController;
 use App\Models\DiscountItem;
@@ -61,5 +64,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('salary', SalaryController::class);
     Route::resource('status', StatusControlller::class);
     Route::resource('restaurantaddress', RestaurantAddressController::class);
-    Route::resource('discontItem', DiscountItemController::class);
+
+    Route::resource('order', OrderController::class);
+    Route::resource('delivery_price', DeliveryPriceController::class);
+
 });
