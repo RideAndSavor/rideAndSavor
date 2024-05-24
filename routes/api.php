@@ -27,6 +27,7 @@ use App\Http\Controllers\DeliverPriceController;
 use App\Http\Controllers\DeliveryPriceController;
 use App\Http\Controllers\PaymentProviderController;
 use App\Http\Controllers\RestaurantAddressController;
+use App\Http\Controllers\RestaurantFoodController;
 use App\Models\DiscountItem;
 
 Route::get('/user', function (Request $request) {
@@ -64,8 +65,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('salary', SalaryController::class);
     Route::resource('status', StatusControlller::class);
     Route::resource('restaurantaddress', RestaurantAddressController::class);
+    Route::resource('discontItem', DiscountItemController::class);
+    Route::post('restaurants/{restaurant}/foods-with-ingredients', [RestaurantFoodController::class, 'storeFoodWithIngredients']);
 
     Route::resource('order', OrderController::class);
     Route::resource('delivery_price', DeliveryPriceController::class);
-
 });
