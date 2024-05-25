@@ -8,10 +8,11 @@ use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Laravel\Scout\Searchable;
 
 class Ingredient extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     public function saveableFields($column): object
     {
@@ -24,6 +25,13 @@ class Ingredient extends Model
         }
 
         return  $arr[$column];
+    }
+
+    public function toSearchableArray()
+    {
+        return [
+            "name" => $this->name,
+        ];
     }
 
     public function foods():BelongsToMany

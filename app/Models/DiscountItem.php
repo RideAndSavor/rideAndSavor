@@ -8,10 +8,11 @@ use App\DB\Core\StringField;
 use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 class DiscountItem extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     public function saveableFields($column): object
     {
@@ -26,6 +27,13 @@ class DiscountItem extends Model
         }
 
         return  $arr[$column];
+    }
+
+    public function toSearchableArray()
+    {
+        return [
+            "name" => $this->name,
+        ];
     }
 
     public function percentage()
