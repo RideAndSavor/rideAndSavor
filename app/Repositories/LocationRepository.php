@@ -7,6 +7,7 @@ use App\Models\Country;
 use App\Contracts\CountryInterface;
 use App\Contracts\LocationInterface;
 use App\Exceptions\CrudException;
+use Illuminate\Support\Facades\Config;
 
 class LocationRepository implements LocationInterface
 {
@@ -34,13 +35,19 @@ class LocationRepository implements LocationInterface
         return $model::find($id);
     }
 
-    public function store(string $modelName, array $data)
+    public function store(string $modelName, array $data,$folder_name = null , $tablename = null)
     {
         if (empty($data)) {
             throw CrudException::emptyData();
         }
         $model = app("App\Models\\{$modelName}");
-        return (new Crud($model, $data, null, false, false))->execute();
+
+        if(get_class($model) !== Config::get('variable.IMAGE_MODEL')){
+            return  (new Crud($model, $data, null, false, false))->execute();
+        }
+        $crud = new Crud($model, $data, null, false, false);
+        $crud->setImageDirectory($folder_name,$tablename);
+        return $crud->execute();
     }
 
     public function update(string $modelName, array $data, int $id)
