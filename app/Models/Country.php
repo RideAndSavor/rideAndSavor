@@ -9,10 +9,11 @@ use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Scout\Searchable;
 
 class Country extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     public function saveableFields($column): object
     {
@@ -25,6 +26,13 @@ class Country extends Model
         }
        
         return  $arr[$column];
+    }
+
+    public function toSearchableArray()
+    {
+        return [
+            'name' => $this->name,
+        ];
     }
 
     public function state(): HasMany
