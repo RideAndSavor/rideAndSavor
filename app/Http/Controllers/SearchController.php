@@ -2,15 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
-use App\Models\Country;
-use App\Models\Food;
-use App\Models\State;
-use App\Models\SubCategory;
-use App\Models\Township;
-use App\Models\User;
+use App\Models\Address;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use App\Models\Category;
+use App\Models\SubCategory;
+use App\Models\Food;
+use App\Models\DiscountItem;
+use App\Models\Ingredient;
+use App\Models\Restaurant;
+use App\Models\Country;
+use App\Models\State;
+use App\Models\City;
+use App\Models\Township;
+use App\Models\Street;
+use App\Models\Ward;
 
 class SearchController extends Controller
 {
@@ -22,45 +28,31 @@ class SearchController extends Controller
             return response()->json(['error' => 'Query parameter "q" is required.'], 400);
         }
 
-        // Perform searches using Laravel Scout
-        $userResults = User::search($query)->get();
-        $categoryResults = Category::search($query)->get(); 
-        $subcategoryResults = SubCategory::search($query)->get();       
-        $countryResults = Country::search($query)->get();
-        $stateResults = State::search($query)->get();
-        $foodResults = Food::search($query)->get();
-        $townshipResults = Township::search($query)->get();
+        $models = [
+            'users' => User::class,
+            'categories' => Category::class,
+            'sub_categories' => SubCategory::class,
+            'foods' => Food::class,
+            'discount_items' => DiscountItem::class,
+            'ingredients' => Ingredient::class,
+            'restaurants' => Restaurant::class,
+            'countries' => Country::class,
+            'states' => State::class,
+            'cities' => City::class,
+            'townships' => Township::class,
+            'wards' => Ward::class,
+            'streets' => Street::class,
+            'addresses' => Address::class,
+        ];
 
         $response = [];
-        if ($userResults->isNotEmpty()) {
-            $response['users'] = $userResults;
-        }
-
-        if ($categoryResults->isNotEmpty()) {
-            $response['categories'] = $categoryResults;
-        }
-
-        if ($foodResults->isNotEmpty()) {
-            $response['foods'] = $foodResults;
-        }
-
-        if ($subcategoryResults->isNotEmpty()) {
-            $response['sub_categories'] = $subcategoryResults;
-        }
-
-        if ($townshipResults->isNotEmpty()) {
-            $response['townships'] = $townshipResults;
-        }
-
-        if ($countryResults->isNotEmpty()) {
-            $response['countries'] = $countryResults;
-        }
-
-        if ($stateResults->isNotEmpty()) {
-            $response['states'] = $stateResults;
+        foreach ($models as $key => $model) {
+            $results = $model::search($query)->get();
+            if ($results->isNotEmpty()) {
+                $response[$key] = $results;
+            }
         }
 
         return response()->json($response);
     }
 }
-
