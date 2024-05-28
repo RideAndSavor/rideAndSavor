@@ -14,6 +14,7 @@ use App\Http\Controllers\StateController;
 use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\StreetController;
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\CalculateDeliveryFeesController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\StatusControlller;
 use App\Http\Controllers\CategoryController;
@@ -40,6 +41,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::resource('paymentmodes', PaymentProviderController::class);
 
 
+// Route::middleware(['auth:sanctum','admin'])->group(function () {
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('country', CountryController::class);
     Route::resource('state', StateController::class);
@@ -70,4 +72,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::resource('order', OrderController::class);
     Route::resource('delivery_price', DeliveryPriceController::class);
+
+    Route::post('/calculate-delivery-fee', [CalculateDeliveryFeesController::class, 'calculateDeliveryFee']);
 });

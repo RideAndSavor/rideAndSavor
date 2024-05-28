@@ -14,7 +14,7 @@ class Salary extends Model
     public function saveableFields($column): object
     {
         $arr = [
-            'name' => StringField::new(),
+            'price' => StringField::new(),
         ];
         if (!array_key_exists($column, $arr)) {
             throw CrudException::missingAttributeException();

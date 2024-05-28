@@ -7,6 +7,7 @@ use App\DB\Core\IntegerField;
 use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Role extends Model
 {
@@ -22,5 +23,10 @@ class Role extends Model
         }
 
         return  $arr[$column];
+    }
+
+    public function user():HasMany
+    {
+        return $this->hasMany(User::class);
     }
 }

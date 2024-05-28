@@ -18,6 +18,9 @@ return [
     'Unprocessable Entity'=>'422',
     'SEVER_ERROR' => '500',
 
+    "YOU_DO_NOT_HAVE_ADMIN_ACCESS"=>"You do not have admin access",
+    "YOU_DO_NOT_HAVE_ACCESS"=>"You do not have access",
+
     "IMAGE_MODEL" => "App\Models\Images",
     "IMAGES_TABLE" => "images",
     'FOOD_IMAGE' => 'food_image',
