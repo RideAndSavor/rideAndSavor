@@ -137,6 +137,9 @@ trait AddressTrait
             ], Config::get('variable.SEVER_ERROR'));
         }
         $food->ingredients()->detach();
+
+        
+
         $this->foodInterface->delete('Food', $id);
         return $food;
     }

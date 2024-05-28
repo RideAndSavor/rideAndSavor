@@ -17,6 +17,7 @@ use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\StreetController;
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\CalculateDeliveryFeesController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\StatusControlller;
 use App\Http\Controllers\CategoryController;
@@ -42,6 +43,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::resource('paymentmodes', PaymentProviderController::class);
 
 
+// Route::middleware(['auth:sanctum','admin'])->group(function () {
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('country', CountryController::class);
     Route::resource('state', StateController::class);
@@ -69,10 +71,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('restaurantaddress', RestaurantAddressController::class);
     Route::resource('discontItem', DiscountItemController::class);
     Route::post('restaurants/{restaurant}/foods-with-ingredients', [RestaurantFoodController::class, 'storeFoodWithIngredients']);
+    Route::get('restaurants/{restaurant}/foods-with-ingredients_all', [RestaurantFoodController::class, 'showAllFoodIngredients']);
+    Route::get('restaurants/{restaurant}/foods-with-ingredients/{food}', [RestaurantFoodController::class, 'showFoodIngredient']);
+    Route::put('restaurants/{restaurant}/foods-with-ingredients/{food}', [RestaurantFoodController::class, 'updateFoodIngredient']);
+    Route::delete('restaurants/{restaurant}/foods-with-ingredients/{food}', [RestaurantFoodController::class, 'destroyFoodIngredient']);
 
     Route::resource('order', OrderController::class);
     Route::resource('delivery_price', DeliveryPriceController::class);
 
+    Route::post('/calculate-delivery-fee', [CalculateDeliveryFeesController::class, 'calculateDeliveryFee']);
     Route::get('/search', [SearchController::class, 'search']);
 
 });

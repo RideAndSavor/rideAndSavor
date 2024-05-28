@@ -2,7 +2,9 @@
 
 namespace App\Traits;
 use App\Db\Core\Crud;
+use App\Models\Images;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 trait ImageTrait
 {
@@ -74,6 +76,18 @@ trait ImageTrait
         return true;
     }
     return false;
+}
+
+public function deleteImage($modelClass,$imageId,$imageColumn){
+    $modelClass::where('id',$imageId)->delete();
+
+    $imagePath = $modelClass::where('id',$imageId)->value($imageColumn);
+
+    if($imagePath){
+        Storage::delete($imagePath);
+    }
+
+    return true;
 }
 
 }

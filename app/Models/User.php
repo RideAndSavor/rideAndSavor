@@ -3,11 +3,15 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\DB\Core\IntegerField;
 use App\DB\Core\StringField;
 use App\Exceptions\CrudException;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Scout\Searchable;
 use Laravel\Scout\Attributes\SearchUsingPrefix;
@@ -59,9 +63,8 @@ class User extends Authenticatable
             'password' => StringField::new(),
             'phone_no' => StringField::new(),
             'gender' => StringField::new(),
-            'phone_no' => StringField::new(),
             'age' => StringField::new(),
-            'role' => StringField::new()
+            'role' => IntegerField::new()
         ];
         if (!array_key_exists($column, $arr)) {
             throw CrudException::missingAttributeException();
@@ -75,6 +78,9 @@ class User extends Authenticatable
         return  $arr[$column];
     }
 
+    public function role():BelongsTo{
+        return $this->belongsTo(Role::class);
+    }
 
     public function addresses()
     {

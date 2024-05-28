@@ -22,12 +22,18 @@ class RestaurantFoodIngredientRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'food' => 'required|array',
+            'food' => 'required|array', // Validation for food
             'food.sub_category_id' => 'nullable|integer',
             'food.name' => 'required|string|max:255',
             'food.quantity' => 'nullable|string|max:255',
-            'ingredients' => 'required|array',
-            'ingredients.*.name' => 'required|string|max:255'
+            'ingredients' => 'required|array', // Validation for ingredients
+            'ingredients.*.price' => 'required|string',
+            'ingredients.*.name' => 'required|string|max:255',
+            'food_restaurant' => 'required|array', // Validation for food_restaurant
+            'food_restaurant.*.price' => 'required|string',
+            'food_restaurant.*.size_id' => 'required|integer',
+            'discount_item_id' => 'nullable|integer',
+            'upload_url' => 'required|image|mimes:jpeg,png,jpg,gif,svg', // uploading image for food
         ];
     }
 }
