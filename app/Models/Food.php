@@ -53,7 +53,7 @@ class Food extends Model
 
     public function ingredients(): BelongsToMany
     {
-        return $this->belongsToMany(Ingredient::class, 'food_ingredient')->withPivot('additional_field')->withTimestamps();
+        return $this->belongsToMany(Ingredient::class, 'food_ingredient')->withTimestamps();
     }
 
     public function image(): HasOne

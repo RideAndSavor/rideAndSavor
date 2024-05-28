@@ -69,6 +69,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('restaurantaddress', RestaurantAddressController::class);
     Route::resource('discontItem', DiscountItemController::class);
     Route::post('restaurants/{restaurant}/foods-with-ingredients', [RestaurantFoodController::class, 'storeFoodWithIngredients']);
+    Route::get('restaurants/{restaurant}/foods-with-ingredients_all', [RestaurantFoodController::class, 'showAllFoodIngredients']);
+    Route::get('restaurants/{restaurant}/foods-with-ingredients/{food}', [RestaurantFoodController::class, 'showFoodIngredient']);
+    Route::put('restaurants/{restaurant}/foods-with-ingredients/{food}', [RestaurantFoodController::class, 'updateFoodIngredient']);
+    Route::delete('restaurants/{restaurant}/foods-with-ingredients/{food}', [RestaurantFoodController::class, 'destroyFoodIngredient']);
 
     Route::resource('order', OrderController::class);
     Route::resource('delivery_price', DeliveryPriceController::class);
