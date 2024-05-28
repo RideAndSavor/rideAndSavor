@@ -27,8 +27,8 @@ class FoodRequest extends FormRequest
             'name'=>'required|string',
             'quantity'=>'required|string',
             'sub_category_id'=>'required|integer',
-            // 'upload_url'=>'sometimes|required|array',
-            // 'upload_url.*' => 'mimes:jpeg,png,jpg,gif,svg|max:2048' ,
+            'upload_url'=>'sometimes|required',
+            'upload_url.*' => 'mimes:jpeg,png,jpg,gif,svg|max:2048' ,
         ];
     }
 }

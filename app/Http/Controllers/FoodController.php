@@ -63,34 +63,34 @@ class FoodController extends Controller
     }
 }
 
-    // public function update(FoodRequest $request, string $id)
-    // {
-    //     $folder_name = 'public/foods';
-    //     $tableName = 'images';
-    //     $validateData = $request->validated();
+    public function update(FoodRequest $request, string $id)
+    {
+        $folder_name = 'public/foods';
+        $tableName = 'images';
+        $validateData = $request->validated();
 
-    //     $food = $this->updateFoodIngredient($validateData,$id);
-    //     if($food instanceof JsonResponse){
-    //         return $food;
-    //     }
+        $food = $this->updateFoodIngredient($validateData,$id);
+        if($food instanceof JsonResponse){
+            return $food;
+        }
 
-    //     if($request->hasFile('upload_url')){
-    //         $this->updateImage($request,$food->id,$this->genre,$this->foodInterface,$folder_name,$tableName,$id);
-    //     }
+        if($request->hasFile('upload_url')){
+            $this->updateImage($request,$food->id,$this->genre,$this->foodInterface,$folder_name,$tableName,$id);
+        }
 
-    //     if ($request->hasFile('upload_url')) {
-    //         try {
-    //             $this->updateImage($request, $food->id, $this->genre, $this->foodInterface, $folder_name, $tableName, $id);
-    //         } catch (\Exception $e) {
-    //             Log::error('Error updating image in FoodController@update: ' . $e->getMessage());
-    //             return response()->json([
-    //                 'message' => 'Image update failed.'
-    //             ], 500);
-    //         }
-    //     }
+        if ($request->hasFile('upload_url')) {
+            try {
+                $this->updateImage($request, $food->id, $this->genre, $this->foodInterface, $folder_name, $tableName, $id);
+            } catch (\Exception $e) {
+                Log::error('Error updating image in FoodController@update: ' . $e->getMessage());
+                return response()->json([
+                    'message' => 'Image update failed.'
+                ], 500);
+            }
+        }
 
-    //     return new FoodResource($food);
-    // }
+        return new FoodResource($food);
+    }
 
     public function destroy(String $id)
     {
@@ -98,6 +98,9 @@ class FoodController extends Controller
         if($food instanceof JsonResponse){
         return $food;
          }
+
+         $imageId = $food->image_id;
+         $this->deleteImage(Images::class,$imageId,'upload_url');
         return response()->json([
             'message' => Config::get('variable.FOOD_DELETED_SUCCESSFULLY')
         ], Config::get('variable.OK'));

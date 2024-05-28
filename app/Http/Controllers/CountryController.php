@@ -24,12 +24,12 @@ class CountryController extends Controller
     }
     public function index()
     {
-        try {
+        // try {
             $countries = $this->locationInterface->all('Country');
             return CountryResource::collection($countries);
-        } catch (\Exception $e) {
-            return ResponseHelper::jsonResponseWithConfigError($e);
-        }
+        // } catch (\Exception $e) {
+            // return ResponseHelper::jsonResponseWithConfigError($e);
+        // }
     }
 
     public function store(CountryRequest $request)
