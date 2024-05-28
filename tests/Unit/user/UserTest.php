@@ -8,7 +8,6 @@ use Tests\UnitTestCase;
 
 class UserTest extends UnitTestCase
 {
-    use RefreshDatabase;
     public function setUp(): void
     {
         parent::setUp();

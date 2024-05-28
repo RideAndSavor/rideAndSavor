@@ -15,6 +15,7 @@ class AddressTest extends UnitTestCase
         parent::setUp();
 
         $this->user = $this->createAdmin();
+        dd($this->user->role);
         $this->country = $this->createCountry();
         $this->state = $this->createState();
         $this->city = $this->createCity();
