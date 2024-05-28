@@ -166,9 +166,9 @@ abstract class UnitTestCase extends BaseTestCase
         return Salary::factory()->create();
     }
 
-    protected function createSize(): Size
-    {
-        return Size::factory()->create();
-    }
+    // protected function createSize(): Size
+    // {
+    //     return Size::factory()->create();
+    // }
     
 }

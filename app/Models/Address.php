@@ -10,10 +10,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Config;
+use Laravel\Scout\Searchable;
 
 class Address extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     public function saveableFields($column): object
     {
@@ -31,6 +32,13 @@ class Address extends Model
         return  $arr[$column];
     }
 
+    public function toSearchableArray()
+    {
+        return [
+            "block_no" => $this->block_no,
+            "floor" => $this->floor,
+        ];
+    }
     public function users()
     {
         return $this->belongsToMany(User::class)->withTimestamps();

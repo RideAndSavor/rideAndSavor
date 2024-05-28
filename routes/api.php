@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\DiscountItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -7,29 +8,30 @@ use App\Http\Controllers\CityController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SizeController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\WardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PriceController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\SalaryController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\StreetController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CalculateDeliveryFeesController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\StatusControlller;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\DiscountItemController;
 use App\Http\Controllers\TownshipController;
 use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\PercentageController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\DeliverPriceController;
+use App\Http\Controllers\DiscountItemController;
 use App\Http\Controllers\DeliveryPriceController;
 use App\Http\Controllers\PaymentProviderController;
 use App\Http\Controllers\RestaurantAddressController;
 use App\Http\Controllers\RestaurantFoodController;
-use App\Models\DiscountItem;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -74,4 +76,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('delivery_price', DeliveryPriceController::class);
 
     Route::post('/calculate-delivery-fee', [CalculateDeliveryFeesController::class, 'calculateDeliveryFee']);
+    Route::get('/search', [SearchController::class, 'search']);
+
 });
