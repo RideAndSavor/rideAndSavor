@@ -26,8 +26,8 @@ class Ingredient extends Model
         return  $arr[$column];
     }
 
-    public function foods():BelongsToMany
+    public function foods(): BelongsToMany
     {
-        return $this->belongsToMany(Food::class,'food_ingredient')->withPivot('additional_field')->withTimestamps();;
+        return $this->belongsToMany(Food::class, 'food_ingredient')->withTimestamps();;
     }
 }

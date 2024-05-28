@@ -14,8 +14,8 @@ return [
     'NO_CONTENT' => '204',
     'OK' => '200',
     'CLIENT_ERROR' => '401',
-    'SEVER_NOT_FOUND'=>'404',
-    'Unprocessable Entity'=>'422',
+    'SEVER_NOT_FOUND' => '404',
+    'Unprocessable Entity' => '422',
     'SEVER_ERROR' => '500',
 
     "IMAGE_MODEL" => "App\Models\Images",
@@ -66,27 +66,27 @@ return [
     'ADDRESS_DELETED_SUCCESSFULLY' => 'Address deleted successfully',
     'YOUR_STREET_CAN_NOT_CHANGE' => 'Your Street can not change you can create a new address',
 
-    'INGREDIENTS_NOT_FOUND'=>'Ingredients Not Found',
-    'FAIL_TO_DELETED_INGREDIENT'=>'Fail To Deleted Ingredient',
-    'INGREDIENT_DELETED_SUCCESSFULLY'=>'Ingredient Deleted Successfully',
+    'INGREDIENTS_NOT_FOUND' => 'Ingredients Not Found',
+    'FAIL_TO_DELETED_INGREDIENT' => 'Fail To Deleted Ingredient',
+    'INGREDIENT_DELETED_SUCCESSFULLY' => 'Ingredient Deleted Successfully',
 
-    'PNF'=> 'Price Not Found',
-    'FTDP'=>"Failed to delete Price",
-    'PDS'=> "Price Deleted Successfully",
+    'PNF' => 'Price Not Found',
+    'FTDP' => "Failed to delete Price",
+    'PDS' => "Price Deleted Successfully",
 
-    'DPNF'=> 'Delivery Price Not Found',
-    'DPDS'=> 'Delivery Price Deleted Successfully',
+    'DPNF' => 'Delivery Price Not Found',
+    'DPDS' => 'Delivery Price Deleted Successfully',
 
-    'ONF'=> 'Order Not Found',
+    'ONF' => 'Order Not Found',
     'ODS' => 'Order Deleted Successfully',
 
-    "SZNF"=> 'Size Not Found',
-    'FTDSZ'=>"Failed to delete Size",
-    'SZDS'=> "Size Deleted Successfully",
+    "SZNF" => 'Size Not Found',
+    'FTDSZ' => "Failed to delete Size",
+    'SZDS' => "Size Deleted Successfully",
 
-    'CATEGORY_NOT_FOUND'=>'Category Not Found',
-    'FAIL_TO_DELETED_CATEGORY'=>"Fail To Deleted Category",
-    'CATEGORY_DELETED_SUCCESSFULLY'=>'Category Deleted Successfully',
+    'CATEGORY_NOT_FOUND' => 'Category Not Found',
+    'FAIL_TO_DELETED_CATEGORY' => "Fail To Deleted Category",
+    'CATEGORY_DELETED_SUCCESSFULLY' => 'Category Deleted Successfully',
 
     'SUBCATEGORY_NOT_FOUND' => 'SubCategory Not Found',
     'FAIL_TO_DELETED_SUBCATEGORY' => 'Fail To Deleted SubCategory',
@@ -108,5 +108,7 @@ return [
     'PERCENTAGE_NOT_FOUND' => 'Percentage Not Found',
     'FAILE_TO_DELETED_PERCENTAGE' => 'Fail To Deleted Percentage',
     'PERCENTAGE_DELETED_SUCCESSFULLY' => 'Percentage Deleted Successfully',
+
+    'FAIL_TO_CREATE_FOODINGREDIENT' => 'Failed to create food with ingredients'
 
 ];
