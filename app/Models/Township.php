@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\DB\Core\StringField;
 use App\DB\Core\IntegerField;
+use Laravel\Scout\Searchable;
 use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Township extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     public function saveableFields($column): object
     {
@@ -25,6 +26,13 @@ class Township extends Model
         }
 
         return  $arr[$column];
+    }
+
+    public function toSearchableArray()
+    {
+        return [
+            'name' => $this->name,
+        ];
     }
 
     public function city(): BelongsTo

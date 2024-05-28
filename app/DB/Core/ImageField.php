@@ -23,7 +23,7 @@ class ImageField extends Field
       throw CrudException::emptyData();
     }
 
-    if ($this->tableName === Config::get('variables.IMAGE')) {
+    if ($this->tableName === Config::get('variable.IMAGES_TABLE')) {
       $uploadedFile = $this->value;
       $imageName = round(microtime(true) * 1000)  . '.' . $uploadedFile->extension();
       $finalImagePath = $this->imageDirectory . $imageName;

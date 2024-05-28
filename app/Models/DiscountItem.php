@@ -2,24 +2,25 @@
 
 namespace App\Models;
 
-use App\DB\Core\StringField;
+use App\DB\Core\DateTimeField;
 use App\DB\Core\IntegerField;
+use App\DB\Core\StringField;
 use App\Exceptions\CrudException;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
 
-class City extends Model
+class DiscountItem extends Model
 {
     use HasFactory, Searchable;
 
     public function saveableFields($column): object
     {
         $arr = [
+            'percentage_id' => IntegerField::new(),
             'name' => StringField::new(),
-            'state_id' => IntegerField::new()
+            'start_date' => DateTimeField::new(),
+            'end_date' => DateTimeField::new()
         ];
         if (!array_key_exists($column, $arr)) {
             throw CrudException::missingAttributeException();
@@ -35,13 +36,8 @@ class City extends Model
         ];
     }
 
-    public function state(): BelongsTo
+    public function percentage()
     {
-        return $this->belongsTo(State::class);
-    }
-
-    public function township(): HasMany
-    {
-        return $this->hasMany(Township::class);
+        return $this->belongsTo(Percentage::class);
     }
 }

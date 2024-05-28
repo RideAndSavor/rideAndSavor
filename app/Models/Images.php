@@ -2,21 +2,24 @@
 
 namespace App\Models;
 
+use App\DB\Core\ImageField;
 use App\DB\Core\StringField;
+use App\DB\Core\IntegerField;
 use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Laravel\Scout\Searchable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Category extends Model
+class Images extends Model
 {
-    use HasFactory, Searchable;
+    use HasFactory;
 
     public function saveableFields($column): object
     {
         $arr = [
-            'name' => StringField::new(),
+            'link_id' => IntegerField::new(),
+            'gener' => StringField::new(),
+            'upload_url'=>ImageField::new(),
         ];
         if (!array_key_exists($column, $arr)) {
             throw CrudException::missingAttributeException();
@@ -25,14 +28,8 @@ class Category extends Model
         return  $arr[$column];
     }
 
-    public function toSearchableArray()
+    public function food():BelongsTo
     {
-        return [
-            'name' => $this->name,
-        ];
-    }
-    public function subCategory():HasMany
-    {
-        return $this->hasMany(SubCategory::class);
+        return $this->belongsTo(Food::class,'link_id');
     }
 }

@@ -1,22 +1,31 @@
 <?php
 
-    return [
-        "ONE" => 1, "TWO" => 2, "THREE" => 3, "FOUR" => 4, "FIVE" => 5, "SIX" => 6,
-        "SEVEN" => 7, "EIGHT" => 8, "NINE" => 9, "TEN" => 10, "ELEVEN" => 11, "TWELVE" => 12,
-        "THIRTEEN" => 13, "FOURTEEN" => 14, "FIFTEEN" => 15, "SIXTEEN" => 16, "SEVENTEEN" => 17,
-        "EIGHTEEN" => 18, "NINETEEN" => 19, "TWENTY" => 20, "TWENTY_ONE" => 21, "TWENTY_TWO" => 22,
-        "TWENTY_THREE" => 23, "TWENTY_FOUR" => 24, "TWENTY_FIVE" => 25, "TWENTY_SIX" => 26,
-        "TWENTY_SEVEN" => 27, "TWENTY_EIGHT" => 28, "TWENTY_NINE" => 29, "THIRTY" => 30,
-        "THIRTY_ONE" => 31, "THIRTY_TWO" => 32, "THIRTY_THREE" => 33, "THIRTY_FOUR" => 34,
-        "THIRTY_FIVE" => 35, "USER" => "user", "ADMIN" => "admin", "OWNER" => "shop_owner",
-        "RIDER" => "rider", "DRIVER" => "driver",
+return [
+    "ONE" => 1, "TWO" => 2, "THREE" => 3, "FOUR" => 4, "FIVE" => 5, "SIX" => 6,
+    "SEVEN" => 7, "EIGHT" => 8, "NINE" => 9, "TEN" => 10, "ELEVEN" => 11, "TWELVE" => 12,
+    "THIRTEEN" => 13, "FOURTEEN" => 14, "FIFTEEN" => 15, "SIXTEEN" => 16, "SEVENTEEN" => 17,
+    "EIGHTEEN" => 18, "NINETEEN" => 19, "TWENTY" => 20, "TWENTY_ONE" => 21, "TWENTY_TWO" => 22,
+    "TWENTY_THREE" => 23, "TWENTY_FOUR" => 24, "TWENTY_FIVE" => 25, "TWENTY_SIX" => 26,
+    "TWENTY_SEVEN" => 27, "TWENTY_EIGHT" => 28, "TWENTY_NINE" => 29, "THIRTY" => 30,
+    "THIRTY_ONE" => 31, "THIRTY_TWO" => 32, "THIRTY_THREE" => 33, "THIRTY_FOUR" => 34,
+    "THIRTY_FIVE" => 35, "USER" => "user", "ADMIN" => "admin", "OWNER" => "shop_owner",
+    "RIDER" => "rider", "DRIVER" => "driver",
 
     'NO_CONTENT' => '204',
     'OK' => '200',
     'CLIENT_ERROR' => '401',
+    'SEVER_NOT_FOUND'=>'404',
+    'Unprocessable Entity'=>'422',
     'SEVER_ERROR' => '500',
 
+    "IMAGE_MODEL" => "App\Models\Images",
+    "IMAGES_TABLE" => "images",
+    'FOOD_IMAGE' => 'food_image',
+
     'ISE' => 'Internal Server Error',
+
+    'DINF' => 'Discount Item Not Found',
+    'DIDSF' => 'Discount Item Deleted Successfully',
 
     "CNF" => 'Country Not Found',
     'FTDC' => "Failed to delete Country",
@@ -57,16 +66,23 @@
     'ADDRESS_DELETED_SUCCESSFULLY' => 'Address deleted successfully',
     'YOUR_STREET_CAN_NOT_CHANGE' => 'Your Street can not change you can create a new address',
 
-    'RESTAURANT_NOT_FOUND' => 'Restaurant Not Found',
-    'RESTAURANT_DELETED_SUCCESSFULLY' => 'Restaurant Updated Successfully',
-
     'INGREDIENTS_NOT_FOUND'=>'Ingredients Not Found',
     'FAIL_TO_DELETED_INGREDIENT'=>'Fail To Deleted Ingredient',
     'INGREDIENT_DELETED_SUCCESSFULLY'=>'Ingredient Deleted Successfully',
 
-    "PNF"=> 'Price Not Found',
+    'PNF'=> 'Price Not Found',
     'FTDP'=>"Failed to delete Price",
     'PDS'=> "Price Deleted Successfully",
+
+    'DPNF'=> 'Delivery Price Not Found',
+    'DPDS'=> 'Delivery Price Deleted Successfully',
+
+    'ONF'=> 'Order Not Found',
+    'ODS' => 'Order Deleted Successfully',
+
+    "SZNF"=> 'Size Not Found',
+    'FTDSZ'=>"Failed to delete Size",
+    'SZDS'=> "Size Deleted Successfully",
 
     'CATEGORY_NOT_FOUND'=>'Category Not Found',
     'FAIL_TO_DELETED_CATEGORY'=>"Fail To Deleted Category",
@@ -86,11 +102,11 @@
     'FAIL_TO_DELETED_STATUS' => 'Fail To Deleted Status',
     'STATUS_DELTED_SUCCESSFULLY' => 'Status Deleted Successfully',
 
-    'FAIL_TO_DELETED_ROLE'=>'Fail To Deleted Role',
-    'ROLE_DELETED_SUCCESSFULLY'=>'Role Deleted Successfully',
+    'FAIL_TO_DELETED_ROLE' => 'Fail To Deleted Role',
+    'ROLE_DELETED_SUCCESSFULLY' => 'Role Deleted Successfully',
 
-    'PERCENTAGE_NOT_FOUND'=>'Percentage Not Found',
-    'FAILE_TO_DELETED_PERCENTAGE'=>'Fail To Deleted Percentage',
-    'PERCENTAGE_DELETED_SUCCESSFULLY'=>'Percentage Deleted Successfully',
+    'PERCENTAGE_NOT_FOUND' => 'Percentage Not Found',
+    'FAILE_TO_DELETED_PERCENTAGE' => 'Fail To Deleted Percentage',
+    'PERCENTAGE_DELETED_SUCCESSFULLY' => 'Percentage Deleted Successfully',
 
 ];

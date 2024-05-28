@@ -9,18 +9,19 @@ use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laravel\Scout\Searchable;
 
 class Restaurant extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
     public function saveableFields($column): object
     {
         $arr = [
             'address_id' => IntegerField::new(),
             'name' => StringField::new(),
-            'open_time'=>DateTimeField::new(),
-            'close_time'=>DateTimeField::new(),
-            'phone_number'=>StringField::new()
+            'open_time' => DateTimeField::new(),
+            'close_time' => DateTimeField::new(),
+            'phone_number' => StringField::new()
         ];
         if (!array_key_exists($column, $arr)) {
             throw CrudException::missingAttributeException();
@@ -29,9 +30,23 @@ class Restaurant extends Model
         return  $arr[$column];
     }
 
-    public function address():BelongsTo
+    public function toSearchableArray()
+    {
+        return [
+            "name" => $this->name,
+        ];
+    }
+
+    public function address(): BelongsTo
     {
         return $this->belongsTo(Address::class);
     }
 
+    public function foods()
+    {
+        return $this->belongsToMany(Food::class, 'food_restaurant')
+            ->using(FoodRestaurant::class)
+            ->withPivot('price', 'size_id', 'discount_item_id')
+            ->withTimestamps();
+    }
 }

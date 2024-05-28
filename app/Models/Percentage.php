@@ -28,4 +28,9 @@ class Percentage extends Model
 
         return  $arr[$column];
     }
+
+    public function discountItems()
+    {
+        return $this->hasMany(DiscountItem::class);
+    }
 }

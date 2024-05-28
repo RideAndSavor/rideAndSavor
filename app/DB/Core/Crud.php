@@ -63,7 +63,9 @@ class Crud
     {
         $target = $record ?? $this->model;
         foreach ($data as $column => $value) {
+            // var_dump($column,$value);
             $target->{$column} = $this->savableField($column)->setValue($value)->execute();
+
         }
         if (!$target) {
             throw CrudException::prepareDataFormat();

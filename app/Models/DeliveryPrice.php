@@ -2,23 +2,21 @@
 
 namespace App\Models;
 
-use App\DB\Core\StringField;
 use App\DB\Core\IntegerField;
 use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Laravel\Scout\Searchable;
 
-class State extends Model
+class DeliveryPrice extends Model
 {
-    use HasFactory, Searchable;
+    use HasFactory;
 
     public function saveableFields($column): object
     {
         $arr = [
-            'name' => StringField::new(),
+            'township_id' => IntegerField::new(),
+            'price_id' => IntegerField::new()
         ];
         if (!array_key_exists($column, $arr)) {
             throw CrudException::missingAttributeException();
@@ -27,20 +25,13 @@ class State extends Model
         return  $arr[$column];
     }
 
-    public function toSearchableArray()
+    public function township(): BelongsTo
     {
-        return [
-            'name' => $this->name,
-        ];
-    }
-    
-    public function country(): BelongsTo
-    {
-        return $this->belongsTo(Country::class);
+        return $this->belongsTo(Township::class);
     }
 
-    public function city(): HasMany
+    public function price(): BelongsTo
     {
-        return $this->hasMany(City::class);
+        return $this->belongsTo(Price::class);
     }
 }
