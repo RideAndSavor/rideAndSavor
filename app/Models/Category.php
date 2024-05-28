@@ -7,10 +7,11 @@ use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Scout\Searchable;
 
 class Category extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     public function saveableFields($column): object
     {
@@ -24,6 +25,12 @@ class Category extends Model
         return  $arr[$column];
     }
 
+    public function toSearchableArray()
+    {
+        return [
+            'name' => $this->name,
+        ];
+    }
     public function subCategory():HasMany
     {
         return $this->hasMany(SubCategory::class);
