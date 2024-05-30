@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Traits;
+
 use App\Db\Core\Crud;
 use App\Models\Images;
 use Illuminate\Database\Eloquent\Model;
@@ -8,8 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 trait ImageTrait
 {
-
-    public function storeImage($request, $linkId, $gener, $interface,$folder_name,$tableName): bool
+    public function storeImage($request, $linkId, $gener, $interface, $folder_name, $tableName): bool
     {
         if ($request->hasFile('upload_url')) {
             $image_data = [];
@@ -18,76 +18,41 @@ trait ImageTrait
             $images = $request->file('upload_url');
             $imageCount = is_array($images) ? count($images) : 1;
 
-            if($imageCount == 1) {
+            if ($imageCount == 1) {
                 $image_data['upload_url'] = $request->file('upload_url');
-                return $interface->store('Images', $image_data,$folder_name,$tableName) ? true : false;
+                return $interface->store('Images', $image_data, $folder_name, $tableName) ? true : false;
             }
 
             foreach ($images as $image) {
                 $image_data['upload_url'] = $image;
-                $interface->store('Images', $image_data,$folder_name,$tableName);
+                $interface->store('Images', $image_data, $folder_name, $tableName);
             }
             return true;
         }
+        return false;
     }
 
-    // public function updateImage($request, $linkId, $genre, $interface,$folder_name,$tableName,$id): bool
-    // {
-    //     if ($request->hasFile('upload_url')) {
-    //         $image_data = [
-    //             'link_id'=>$linkId,
-    //             'genre'=>$genre
-    //         ];
-    //         $images = $request->file('upload_url');
-    //         $imageCount = is_array($images) ? count($images) : 1;
-
-    //         if ($imageCount == 1) {
-    //             $image_data['upload_url'] = $request->file('upload_url');
-    //             return $interface->update('Images', $image_data, $id);
-    //         }
-    //         foreach ($images as $image) {
-    //             $image_data['upload_url'] = $image;
-    //             $interface->update('Images', $image_data, $id);
-    //         }
-    //     }
-    // }
-
-    public function updateImage($request, $linkId, $genre, $interface, $folder_name, $tableName, $id): bool
-{
-    if ($request->hasFile('upload_url')) {
-        $image_data = [
-            'link_id' => $linkId,
-            'genre' => $genre,
-        ];
-        $images = $request->file('upload_url');
-        $imageCount = is_array($images) ? count($images) : 1;
-
-        $interface->deleteExistingImages($linkId, $tableName); // Assuming such a method exists.
-
-        if ($imageCount == 1) {
-            $image_data['upload_url'] =  $images->store($folder_name, 'public');
-            return $interface->update('Images', $image_data, $id) ? true : false;
+    public function updateImage($request, $oldImageDatas,  $linkId, $gener, $interface, $folderName, $tableName): bool
+    {
+        if ($request->hasFile('upload_url')) {
+            foreach ($oldImageDatas as $record) {
+                if (Storage::exists($record->upload_url)) {
+                    Storage::delete($record->upload_url);
+                }
+                $interface->delete('Images', $record->id);
+            }
+            return $this->storeImage($request, $linkId, $gener, $interface, $folderName, $tableName);
         }
+        return false;
+    }
 
-        foreach ($images as $image) {
-            $image_data['upload_url'] = $image->store($folder_name, 'public');
-            $interface->update('Images', $image_data, $id);
+    public function deleteImage($interface, $oldImageDatas)
+    {
+        foreach ($oldImageDatas as $record) {
+            if (Storage::exists($record->upload_url)) {
+                Storage::delete($record->upload_url);
+            }
+            $interface->delete('Images', $record->id);
         }
-        return true;
     }
-    return false;
-}
-
-public function deleteImage($modelClass,$imageId,$imageColumn){
-    $modelClass::where('id',$imageId)->delete();
-
-    $imagePath = $modelClass::where('id',$imageId)->value($imageColumn);
-
-    if($imagePath){
-        Storage::delete($imagePath);
-    }
-
-    return true;
-}
-
 }
