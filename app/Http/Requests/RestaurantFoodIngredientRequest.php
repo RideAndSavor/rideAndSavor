@@ -33,7 +33,7 @@ class RestaurantFoodIngredientRequest extends FormRequest
             'food_restaurant.*.price' => 'required|string',
             'food_restaurant.*.size_id' => 'required|integer',
             'discount_item_id' => 'nullable|integer',
-            'upload_url' => 'required|image|mimes:jpeg,png,jpg,gif,svg', // uploading image for food
+            'upload_url.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg', // uploading image for food
         ];
     }
 }
