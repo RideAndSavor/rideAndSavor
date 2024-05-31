@@ -35,35 +35,46 @@ class LocationRepository implements LocationInterface
         return $model::find($id);
     }
 
-    public function store(string $modelName, array $data,$folder_name = null , $tablename = null)
+    public function findWhere($modelName, $link_id)
+    {
+        $model = app("App\Models\\{$modelName}");
+        return $model->where('link_id', $link_id)->get();
+    }
+
+    public function store(string $modelName, array $data, $folder_name = null, $tablename = null)
     {
         if (empty($data)) {
             throw CrudException::emptyData();
         }
         $model = app("App\Models\\{$modelName}");
 
-        if(get_class($model) !== Config::get('variable.IMAGE_MODEL')){
-            return  (new Crud($model, $data, null, false, false))->execute();
+        if (get_class($model) !== Config::get('variable.IMAGE_MODEL')) {
+            return (new Crud($model, $data, null, false, false))->execute();
         }
         $crud = new Crud($model, $data, null, false, false);
-        $crud->setImageDirectory($folder_name,$tablename);
+        $crud->setImageDirectory($folder_name, $tablename);
         return $crud->execute();
     }
 
-    public function update(string $modelName, array $data, int $id)
+    public function update(string $modelName, array $data, int $id, $folder_name = null, $tablename = null)
     {
         if (empty($data)) {
             throw CrudException::emptyData();
         }
         $model = app("App\Models\\{$modelName}");
 
-        return (new Crud($model,$data,$id,true,false))->execute();
+        if (get_class($model) !== Config::get('variable.IMAGE_MODEL')) {
+            return (new Crud($model, $data, $id, true, false))->execute();
+        }
+        $curd = new Crud($model, $data, $id, true, false);
+        $curd->setImageDirectory($folder_name, $tablename);
+        return $curd->execute();
     }
 
     public function delete(string $modelName, int $id)
     {
         $model = app("App\Models\\{$modelName}");
 
-        return (new Crud($model,null,$id,false,true))->execute();
+        return (new Crud($model, null, $id, false, true))->execute();
     }
 }
