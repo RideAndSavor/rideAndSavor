@@ -35,7 +35,7 @@ class Ingredient extends Model
         ];
     }
 
-    public function foods():BelongsToMany
+    public function foods(): BelongsToMany
     {
         return $this->belongsToMany(Food::class, 'food_ingredient')->withTimestamps();;
     }
