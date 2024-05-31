@@ -40,7 +40,7 @@ class RestaurantFoodController extends Controller
 
         return FoodResource::collection($uniqueFoods);
     }
-
+ 
     public function showFoodIngredient(Restaurant $restaurant, Food $food)
     {
         $relatedFood = $restaurant->foods()->wherePivot('food_id', $food->id)
