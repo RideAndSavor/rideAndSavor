@@ -27,7 +27,7 @@ class Ingredient extends Model
         return  $arr[$column];
     }
 
-    public function foods(): BelongsToMany
+    // public function foods(): BelongsToMany
     public function toSearchableArray()
     {
         return [

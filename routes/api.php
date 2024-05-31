@@ -70,16 +70,28 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('status', StatusControlller::class);
     Route::resource('restaurantaddress', RestaurantAddressController::class);
     Route::resource('discontItem', DiscountItemController::class);
-    Route::post('restaurants/{restaurant}/foods-with-ingredients', [RestaurantFoodController::class, 'storeFoodWithIngredients']);
-    Route::get('restaurants/{restaurant}/foods-with-ingredients_all', [RestaurantFoodController::class, 'showAllFoodIngredients']);
-    Route::get('restaurants/{restaurant}/foods-with-ingredients/{food}', [RestaurantFoodController::class, 'showFoodIngredient']);
-    Route::put('restaurants/{restaurant}/foods-with-ingredients/{food}', [RestaurantFoodController::class, 'updateFoodIngredient']);
-    Route::delete('restaurants/{restaurant}/foods-with-ingredients/{food}', [RestaurantFoodController::class, 'destroyFoodIngredient']);
+    // Route::post('restaurants/{restaurant}/foods-with-ingredients', [RestaurantFoodController::class, 'storeFoodWithIngredients']);
+    // Route::get('restaurants/{restaurant}/foods-with-ingredients_all', [RestaurantFoodController::class, 'showAllFoodIngredients']);
+    // Route::get('restaurants/{restaurant}/foods-with-ingredients/{food}', [RestaurantFoodController::class, 'showFoodIngredient']);
+    // Route::put('restaurants/{restaurant}/foods-with-ingredients/{food}', [RestaurantFoodController::class, 'updateFoodIngredient']);
+    // Route::delete('restaurants/{restaurant}/foods-with-ingredients/{food}', [RestaurantFoodController::class, 'destroyFoodIngredient']);
+
+    //Restaurant_Food
+    Route::controller(RestaurantFoodController::class)->group(function(){
+        Route::post('restaurants/{restaurant}/foods-with-ingredients','storeFoodWithIngredients');
+        Route::get('restaurants/{restaurant}/foods-with-ingredients_all','showAllFoodIngredients');
+        Route::get('restaurants/{restaurant}/foods-with-ingredients/{food}','showFoodIngredient');
+        Route::put('restaurants/{restaurant}/foods-with-ingredients/{food}','updateFoodIngredient');
+        Route::delete('restaurants/{restaurant}/foods-with-ingredients/{food}','destroyFoodIngredient');
+
+    });
 
     Route::resource('order', OrderController::class);
     Route::resource('delivery_price', DeliveryPriceController::class);
 
+    //Calculate_Delivery_Fees
     Route::post('/calculate-delivery-fee', [CalculateDeliveryFeesController::class, 'calculateDeliveryFee']);
+
     Route::get('/search', [SearchController::class, 'search']);
 
 });

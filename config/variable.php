@@ -16,7 +16,7 @@ return [
     'CLIENT_ERROR' => '401',
     'SEVER_NOT_FOUND' => '404',
     'Unprocessable Entity' => '422',
-    'SEVER_ERROR' => '500',
+    'INTERNAL_SEVER_ERROR' => '500',
 
     "YOU_DO_NOT_HAVE_ADMIN_ACCESS"=>"You do not have admin access",
     "YOU_DO_NOT_HAVE_ACCESS"=>"You do not have access",
@@ -112,6 +112,8 @@ return [
     'FAILE_TO_DELETED_PERCENTAGE' => 'Fail To Deleted Percentage',
     'PERCENTAGE_DELETED_SUCCESSFULLY' => 'Percentage Deleted Successfully',
 
-    'FAIL_TO_CREATE_FOODINGREDIENT' => 'Failed to create food with ingredients'
+    'FAIL_TO_CREATE_FOODINGREDIENT' => 'Failed to create food with ingredients',
+
+    'User address Not Found Found'=>"USER_ADDRESS_NOT_FOUND"
 
 ];
