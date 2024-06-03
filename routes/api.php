@@ -31,6 +31,7 @@ use App\Http\Controllers\DiscountItemController;
 use App\Http\Controllers\DeliveryPriceController;
 use App\Http\Controllers\FoodRestaurantController;
 use App\Http\Controllers\OrderDetailController;
+use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\PaymentProviderController;
 use App\Http\Controllers\RestaurantAddressController;
 use App\Http\Controllers\RestaurantFoodController;
@@ -82,13 +83,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Route::delete('restaurants/{restaurant}/foods-with-ingredients/{food}', [RestaurantFoodController::class, 'destroyFoodIngredient']);
 
     //Restaurant_Food
-    Route::controller(RestaurantFoodController::class)->group(function(){
-        Route::post('restaurants/{restaurant}/foods-with-ingredients','storeFoodWithIngredients');
-        Route::get('restaurants/{restaurant}/foods-with-ingredients_all','showAllFoodIngredients');
-        Route::get('restaurants/{restaurant}/foods-with-ingredients/{food}','showFoodIngredient');
-        Route::put('restaurants/{restaurant}/foods-with-ingredients/{food}','updateFoodIngredient');
-        Route::delete('restaurants/{restaurant}/foods-with-ingredients/{food}','destroyFoodIngredient');
-
+    Route::controller(RestaurantFoodController::class)->group(function () {
+        Route::post('restaurants/{restaurant}/foods-with-ingredients', 'storeFoodWithIngredients');
+        Route::get('restaurants/{restaurant}/foods-with-ingredients_all', 'showAllFoodIngredients');
+        Route::get('restaurants/{restaurant}/foods-with-ingredients/{food}', 'showFoodIngredient');
+        Route::put('restaurants/{restaurant}/foods-with-ingredients/{food}', 'updateFoodIngredient');
+        Route::delete('restaurants/{restaurant}/foods-with-ingredients/{food}', 'destroyFoodIngredient');
     });
     
     Route::resource('order', OrderController::class);
@@ -101,4 +101,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/search', [SearchController::class, 'search']);
 
+    Route::get('/discounted-foods', [DiscountController::class, 'getDiscountFoods']);
 });

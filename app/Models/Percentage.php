@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\DB\Core\IntegerField;
 use App\DB\Core\StringField;
 use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,7 @@ class Percentage extends Model
 {
     use HasFactory;
 
-    public function discount(float $price, int $percent): float
+    public function discount(float $price, float $percent): float
     {
         return ($price - (($price * $percent) / 100));
     }
@@ -20,7 +21,7 @@ class Percentage extends Model
     public function saveableFields($column): object
     {
         $arr = [
-            'discount_percentage' => StringField::new(),
+            'discount_percentage' => IntegerField::new(),
         ];
         if (!array_key_exists($column, $arr)) {
             throw CrudException::missingAttributeException();
