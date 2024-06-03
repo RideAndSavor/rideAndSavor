@@ -60,4 +60,14 @@ class Food extends Model
     {
         return $this->hasOne(Images::class, 'link_id');
     }
+
+    public function foodRestaurants()
+    {
+        return $this->hasMany(FoodRestaurant::class);
+    }
+
+    public function orderDetails()
+    {
+        return $this->hasManyThrough(OrderDetail::class, FoodRestaurant::class, 'food_id', 'food_restaurant_id', 'id', 'id');
+    }
 }
