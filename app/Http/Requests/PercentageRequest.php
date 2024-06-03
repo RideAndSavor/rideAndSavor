@@ -22,7 +22,7 @@ class PercentageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'discount_percentage'=>'required|string'
+            'discount_percentage' => 'required|integer',
         ];
     }
 }
