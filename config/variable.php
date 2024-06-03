@@ -83,6 +83,12 @@ return [
     'ONF' => 'Order Not Found',
     'ODS' => 'Order Deleted Successfully',
 
+    'FRNF' => 'Food Restaurant Not Found',
+    'FRDS' => 'Food Restaurant Deleted Successfully',
+
+    'ODNF' => 'Order Detail Not Found',
+    'ODDS' => 'Order Detail Deleted Successfully',
+
     "SZNF" => 'Size Not Found',
     'FTDSZ' => "Failed to delete Size",
     'SZDS' => "Size Deleted Successfully",
