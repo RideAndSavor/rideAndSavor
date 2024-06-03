@@ -29,10 +29,13 @@ use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\DeliverPriceController;
 use App\Http\Controllers\DiscountItemController;
 use App\Http\Controllers\DeliveryPriceController;
+use App\Http\Controllers\FoodRestaurantController;
+use App\Http\Controllers\OrderDetailController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\PaymentProviderController;
 use App\Http\Controllers\RestaurantAddressController;
 use App\Http\Controllers\RestaurantFoodController;
+use App\Models\OrderDetail;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -67,6 +70,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::resource('restaurant', RestaurantController::class);
     Route::resource('foods', FoodController::class);
+    Route::get('/popular-foods', [FoodController::class, 'getPopularFoods']);
+
     Route::resource('salary', SalaryController::class);
     Route::resource('status', StatusControlller::class);
     Route::resource('restaurantaddress', RestaurantAddressController::class);
@@ -85,9 +90,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('restaurants/{restaurant}/foods-with-ingredients/{food}', 'updateFoodIngredient');
         Route::delete('restaurants/{restaurant}/foods-with-ingredients/{food}', 'destroyFoodIngredient');
     });
-
+    
     Route::resource('order', OrderController::class);
     Route::resource('delivery_price', DeliveryPriceController::class);
+    Route::resource('orderDetail', OrderDetailController::class);
+
 
     //Calculate_Delivery_Fees
     Route::post('/calculate-delivery-fee', [CalculateDeliveryFeesController::class, 'calculateDeliveryFee']);

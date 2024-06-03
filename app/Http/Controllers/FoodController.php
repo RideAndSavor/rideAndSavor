@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Food;
 use App\Models\Images;
+use App\Traits\ImageTrait;
 use App\Traits\AddressTrait;
 use App\Helpers\ResponseHelper;
 use App\Exceptions\CrudException;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\FoodRequest;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Contracts\LocationInterface;
 use App\Http\Resources\FoodResource;
-use App\Traits\ImageTrait;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 
@@ -106,5 +108,17 @@ class FoodController extends Controller
         ], Config::get('variable.OK'));
     }
 
+    public function getPopularFoods()
+    {
+        $popularFoods = DB::table('food')
+            ->select('food.id', 'food.name', DB::raw('COUNT(order_details.id) as orders_count'))
+            ->join('food_restaurant', 'food.id', '=', 'food_restaurant.food_id')
+            ->join('order_details', 'food_restaurant.id', '=', 'order_details.food_restaurant_id')
+            ->groupBy('food.id', 'food.name')
+            ->orderBy('orders_count', 'desc')
+            ->take(10) 
+            ->get();
 
+        return response()->json($popularFoods);
+    }
 }
