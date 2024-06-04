@@ -110,13 +110,10 @@ class FoodController extends Controller
 
     public function getPopularFoods()
     {
-        $popularFoods = DB::table('food')
-            ->select('food.id', 'food.name', DB::raw('COUNT(order_details.id) as orders_count'))
-            ->join('food_restaurant', 'food.id', '=', 'food_restaurant.food_id')
-            ->join('order_details', 'food_restaurant.id', '=', 'order_details.food_restaurant_id')
-            ->groupBy('food.id', 'food.name')
+        dd(Food::withCount('orderDetails as orders_count'));
+        $popularFoods = Food::withCount('orderDetails as orders_count')
             ->orderBy('orders_count', 'desc')
-            ->take(10) 
+            ->take(5)
             ->get();
 
         return response()->json($popularFoods);

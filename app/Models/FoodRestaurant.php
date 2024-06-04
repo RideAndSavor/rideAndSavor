@@ -17,4 +17,14 @@ class FoodRestaurant extends Pivot
     ];
 
     public $timestamps = true;
+
+    public function food()
+    {
+        return $this->belongsTo(Food::class);
+    }
+
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
 }
