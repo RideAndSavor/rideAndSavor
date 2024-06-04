@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PercentageRequest extends FormRequest
+class OrderDetailRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,10 @@ class PercentageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'discount_percentage' => 'required|integer',
+            'order_id'=>'required|integer',
+            'food_restaurant_id'=>'required|integer',
+            'quantity'=>'required|integer',
+            'discount_prices'=>'required|integer',
         ];
     }
 }
