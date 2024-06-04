@@ -24,7 +24,7 @@ class DiscountItemRequest extends FormRequest
         return [
             'percentage_id' => 'required|integer',
             'name' => 'required|string',
-            'start_date' => 'required|date',
+            'start_date' => 'required|date', //"2024-06-01"
             'end_date' => 'required|date'
         ];
     }

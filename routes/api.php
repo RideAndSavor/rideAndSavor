@@ -43,8 +43,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::resource('paymentmodes', PaymentProviderController::class);
 
 
-// Route::middleware(['auth:sanctum','admin'])->group(function () {
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum','admin','shop_owner'])->group(function () {
+// Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('country', CountryController::class);
     Route::resource('state', StateController::class);
     Route::resource('city', CityController::class);
@@ -52,7 +52,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('ward', WardController::class);
     Route::resource('street', StreetController::class);
     Route::resource('address', AddressController::class);
-    Route::resource('restaurant', RestaurantController::class);
     Route::resource('ingredients', IngredientController::class);
     Route::resource('category', CategoryController::class);
     Route::resource('subcategory', SubCategoryController::class);
@@ -69,7 +68,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('salary', SalaryController::class);
     Route::resource('status', StatusControlller::class);
     Route::resource('restaurantaddress', RestaurantAddressController::class);
-    Route::resource('discontItem', DiscountItemController::class);
+    Route::resource('discountItem', DiscountItemController::class);
+
     // Route::post('restaurants/{restaurant}/foods-with-ingredients', [RestaurantFoodController::class, 'storeFoodWithIngredients']);
     // Route::get('restaurants/{restaurant}/foods-with-ingredients_all', [RestaurantFoodController::class, 'showAllFoodIngredients']);
     // Route::get('restaurants/{restaurant}/foods-with-ingredients/{food}', [RestaurantFoodController::class, 'showFoodIngredient']);
