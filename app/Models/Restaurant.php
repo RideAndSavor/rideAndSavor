@@ -49,4 +49,14 @@ class Restaurant extends Model
             ->withPivot('price', 'size_id', 'discount_item_id')
             ->withTimestamps();
     }
+
+    public function foodRestaurants()
+    {
+        return $this->hasMany(FoodRestaurant::class, 'restaurant_id');
+    }
+
+    public function orderDetails()
+    {
+        return $this->hasManyThrough(OrderDetail::class, FoodRestaurant::class, 'restaurant_id', 'food_restaurant_id');
+    }
 }

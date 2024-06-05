@@ -73,4 +73,15 @@ class RestaurantController extends Controller
             'message' => Config::get('variable.RESTAURANT_DELETED_SUCCESSFULLY')
         ], Config::get('variable.NO_CONTENT'));
     }
+    
+    public function featureRestaurants()
+    {
+        $featureRestaurants = Restaurant::withCount('orderDetails as orders_count')
+            ->orderBy('orders_count', 'desc')
+            ->take(5)
+            ->get();
+
+        return response()->json($featureRestaurants);
+    }
+
 }
