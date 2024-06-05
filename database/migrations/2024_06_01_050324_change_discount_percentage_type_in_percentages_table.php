@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('percentages', function (Blueprint $table) {
-            $table->string('discount_percentage')->change();
+            $table->decimal('discount_percentage')->change();
         });
     }
 };

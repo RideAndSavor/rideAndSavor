@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Scout\Searchable;
 
 class Food extends Model
@@ -59,5 +60,10 @@ class Food extends Model
     public function image(): HasOne
     {
         return $this->hasOne(Images::class, 'link_id');
+    }
+
+    public function foodRestaurants():HasMany
+    {
+        return $this->hasMany(FoodRestaurant::class);
     }
 }

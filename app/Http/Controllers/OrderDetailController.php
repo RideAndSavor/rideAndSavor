@@ -13,8 +13,8 @@ use App\Http\Resources\OrderDetailResource;
 class OrderDetailController extends Controller
 {
     private $orderDetailInterface;
- 
-    public function __construct(LocationInterface $orderDetailInterface ) 
+
+    public function __construct(LocationInterface $orderDetailInterface )
     {
      $this->orderDetailInterface = $orderDetailInterface;
     }
@@ -27,7 +27,7 @@ class OrderDetailController extends Controller
             return ResponseHelper::jsonResponseWithConfigError($e);
         }
      }
- 
+
     public function store(OrderDetailRequest $request)
     {
         $validateData = $request->validated();
@@ -38,7 +38,7 @@ class OrderDetailController extends Controller
             throw CrudException::argumentCountError();
         }
     }
- 
+
     public function update(OrderDetailRequest $request, string $id)
     {
     try {
@@ -55,7 +55,7 @@ class OrderDetailController extends Controller
             return ResponseHelper::jsonResponseWithConfigError($e);
         }
     }
- 
+
     public function destroy(string $id)
     {
         $orderDetail = $this->orderDetailInterface->findById('OrderDetail',$id);

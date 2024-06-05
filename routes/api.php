@@ -35,7 +35,6 @@ use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\PaymentProviderController;
 use App\Http\Controllers\RestaurantAddressController;
 use App\Http\Controllers\RestaurantFoodController;
-use App\Models\OrderDetail;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -47,8 +46,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::resource('paymentmodes', PaymentProviderController::class);
 
 
-Route::middleware(['auth:sanctum','admin','shop_owner'])->group(function () {
-// Route::middleware(['auth:sanctum'])->group(function () {
+// Route::middleware(['auth:sanctum','admin','shop_owner'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('country', CountryController::class);
     Route::resource('state', StateController::class);
     Route::resource('city', CityController::class);
@@ -90,7 +89,7 @@ Route::middleware(['auth:sanctum','admin','shop_owner'])->group(function () {
         Route::put('restaurants/{restaurant}/foods-with-ingredients/{food}', 'updateFoodIngredient');
         Route::delete('restaurants/{restaurant}/foods-with-ingredients/{food}', 'destroyFoodIngredient');
     });
-    
+
     Route::resource('order', OrderController::class);
     Route::resource('delivery_price', DeliveryPriceController::class);
     Route::resource('orderDetail', OrderDetailController::class);
@@ -102,4 +101,7 @@ Route::middleware(['auth:sanctum','admin','shop_owner'])->group(function () {
     Route::get('/search', [SearchController::class, 'search']);
 
     Route::get('/discounted-foods', [DiscountController::class, 'getDiscountFoods']);
+
+    //recent_order
+   Route::get('users/{userId}/recent-orders',[OrderController::class,'getRecentOrder']);
 });

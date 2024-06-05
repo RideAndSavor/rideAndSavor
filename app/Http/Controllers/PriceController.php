@@ -57,7 +57,7 @@ class PriceController extends Controller
     public function destroy(String $id)
     {
         $price = $this->priceInterface->findById('Price' , $id);
-        if(!$price) 
+        if(!$price)
         {
             return response()->json([
                 'message' => Config::get('variable.PNF')

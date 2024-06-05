@@ -33,6 +33,6 @@ class OrderDetail extends Model
 
     public function foodRestaurant()
     {
-        return $this->belongsTo(FoodRestaurant::class);
+        return $this->belongsTo(FoodRestaurant::class,'food_id');
     }
 }

@@ -9,6 +9,7 @@ use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
@@ -36,8 +37,23 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function orderDetalis():HasMany{
+        return $this->hasMany(OrderDetail::class);
+    }
+
     public function delivery_price(): BelongsTo
     {
         return $this->belongsTo(DeliveryPrice::class);
+    }
+
+    public function food(){
+        return $this->hasManyThrough(
+            Food::class,
+            OrderDetail::class,
+            'order_id',  //Foreign Key on OrderDetails Table
+            'id', //Foreign Key on FoodRestaurant Table
+            'id',//Local Key on Order Table
+            'food_restaurant_id' //Local Key on OrderDetails Table
+        );
     }
 }

@@ -96,4 +96,10 @@ class User extends Authenticatable
             'password' => $this->password,
         ];
     }
+
+    public function orders():HasMany
+    {
+        return $this->hasMany(Order::class);
+
+    }
 }
