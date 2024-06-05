@@ -107,15 +107,15 @@ class RestaurantFoodController extends Controller
             $this->foodRestaurantInterface->update('Food', $validatedData['food'], $food->id);
 
             // Handle the image update if there's a file uploaded
-            $iamgeDatas = $this->foodRestaurantInterface->findWhere('Images', $food->id);
-            if (!$iamgeDatas) {
+            $imageData = $this->foodRestaurantInterface->findWhere('Images', $food->id);
+            if (!$imageData) {
                 return response()->json([
                     'message' => Config::get('variable.IMAGE_DATA_NOT_FOUND')
                 ], Config::get('variable.CLIENT_ERROR'));
             }
 
             if ($restaurantFoodIngredientRequest->hasFile('upload_url')) {
-                $this->updateImage($restaurantFoodIngredientRequest, $iamgeDatas, $food->id, $this->genre, $this->foodRestaurantInterface, $this->folder_name, $this->tableName);
+                $this->updateImage($restaurantFoodIngredientRequest, $imageData, $food->id, $this->genre, $this->foodRestaurantInterface, $this->folder_name, $this->tableName);
             }
 
             // Update existing ingredients and add new ones
@@ -178,9 +178,9 @@ class RestaurantFoodController extends Controller
             // Delete the food record
             $this->foodRestaurantInterface->delete('Food', $food->id);
 
-            $iamgeDatas = $this->foodRestaurantInterface->findWhere('Images', $food->id);
-            if ($iamgeDatas) {
-                $this->deleteImage($this->foodRestaurantInterface, $iamgeDatas);
+            $imageData = $this->foodRestaurantInterface->findWhere('Images', $food->id);
+            if ($imageData) {
+                $this->deleteImage($this->foodRestaurantInterface, $imageData);
             }
 
             // Delete the food entry from the pivot table with the restaurant
