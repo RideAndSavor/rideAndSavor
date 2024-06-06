@@ -110,7 +110,6 @@ class FoodController extends Controller
 
     public function getPopularFoods()
     {
-        dd(Food::withCount('orderDetails as orders_count'));
         $popularFoods = Food::withCount('orderDetails as orders_count')
             ->orderBy('orders_count', 'desc')
             ->take(5)

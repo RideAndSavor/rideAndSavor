@@ -33,4 +33,9 @@ class FoodRestaurant extends Pivot
     {
         return $this->hasMany(OrderDetail::class);
     }
+
+    public function restaurant()
+    {
+        return $this->belongsTo(Restaurant::class);
+    }
 }
