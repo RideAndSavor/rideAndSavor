@@ -102,4 +102,9 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
 
     }
+
+    // public function foods()
+    // {
+    //     return $this->hasManyThrough(Food::class, Order::class, 'user_id', 'id', 'id', 'food_id');
+    // }
 }

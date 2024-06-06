@@ -7,7 +7,6 @@ use App\DB\Core\StringField;
 use App\DB\Core\IntegerField;
 use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -57,13 +56,25 @@ class Food extends Model
         return $this->belongsToMany(Ingredient::class, 'food_ingredient')->withTimestamps();
     }
 
-    public function image(): HasOne
+    public function image(): HasMany
     {
-        return $this->hasOne(Images::class, 'link_id');
+        return $this->hasMany(Images::class, 'link_id');
     }
 
-    public function foodRestaurants():HasMany
+    public function foodRestaurants()
     {
         return $this->hasMany(FoodRestaurant::class);
+    }
+
+    public function orderDetails()
+    {
+        return $this->hasManyThrough(
+            OrderDetail::class,
+            FoodRestaurant::class,
+            'food_id',
+            'food_restaurant_id',
+            'id', //(current model key): The local key on the current model.
+            'id' // (intermediate model key): The local key on the FoodRestaurant model.
+            );
     }
 }

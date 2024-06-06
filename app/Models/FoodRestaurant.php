@@ -22,10 +22,15 @@ class FoodRestaurant extends Pivot
         return $this->hasMany(OrderDetail::class,'food_id');
     }
 
-    public function food():BelongsTo
+    public $timestamps = true;
+
+    public function food()
     {
         return $this->belongsTo(Food::class);
     }
 
-    public $timestamps = true;
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
 }
