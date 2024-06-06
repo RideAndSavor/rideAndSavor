@@ -7,10 +7,10 @@ use App\DB\Core\StringField;
 use App\DB\Core\IntegerField;
 use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Scout\Searchable;
 
 class Food extends Model
@@ -56,9 +56,9 @@ class Food extends Model
         return $this->belongsToMany(Ingredient::class, 'food_ingredient')->withTimestamps();
     }
 
-    public function image(): HasOne
+    public function image(): HasMany
     {
-        return $this->hasOne(Images::class, 'link_id');
+        return $this->hasMany(Images::class, 'link_id');
     }
 
     public function foodRestaurants()
@@ -68,6 +68,13 @@ class Food extends Model
 
     public function orderDetails()
     {
-        return $this->hasManyThrough(OrderDetail::class, FoodRestaurant::class, 'food_id', 'food_restaurant_id', 'id', 'id');
+        return $this->hasManyThrough(
+            OrderDetail::class,
+            FoodRestaurant::class,
+            'food_id',
+            'food_restaurant_id',
+            'id', //(current model key): The local key on the current model.
+            'id' // (intermediate model key): The local key on the FoodRestaurant model.
+            );
     }
 }

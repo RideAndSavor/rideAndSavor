@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Order;
 use App\Helpers\ResponseHelper;
 use App\Exceptions\CrudException;
 use App\Http\Requests\OrderRequest;
@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Config;
 class OrderController extends Controller
 {
     private $orderInterface;
- 
-    public function __construct(LocationInterface $orderInterface ) 
+
+    public function __construct(LocationInterface $orderInterface )
     {
      $this->orderInterface = $orderInterface;
     }
@@ -27,7 +27,7 @@ class OrderController extends Controller
             return ResponseHelper::jsonResponseWithConfigError($e);
         }
      }
- 
+
     public function store(OrderRequest $request)
     {
         $validateData = $request->validated();
@@ -38,7 +38,7 @@ class OrderController extends Controller
             throw CrudException::argumentCountError();
         }
     }
- 
+
     public function update(OrderRequest $request, string $id)
     {
     try {
@@ -55,7 +55,7 @@ class OrderController extends Controller
             return ResponseHelper::jsonResponseWithConfigError($e);
         }
     }
- 
+
     public function destroy(string $id)
     {
         $order = $this->orderInterface->findById('Order',$id);
@@ -68,5 +68,43 @@ class OrderController extends Controller
         return response()->json([
             'message'=>Config::get('variable.ODS')
         ],Config::get('variable.OK'));
+    }
+
+    public function getRecentOrder($userId)
+    {
+        $recentOrders = Order::where('user_id', $userId)
+            ->with(['orderDetalis.foodRestaurant.food.image'])
+            ->orderBy('created_at', 'desc')
+            ->take(5) // Adjust the number of recent orders as needed
+            ->get();
+
+        // return response()->json($recentOrders);
+
+        $foodCounts = [];
+
+        // Loop through each order and count each food item
+        foreach ($recentOrders as $order) {
+            foreach ($order->orderDetalis as $orderDetail) {
+                $foodId = $orderDetail->foodRestaurant->food->id;
+                if (!isset($foodCounts[$foodId])) {
+                    $foodCounts[$foodId] = [
+                        'food' => $orderDetail->foodRestaurant->food,
+                        'count' => 0,
+                    ];
+                }
+                $foodCounts[$foodId]['count']++;
+            }
+        }
+
+        // Sort the food items by count in descending order
+        usort($foodCounts, function ($a, $b) {
+            return $b['count'] <=> $a['count'];
+        });
+
+        // Get the most ordered item(s)
+        $mostOrdered = array_slice($foodCounts, 0, 10); // Adjust the number of items to return as needed
+
+        // Return the most ordered item(s) as a JSON response
+        return response()->json($mostOrdered);
     }
 }
