@@ -27,7 +27,8 @@ jobs:
         run: |
           php artisan config:clear
           php artisan cache:clear
-          composer install --no-dev --no-interaction --prefer-dist
+          composer install --no-dev --no-interaction --prefer-dist --ignore-platform-reqs
+
 
       - name: Create deployment artifact
         env:
