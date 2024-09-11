@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Db\Core\Crud;
+use App\DB\Core\Crud;
 use App\Models\Country;
 use App\Contracts\CountryInterface;
 use App\Contracts\LocationInterface;

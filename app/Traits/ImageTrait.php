@@ -2,7 +2,7 @@
 
 namespace App\Traits;
 
-use App\Db\Core\Crud;
+use App\DB\Core\Crud;
 use App\Models\Images;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
