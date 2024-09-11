@@ -38,12 +38,12 @@ return [
             'serialize' => false,
         ],
 
-        'database' => [
-            'driver' => 'database',
+        // 'database' => [
+        //     'driver' => 'database',
             // 'table' => env('DB_CACHE_TABLE', 'cache'),
             // 'connection' => env('DB_CACHE_CONNECTION'),
             // 'lock_connection' => env('DB_CACHE_LOCK_CONNECTION'),
-        ],
+        // ],
 
         'file' => [
             'driver' => 'file',
