@@ -27,10 +27,6 @@ jobs:
         run: |
           composer update
 
-      - name: Clear Config and Cache
-        run: |
-          php artisan optimize:clear
-
       - name: Create deployment artifact
         env:
           GITHUB_SHA: ${{ github.sha }}
