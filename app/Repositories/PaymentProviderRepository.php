@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\Contracts\PaymentProviderInterface;
-use App\Db\Core\Crud;
+use App\DB\Core\Crud;
 use App\Models\PaymentProvider;
 
 

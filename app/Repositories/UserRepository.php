@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Contracts\PlatformUserInterface;
 use App\Contracts\UserInterface;
-use App\Db\Core\Crud;
+use App\DB\Core\Crud;
 use App\Http\Requests\TeamInviteDto;
 use App\Http\Requests\AuthRequest;
 use App\Models\PlatformUser;
