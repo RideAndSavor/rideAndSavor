@@ -29,11 +29,7 @@ jobs:
 
       - name: Clear Config and Cache
         run: |
-          php artisan config:clear
-          php artisan cache:clear 
           php artisan optimize:clear
-          php artisan route:clear   
-
 
       - name: Create deployment artifact
         env:
