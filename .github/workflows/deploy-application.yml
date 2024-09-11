@@ -22,12 +22,15 @@ jobs:
         with:
           php-version: 8.2.0
           extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml
-      
-      - name: Composer install --ignore-platform-reqs
+
+      - name: Install Composer Dependencies
+        run: |
+          composer install --no-dev --no-interaction --prefer-dist --ignore-platform-reqs
+
+      - name: Clear Config and Cache
         run: |
           php artisan config:clear
-          php artisan cache:clear
-          composer install --no-dev --no-interaction --prefer-dist --ignore-platform-reqs
+          php artisan cache:clear    
 
 
       - name: Create deployment artifact
