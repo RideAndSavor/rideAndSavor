@@ -16,7 +16,7 @@ class SalarySeeder extends Seeder
         $salaries = ["100000", "200000", "300000", "400000", "500000"];
         foreach ($salaries as $salary) {
             Salary::create([
-                'name' => $salary
+                'price' => $salary
             ]);
         }
     }

@@ -1,0 +1,12 @@
+[
+    {
+        "name": "server-1",
+        "ip": "159.65.133.230",
+        "username": "root",
+        "password": "Devtech@mm2024", 
+        "port": "22",
+        "beforeHooks": "cd $RELEASE_PATH",
+        "afterHooks": "",
+        "path": "/var/www/html/RideAndSavor"
+    }
+]
