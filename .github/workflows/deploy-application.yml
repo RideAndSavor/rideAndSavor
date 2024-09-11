@@ -25,6 +25,8 @@ jobs:
       
       - name: Composer install --ignore-platform-reqs
         run: |
+          php artisan config:clear
+          php artisan cache:clear
           composer install --no-dev --no-interaction --prefer-dist
 
       - name: Create deployment artifact
