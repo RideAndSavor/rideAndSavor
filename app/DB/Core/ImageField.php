@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DB\Core;
+namespace App\Db\Core;
 
 use App\Db\Core\Crud;
 use App\Exceptions\CrudException;

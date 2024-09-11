@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DB\Core;
+namespace App\Db\Core;
 
 use App\Exceptions\CrudException;
 use Carbon\Carbon;
