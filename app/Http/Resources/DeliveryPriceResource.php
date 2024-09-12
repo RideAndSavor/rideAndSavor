@@ -24,7 +24,7 @@ class DeliveryPriceResource extends JsonResource
     {
         return[
             'version' => '1.0.0',
-            'api_url' => url('http://127.0.0.1:8000/api/delivery_price'),
+            'api_url' => url('http://api.dailyfairdeal.com/api/delivery_price'),
             'message' => 'Your action is successful'
         ];
     }

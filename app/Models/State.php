@@ -19,6 +19,7 @@ class State extends Model
     {
         $arr = [
             'name' => StringField::new(),
+            'country_id' => IntegerField::new(),
         ];
         if (!array_key_exists($column, $arr)) {
             throw CrudException::missingAttributeException();

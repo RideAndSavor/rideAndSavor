@@ -2,7 +2,7 @@
 
 namespace App\DB\Core;
 
-use App\Db\Core\Crud;
+use App\DB\Core\Crud;
 use App\Exceptions\CrudException;
 use Illuminate\Support\Facades\Config;
 

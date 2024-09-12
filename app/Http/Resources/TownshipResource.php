@@ -25,7 +25,7 @@ class TownshipResource extends JsonResource
     {
         return[
             'version' => '1.0.0',
-            'api_url' => url('http://127.0.0.1:8000/api/township'),
+            'api_url' => url('http://api.dailyfairdeal.com/api/township'),
             'message' => 'Your action is successful'
         ];
     }
