@@ -18,6 +18,7 @@ class Restaurant extends Model
     {
         $arr = [
             'address_id' => IntegerField::new(),
+            'restaurant_type_id' => IntegerField::new(),
             'name' => StringField::new(),
             'open_time' => DateTimeField::new(),
             'close_time' => DateTimeField::new(),
