@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Contracts\LocationInterface;
-use App\Exceptions\CrudException;
-use App\Http\Requests\RestaurantRequest;
-use App\Http\Resources\RestaurantResource;
+use Carbon\Carbon;
 use App\Models\Restaurant;
 use App\Traits\AddressTrait;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon as SupportCarbon;
+use App\Exceptions\CrudException;
+use Illuminate\Support\Facades\DB;
+use App\Contracts\LocationInterface;
 use Illuminate\Support\Facades\Config;
+use App\Http\Requests\RestaurantRequest;
+use App\Http\Resources\RestaurantResource;
+use Illuminate\Support\Carbon as SupportCarbon;
 
 class RestaurantController extends Controller
 {
@@ -83,5 +84,14 @@ class RestaurantController extends Controller
 
         return response()->json($featureRestaurants);
     }
+
+    public function restaurantTypes(){
+        // Correct the spelling of 'restaurant_types'
+        $restaurantTypes = DB::table('restaurant_types')->get();
+        
+        // Return the correct variable
+        return response()->json($restaurantTypes);
+    }
+    
 
 }
