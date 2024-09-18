@@ -67,6 +67,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('price', PriceController::class);
 
     Route::resource('restaurant', RestaurantController::class);
+    Route::get('restaurant_types', [RestaurantController::class, 'restaurantTypes']);
     Route::resource('foods', FoodController::class);
     Route::get('/popular-foods', [FoodController::class, 'getPopularFoods']);
     Route::get('/featureRestaurant', [RestaurantController::class, 'featureRestaurants']);
