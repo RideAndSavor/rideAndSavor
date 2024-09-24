@@ -17,24 +17,25 @@ use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\StreetController;
 use App\Http\Controllers\AddressController;
-use App\Http\Controllers\CalculateDeliveryFeesController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\StatusControlller;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\TownshipController;
 use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\PercentageController;
 use App\Http\Controllers\RestaurantController;
+use App\Http\Controllers\TaxiDriverController;
+use App\Http\Controllers\OrderDetailController;
 use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\DeliverPriceController;
 use App\Http\Controllers\DiscountItemController;
 use App\Http\Controllers\DeliveryPriceController;
 use App\Http\Controllers\FoodRestaurantController;
-use App\Http\Controllers\OrderDetailController;
-use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\RestaurantFoodController;
 use App\Http\Controllers\PaymentProviderController;
 use App\Http\Controllers\RestaurantAddressController;
-use App\Http\Controllers\RestaurantFoodController;
+use App\Http\Controllers\CalculateDeliveryFeesController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -48,6 +49,12 @@ Route::resource('paymentmodes', PaymentProviderController::class);
 
 // Route::middleware(['auth:sanctum','admin','shop_owner'])->group(function () {
 Route::middleware(['auth:sanctum'])->group(function () {
+    
+    Route::post('/user/change-role-to-driver', [UserController::class, 'changeRoleToDriver']); 
+    Route::post('/taxi-drivers/update-location', [TaxiDriverController::class, 'updateLocation'])
+      ->middleware('throttle:60,1'); // Limit to 60 requests per minute
+    Route::post('/taxi-drivers/nearby', [TaxiDriverController::class, 'getNearbyDrivers']);
+
     Route::resource('country', CountryController::class);
     Route::resource('state', StateController::class);
     Route::resource('city', CityController::class);
