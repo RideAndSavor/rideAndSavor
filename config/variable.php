@@ -11,6 +11,12 @@ return [
     "THIRTY_FIVE" => 35, "USER" => "user", "ADMIN" => "admin", "OWNER" => "shop_owner",
     "RIDER" => "rider", "DRIVER" => "driver",
 
+    "ADMIN_ROLE_NO" => 2,
+    "USER_ROLE_NO" => 1,
+    "DRIVER_ROLE_NO" => 5,
+    "SHOP_OWNER_ROLE_NO" => 3,
+    "RIDER_ROLE_NO" => 4,
+
     'NO_CONTENT' => '204',
     'OK' => '200',
     'CLIENT_ERROR' => '401',
