@@ -5,7 +5,7 @@ namespace App\Traits;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
 
-trait NearbyScope
+trait NearByScope
 {
     /**
      * Scope a query to get nearby drivers within a given radius.
