@@ -36,10 +36,13 @@ use App\Http\Controllers\RestaurantFoodController;
 use App\Http\Controllers\PaymentProviderController;
 use App\Http\Controllers\RestaurantAddressController;
 use App\Http\Controllers\CalculateDeliveryFeesController;
+use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 
 Route::post('register', [AuthController::class, 'register'])->name('register');
 Route::post('login', [AuthController::class, 'login'])->name('login');
