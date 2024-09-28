@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://www.dailyfairdeal.com'],
+    'allowed_origins' => ['https://www.dailyfairdeal.com', 'http://www.dailyfairdeal.com'],
 
     'allowed_origins_patterns' => [],
 
