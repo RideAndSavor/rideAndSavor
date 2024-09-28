@@ -20,8 +20,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        VerifyCsrfToken::except([
-            'api/*', // Exclude your API route
-        ]);
+        // VerifyCsrfToken::except([
+        //     'api/*', // Exclude your API route
+        // ]);
     }
 }
