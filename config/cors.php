@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'paths' => ['backend/api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
     'allowed_methods' => ['*'],
     // 'https://www.dailyfairdeal.com', 'http://www.dailyfairdeal.com'
