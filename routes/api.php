@@ -76,7 +76,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('size', SizeController::class);
     Route::resource('price', PriceController::class);
 
-    Route::resource('restaurant', RestaurantController::class);
     Route::get('restaurant_types', [RestaurantController::class, 'restaurantTypes']);
     Route::resource('foods', FoodController::class);
     Route::get('/popular-foods', [FoodController::class, 'getPopularFoods']);
@@ -92,6 +91,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Route::get('restaurants/{restaurant}/foods-with-ingredients/{food}', [RestaurantFoodController::class, 'showFoodIngredient']);
     // Route::put('restaurants/{restaurant}/foods-with-ingredients/{food}', [RestaurantFoodController::class, 'updateFoodIngredient']);
     // Route::delete('restaurants/{restaurant}/foods-with-ingredients/{food}', [RestaurantFoodController::class, 'destroyFoodIngredient']);
+
+    // Restaurant Info
+    Route::resource('restaurant', RestaurantController::class);
+
 
     //Restaurant_Food
     Route::controller(RestaurantFoodController::class)->group(function () {

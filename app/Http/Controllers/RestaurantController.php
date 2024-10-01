@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Exceptions\CrudException;
 use Illuminate\Support\Facades\DB;
 use App\Contracts\LocationInterface;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use App\Http\Requests\RestaurantRequest;
 use App\Http\Resources\RestaurantResource;
@@ -36,6 +37,8 @@ class RestaurantController extends Controller
 
     public function store(RestaurantRequest $request)
     {
+        $userId = Auth::id();
+        dd($userId);
         $validatedData = $request->validated();
         $validatedData = $this->dateFormat($validatedData);
         $restaurant = $this->restaurantInterface->store('Restaurant', $validatedData);
