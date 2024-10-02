@@ -20,7 +20,7 @@ return [
     'allowed_methods' => ['*'],
     // 'https://www.dailyfairdeal.com', 'http://www.dailyfairdeal.com'
 
-    'allowed_origins' => ['https://www.dailyfairdeal.com', 'http://www.dailyfairdeal.com', 'http://localhost:5173/'],
+    'allowed_origins' => ['https://www.dailyfairdeal.com', 'http://www.dailyfairdeal.com', 'http://localhost:5173'],
 
     'allowed_origins_patterns' => [],
 
