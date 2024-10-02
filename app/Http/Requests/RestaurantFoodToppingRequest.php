@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RestaurantFoodIngredientRequest extends FormRequest
+class RestaurantFoodToppingRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,9 +26,9 @@ class RestaurantFoodIngredientRequest extends FormRequest
             'food.sub_category_id' => 'nullable|integer',
             'food.name' => 'required|string|max:255',
             'food.quantity' => 'nullable|string|max:255',
-            'ingredients' => 'required|array', // Validation for ingredients
-            'ingredients.*.price' => 'required|string',
-            'ingredients.*.name' => 'required|string|max:255',
+            'toppings' => 'required|array', // Validation for toppings
+            'toppings.*.price' => 'required|string',
+            'toppings.*.name' => 'required|string|max:255',
             'food_restaurant' => 'required|array', // Validation for food_restaurant
             'food_restaurant.*.price' => 'required|string',
             'food_restaurant.*.size_id' => 'required|integer',

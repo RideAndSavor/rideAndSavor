@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class IngredientResource extends JsonResource
+class ToppingResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -25,7 +25,7 @@ class IngredientResource extends JsonResource
     {
         return [
             'version' => '1.0.0',
-            'api_url' => url('http://api.dailyfairdeal.com/api/ingredient'),
+            'api_url' => url('http://api.dailyfairdeal.com/api/topping'),
             'message' => 'Your action is successful'
         ];
     }

@@ -93,10 +93,10 @@ trait AddressTrait
         return $address;
     }
 
-    public function updateFoodIngredient($validateData, $id)
+    public function updateFoodTopping($validateData, $id)
     {
-        if($validateData['ingredient_id']){
-            $ingredient_id = $validateData['ingredient_id'];
+        if($validateData['topping_id']){
+            $topping_id = $validateData['topping_id'];
     }
     $food = $this->foodInterface->findById('Food', $id);
     if (!$food) {
@@ -105,7 +105,7 @@ trait AddressTrait
         ], Config::get('variable.SEVER_NOT_FOUND'));
     }
 
-    unset($validateData['ingredient_id']);
+    unset($validateData['topping_id']);
 
     $updatedFood = $this->foodInterface->update('Food', $validateData ,$id);
     if (!$updatedFood) {
@@ -113,8 +113,8 @@ trait AddressTrait
             'message' => Config::get('variable.FOOD_UPDATE_FAILED')
         ], Config::get('variable.SEVER_ERROR'));
     }
-    if (isset(request()->ingredient_id)) {
-        $food->ingredients()->sync($ingredient_id);
+    if (isset(request()->topping_id)) {
+        $food->toppings()->sync($topping_id);
     }
     return $updatedFood;
    }
@@ -128,7 +128,7 @@ trait AddressTrait
         return $validatedData;
     }
 
-    public function deletedFoodIngredient($id){
+    public function deletedFoodTopping($id){
         $food = $this->foodInterface->findById('Food', $id);
 
         if (!$food) {
@@ -136,7 +136,7 @@ trait AddressTrait
                 'message' => Config::get('variable.FOOD_NOT_FOUND')
             ], Config::get('variable.SEVER_ERROR'));
         }
-        $food->ingredients()->detach();
+        $food->toppings()->detach();
 
         
 

@@ -29,7 +29,7 @@ class FoodResource extends JsonResource
                 ];
             }),
             'sub_category_id ' => $sub_category->name,
-            'ingredients' =>  IngredientResource::collection($this->ingredients),
+            'toppings' =>  ToppingResource::collection($this->toppings),
             'restaurant' => new RestaurantResource($this->restaurants->first())
         ];
     }

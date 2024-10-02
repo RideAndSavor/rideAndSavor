@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Laravel\Scout\Searchable;
 
-class Ingredient extends Model
+class Topping extends Model
 {
     use HasFactory, Searchable;
 
@@ -36,6 +36,6 @@ class Ingredient extends Model
 
     public function foods(): BelongsToMany
     {
-        return $this->belongsToMany(Food::class, 'food_ingredient')->withTimestamps();;
+        return $this->belongsToMany(Food::class, 'food_toppings')->withTimestamps();;
     }
 }

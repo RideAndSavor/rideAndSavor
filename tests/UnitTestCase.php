@@ -8,7 +8,7 @@ use App\Models\Category;
 use App\Models\City;
 use App\Models\Country;
 use App\Models\Food;
-use App\Models\Ingredient;
+use App\Models\Topping;
 use App\Models\Price;
 use App\Models\Restaurant;
 use App\Models\Role;
@@ -38,7 +38,7 @@ abstract class UnitTestCase extends BaseTestCase
     protected Category $category;
     protected SubCategory $subCategory;
     protected Restaurant $restaurant;
-    protected Ingredient $ingredient;
+    protected Topping $topping;
     protected Food $food;
     protected Price $price;
     protected Role $role;
@@ -139,9 +139,9 @@ abstract class UnitTestCase extends BaseTestCase
         ]);
     }
 
-    protected function createIngredient(): Ingredient
+    protected function createTopping(): Topping
     {
-        return Ingredient::factory()->create();
+        return Topping::factory()->create();
     }
 
     protected function createFood(): Food

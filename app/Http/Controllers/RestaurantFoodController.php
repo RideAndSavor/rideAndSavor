@@ -8,7 +8,7 @@ use App\Contracts\LocationInterface;
 use Illuminate\Support\Facades\Config;
 
 use function PHPUnit\Framework\isEmpty;
-use App\Http\Requests\RestaurantFoodIngredientRequest;
+use App\Http\Requests\RestaurantFoodToppingRequest;
 use App\Http\Resources\FoodResource;
 use App\Models\Food;
 use App\Models\FoodRestaurant;
@@ -32,26 +32,26 @@ class RestaurantFoodController extends Controller
         $this->tableName = 'images';
     }
 
-    public function showAllFoodIngredients(Restaurant $restaurant)
+    public function showAllFoodToppings(Restaurant $restaurant)
     {
-        $foods = $restaurant->foods()->with('ingredients')->get();
+        $foods = $restaurant->foods()->with('toppings')->get();
 
         $uniqueFoods = $foods->unique('id'); // Food id is duplicate that why we need to do unique for food_id
 
         return FoodResource::collection($uniqueFoods);
     }
 
-    public function showFoodIngredient(Restaurant $restaurant, Food $food)
+    public function showFoodTopping(Restaurant $restaurant, Food $food)
     {
         $relatedFood = $restaurant->foods()->wherePivot('food_id', $food->id)
             ->first();
         return new FoodResource($relatedFood);
     }
 
-    public function storeFoodWithIngredients(RestaurantFoodIngredientRequest $restaurantFoodIngredientRequest, Restaurant $restaurant)
+    public function storeFoodWithToppings(RestaurantFoodToppingRequest $restaurantFoodToppingRequest, Restaurant $restaurant)
     {
         // Validate the incoming request data
-        $validatedData = $restaurantFoodIngredientRequest->validated();
+        $validatedData = $restaurantFoodToppingRequest->validated();
         DB::beginTransaction(); // Begin the database transaction
 
         try {
@@ -59,19 +59,19 @@ class RestaurantFoodController extends Controller
             $food = $this->foodRestaurantInterface->store('Food', $validatedData['food']);
 
             // If there is an uploaded file, store the image
-            if ($restaurantFoodIngredientRequest->hasFile('upload_url')) {
-                $this->storeImage($restaurantFoodIngredientRequest, $food->id, $this->genre, $this->foodRestaurantInterface, $this->folder_name, $this->tableName);
+            if ($restaurantFoodToppingRequest->hasFile('upload_url')) {
+                $this->storeImage($restaurantFoodToppingRequest, $food->id, $this->genre, $this->foodRestaurantInterface, $this->folder_name, $this->tableName);
             }
 
-            // Store the ingredients and get their IDs
-            $ingredinetIDs = [];
-            foreach ($validatedData['ingredients'] as $ingredinetData) {
-                $ingredinet = $this->foodRestaurantInterface->store('Ingredient', $ingredinetData);
-                $ingredinetIDs[] = $ingredinet->id;
+            // Store the toppings and get their IDs
+            $toppingIDs = [];
+            foreach ($validatedData['toppings'] as $toppingData) {
+                $topping = $this->foodRestaurantInterface->store('Topping', $toppingData);
+                $toppingIDs[] = $topping->id;
             }
 
-            // Attach the ingredients to the food
-            $food->ingredients()->attach($ingredinetIDs);
+            // Attach the toppings to the food
+            $food->toppings()->attach($toppingIDs);
 
             // Attach the food to the restaurant with size and price details
             foreach ($validatedData['food_restaurant'] as $sizeData) {
@@ -87,19 +87,19 @@ class RestaurantFoodController extends Controller
         } catch (\Exception $e) {
             DB::rollBack(); // Rollback the transaction in case of an error
             return response()->json([
-                'message' => Config::get('variable.FAIL_TO_CREATE_FOODINGREDIENT'), // Return an error message
+                'message' => Config::get('variable.FAIL_TO_CREATE_FOODTOPPING'), // Return an error message
                 'error' => $e->getMessage() // Include the exception message for debugging
             ], Config::get('variable.SERVER_ERROR'));
         }
     }
 
 
-    public function updateFoodIngredient(
-        RestaurantFoodIngredientRequest $restaurantFoodIngredientRequest,
+    public function updateFoodTopping(
+        RestaurantFoodToppingRequest $restaurantFoodToppingRequest,
         Restaurant $restaurant,
         Food $food
     ) {
-        $validatedData = $restaurantFoodIngredientRequest->validated();
+        $validatedData = $restaurantFoodToppingRequest->validated();
         DB::beginTransaction();
 
         try {
@@ -114,36 +114,36 @@ class RestaurantFoodController extends Controller
                 ], Config::get('variable.CLIENT_ERROR'));
             }
 
-            if ($restaurantFoodIngredientRequest->hasFile('upload_url')) {
-                $this->updateImage($restaurantFoodIngredientRequest, $imageData, $food->id, $this->genre, $this->foodRestaurantInterface, $this->folder_name, $this->tableName);
+            if ($restaurantFoodToppingRequest->hasFile('upload_url')) {
+                $this->updateImage($restaurantFoodToppingRequest, $imageData, $food->id, $this->genre, $this->foodRestaurantInterface, $this->folder_name, $this->tableName);
             }
 
-            // Update existing ingredients and add new ones
-            $existingIngredients = $food->ingredients;
-            $existingIngredientIDs = $existingIngredients->pluck('id')->toArray();
-            $newIngredientIDs = [];
+            // Update existing toppings and add new ones
+            $existingToppings = $food->toppings;
+            $existingToppingIDs = $existingToppings->pluck('id')->toArray();
+            $newToppingIDs = [];
 
-            foreach ($validatedData['ingredients'] as $index => $ingredientData) {
-                if (isset($existingIngredients[$index])) {
-                    $this->foodRestaurantInterface->update('Ingredient', $ingredientData, $existingIngredients[$index]->id);
-                    $newIngredientIDs[] = $existingIngredients[$index]->id;
+            foreach ($validatedData['toppings'] as $index => $toppingData) {
+                if (isset($existingToppings[$index])) {
+                    $this->foodRestaurantInterface->update('Topping', $toppingData, $existingToppings[$index]->id);
+                    $newToppingIDs[] = $existingToppings[$index]->id;
                 } else {
-                    $newIngredient = $this->foodRestaurantInterface->store('Ingredient', $ingredientData);
-                    $newIngredientIDs[] = $newIngredient->id;
+                    $newTopping = $this->foodRestaurantInterface->store('Topping', $toppingData);
+                    $newToppingIDs[] = $newTopping->id;
                 }
             }
 
-            // Delete any extra ingredients that were removed
-            if (count($existingIngredientIDs) > count($validatedData['ingredients'])) {
-                $extraIngredientIDs = array_slice($existingIngredientIDs, count($validatedData['ingredients']));
-                foreach ($extraIngredientIDs as $extraIngredientID) {
-                    $this->foodRestaurantInterface->delete('Ingredient', $extraIngredientID);
+            // Delete any extra toppings that were removed
+            if (count($existingToppingIDs) > count($validatedData['toppings'])) {
+                $extraToppingIDs = array_slice($existingToppingIDs, count($validatedData['toppings']));
+                foreach ($extraToppingIDs as $extraToppingID) {
+                    $this->foodRestaurantInterface->delete('Topping', $extraToppingID);
                 }
-                $food->ingredients()->detach($extraIngredientIDs);
+                $food->toppings()->detach($extraToppingIDs);
             }
 
-            // Sync the new ingredient IDs
-            $food->ingredients()->sync($newIngredientIDs);
+            // Sync the new toppings IDs
+            $food->toppings()->sync($newToppingIDs);
 
             // Sync the food and restaurant relationships
             $food->restaurants()->sync($this->mapFoodRestaurant($food->id, $restaurant->id, $validatedData['food_restaurant'], $validatedData['discount_item_id']));
@@ -153,27 +153,27 @@ class RestaurantFoodController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
-                'message' => Config::get('variable.FAIL_TO_UPDATE_FOODINGREDIENT'),
+                'message' => Config::get('variable.FAIL_TO_UPDATE_FOODTOPPING'),
                 'error' => $e->getMessage()
             ], Config::get('variable.SEVER_ERROR'));
         }
     }
 
-    public function destroyFoodIngredient(Restaurant $restaurant, Food $food)
+    public function destroyFoodTopping(Restaurant $restaurant, Food $food)
     {
         DB::beginTransaction();
 
         try {
-            // Get all ingredient IDs associated with the food
-            $ingredientIDs = $food->ingredients()->pluck('ingredient_id');
-            // dd($ingredientIDs);
+            // Get all topping IDs associated with the food
+            $toppingIDs = $food->toppings()->pluck('topping_id');
+            // dd($toppingIDs);
             // Use each for side effects
-            $ingredientIDs->each(function ($ingredientID) {
-                $this->foodRestaurantInterface->delete('Ingredient', $ingredientID);
+            $toppingIDs->each(function ($toppingID) {
+                $this->foodRestaurantInterface->delete('topping', $toppingID);
             });
 
-            // Detach the ingredients associated with the food
-            $food->ingredients()->detach();
+            // Detach the toppings associated with the food
+            $food->toppings()->detach();
 
             // Delete the food record
             $this->foodRestaurantInterface->delete('Food', $food->id);
@@ -188,7 +188,7 @@ class RestaurantFoodController extends Controller
 
             DB::commit();
             return response()->json([
-                'message' => Config::get('variable.FOOD AND INGREDIENTS SUCCESSFULLY DELETED')
+                'message' => Config::get('variable.FOOD AND TOPPINGS SUCCESSFULLY DELETED')
             ], Config::get('variable.OK'));
         } catch (\Exception $e) {
             DB::rollBack();
