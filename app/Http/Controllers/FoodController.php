@@ -44,9 +44,9 @@ class FoodController extends Controller
     $tableName= 'images';
     $validateData = $request->validated();
 
-    $ingredientIds = $validateData['ingredient_id'] ?? [];
+    $toppingIds = $validateData['topping_id'] ?? [];
     unset($validateData['upload_url']);
-    unset($validateData['ingredient_id']);
+    unset($validateData['topping_id']);
 
     try {
         $food = $this->foodInterface->store('Food', $validateData);
@@ -55,8 +55,8 @@ class FoodController extends Controller
             $this->storeImage($request,$food->id,$this->genre,$this->foodInterface,$folder_name,$tableName);
         }
 
-        if (!empty($ingredientIds)) {
-            $food->ingredients()->attach($ingredientIds);
+        if (!empty($toppingIds)) {
+            $food->toppings()->attach($toppingIds);
         }
         return new FoodResource($food);
     } catch (\Exception $e) {
@@ -71,7 +71,7 @@ class FoodController extends Controller
         $tableName = 'images';
         $validateData = $request->validated();
 
-        $food = $this->updateFoodIngredient($validateData,$id);
+        $food = $this->updateFoodTopping($validateData,$id);
         if($food instanceof JsonResponse){
             return $food;
         }
@@ -96,7 +96,7 @@ class FoodController extends Controller
 
     public function destroy(String $id)
     {
-        $food = $this->deletedFoodIngredient($id);
+        $food = $this->deletedFoodTopping($id);
         if($food instanceof JsonResponse){
         return $food;
          }

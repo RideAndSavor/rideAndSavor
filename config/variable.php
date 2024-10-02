@@ -75,9 +75,9 @@ return [
     'ADDRESS_DELETED_SUCCESSFULLY' => 'Address deleted successfully',
     'YOUR_STREET_CAN_NOT_CHANGE' => 'Your Street can not change you can create a new address',
 
-    'INGREDIENTS_NOT_FOUND' => 'Ingredients Not Found',
-    'FAIL_TO_DELETED_INGREDIENT' => 'Fail To Deleted Ingredient',
-    'INGREDIENT_DELETED_SUCCESSFULLY' => 'Ingredient Deleted Successfully',
+    'TOPPINGS_NOT_FOUND' => 'Toppings Not Found',
+    'FAIL_TO_DELETED_TOPPING' => 'Fail To Deleted Topping',
+    'TOPPING_DELETED_SUCCESSFULLY' => 'Topping Deleted Successfully',
 
     'PNF' => 'Price Not Found',
     'FTDP' => "Failed to delete Price",
@@ -124,13 +124,13 @@ return [
     'FAILE_TO_DELETED_PERCENTAGE' => 'Fail To Deleted Percentage',
     'PERCENTAGE_DELETED_SUCCESSFULLY' => 'Percentage Deleted Successfully',
 
-    'FAIL_TO_CREATE_FOODINGREDIENT' => 'Failed to create food with ingredients',
+    'FAIL_TO_CREATE_FOODTOPPING' => 'Failed to create food with toppings',
 
     'User address Not Found Found'=>"USER_ADDRESS_NOT_FOUND",
     
-    'FAIL_TO_UPDATE_FOODINGREDIENT' => 'Failed to update food with ingredients',
-    'FOOD AND INGREDIENTS SUCCESSFULLY DELETED' => 'Food and associated ingredients successfully deleted',
-    'FAIL TO DELETE FOOD AND INREDIENTS' => 'Failed to delete food and ingredients',
+    'FAIL_TO_UPDATE_FOODTOPPING' => 'Failed to update food with toppings',
+    'FOOD AND TOPPINGS SUCCESSFULLY DELETED' => 'Food and associated toppings successfully deleted',
+    'FAIL TO DELETE FOOD AND INREDIENTS' => 'Failed to delete food and toppings',
 
     'IMAGE_DATA_NOT_FOUND' => 'Image Data Not Found'
 

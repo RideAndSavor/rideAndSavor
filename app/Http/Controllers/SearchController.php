@@ -8,7 +8,6 @@ use App\Models\Category;
 use App\Models\SubCategory;
 use App\Models\Food;
 use App\Models\DiscountItem;
-use App\Models\Ingredient;
 use App\Models\Restaurant;
 use App\Models\Country;
 use App\Models\State;
@@ -17,6 +16,7 @@ use App\Models\Township;
 use App\Models\Ward;
 use App\Models\Street;
 use App\Models\Address;
+use App\Models\Topping;
 
 class SearchController extends Controller
 {
@@ -47,7 +47,7 @@ class SearchController extends Controller
             'sub_categories' => [SubCategory::class, ['name']],
             'foods' => [Food::class, ['name']], 
             'discount_items' => [DiscountItem::class, ['name']],
-            'ingredients' => [Ingredient::class, ['name']],
+            'toppings' => [Topping::class, ['name']],
             'restaurants' => [Restaurant::class, ['name']],
             'countries' => [Country::class, ['name']],
             'states' => [State::class, ['name']],

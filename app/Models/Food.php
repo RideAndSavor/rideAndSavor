@@ -51,9 +51,9 @@ class Food extends Model
             ->withTimestamps();
     }
 
-    public function ingredients(): BelongsToMany
+    public function toppings(): BelongsToMany
     {
-        return $this->belongsToMany(Ingredient::class, 'food_ingredient')->withTimestamps();
+        return $this->belongsToMany(Topping::class, 'food_toppings')->withTimestamps();
     }
 
     public function image(): HasMany
