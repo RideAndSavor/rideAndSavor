@@ -22,7 +22,6 @@ use App\Http\Controllers\StatusControlller;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\TownshipController;
-use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\PercentageController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\TaxiDriverController;
@@ -36,6 +35,7 @@ use App\Http\Controllers\RestaurantFoodController;
 use App\Http\Controllers\PaymentProviderController;
 use App\Http\Controllers\RestaurantAddressController;
 use App\Http\Controllers\CalculateDeliveryFeesController;
+use App\Http\Controllers\ToppingController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -62,7 +62,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('ward', WardController::class);
     Route::resource('street', StreetController::class);
     Route::resource('address', AddressController::class);
-    Route::resource('ingredients', IngredientController::class);
+    Route::resource('topping', ToppingController::class);
     Route::resource('category', CategoryController::class);
     Route::resource('subcategory', SubCategoryController::class);
     Route::resource('foods', FoodController::class);
@@ -92,11 +92,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     //Restaurant_Food
     Route::controller(RestaurantFoodController::class)->group(function () {
-        Route::post('restaurants/{restaurant}/foods-with-ingredients', 'storeFoodWithIngredients');
-        Route::get('restaurants/{restaurant}/foods-with-ingredients_all', 'showAllFoodIngredients');
-        Route::get('restaurants/{restaurant}/foods-with-ingredients/{food}', 'showFoodIngredient');
-        Route::put('restaurants/{restaurant}/foods-with-ingredients/{food}', 'updateFoodIngredient');
-        Route::delete('restaurants/{restaurant}/foods-with-ingredients/{food}', 'destroyFoodIngredient');
+        Route::post('restaurants/{restaurant}/foods-with-toppings', 'storeFoodWithToppings');
+        Route::get('restaurants/{restaurant}/foods-with-toppings_all', 'showAllFoodToppings');
+        Route::get('restaurants/{restaurant}/foods-with-toppings/{food}', 'showFoodTopping');
+        Route::put('restaurants/{restaurant}/foods-with-toppings/{food}', 'updateFoodTopping');
+        Route::delete('restaurants/{restaurant}/foods-with-toppings/{food}', 'destroyFoodTopping');
     });
 
     Route::resource('order', OrderController::class);
