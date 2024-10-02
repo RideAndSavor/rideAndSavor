@@ -36,10 +36,9 @@ class RestaurantController extends Controller
     }
 
     public function store(RestaurantRequest $request)
-    {
-        $userId = Auth::id();
-        dd($userId);
+    { 
         $validatedData = $request->validated();
+        $validatedData['user_id'] = Auth::id();
         $validatedData = $this->dateFormat($validatedData);
         $restaurant = $this->restaurantInterface->store('Restaurant', $validatedData);
         if (!$restaurant) {

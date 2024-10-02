@@ -19,6 +19,7 @@ class Restaurant extends Model
         $arr = [
             'address_id' => IntegerField::new(),
             'restaurant_type_id' => IntegerField::new(),
+            'user_id' => IntegerField::new(),
             'name' => StringField::new(),
             'open_time' => DateTimeField::new(),
             'close_time' => DateTimeField::new(),
@@ -41,6 +42,11 @@ class Restaurant extends Model
     public function address(): BelongsTo
     {
         return $this->belongsTo(Address::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function foods()
