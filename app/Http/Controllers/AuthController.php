@@ -28,12 +28,12 @@ class AuthController extends Controller
         $validatedUserData['password'] = Hash::make($validatedUserData['password']);
 
         // Check if the email already exists
-        $userEmail = User::where('email', $request->email)->first();
-        if ($userEmail) {
-            return response()->json([
-                'message' => Config::get('variable.USER_EMAIL_ALREADY_EXIT')
-            ], 409); // 409 Conflict
-        }
+        // $userEmail = User::where('email', $request->email)->first();
+        // if ($userEmail) {
+        //     return response()->json([
+        //         'message' => Config::get('variable.USER_EMAIL_ALREADY_EXIT')
+        //     ], 409); // 409 Conflict
+        // }
 
         // Assign the role based on the request
         switch (strtolower($request->role)) {
@@ -81,6 +81,7 @@ class AuthController extends Controller
             $user = User::find(auth()->user()->id);
             $token = $user->createToken('rideandsavor')->plainTextToken;
             return response()->json([
+                'name' => $user->name,
                 'email' => $user->email,
                 'message' => Config::get('variable.LOGIN_SUCCESSFULLY'),
                 'access_token' => $token,
@@ -92,7 +93,7 @@ class AuthController extends Controller
         ], Config::get('variable.CLIENT_ERROR'));
     }
 
-    public function logout(Request $request)
+    public function logout()
     {
         $user = User::find(auth()->user()->id);
         if (!$user) {

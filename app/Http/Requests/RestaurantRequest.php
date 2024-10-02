@@ -24,7 +24,6 @@ class RestaurantRequest extends FormRequest
 
         // 'address_id' => 'required|integer',
         return [
-            'address_id' => 'required|integer',
             'restaurant_type_id' => 'required|integer',
             'name' => 'required|string|max:255',
             'open_time' => 'required|date_format:g:i A', // 12-hour format with AM/PM
