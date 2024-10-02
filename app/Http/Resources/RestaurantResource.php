@@ -32,7 +32,8 @@ class RestaurantResource extends JsonResource
             'City_Name' => $address->street->ward->township->city->name,
             'Country_Name' => $address->street->ward->township->city->state->country->name,
             'Latitude' => $address->latitude,
-            'Longitude' => $address->longitude
+            'Longitude' => $address->longitude,
+            'user' => new AuthResource($this->whenLoaded('user')), 
         ];
     }
 
