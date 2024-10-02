@@ -14,6 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // $middleware->validateCsrfTokens(except: [
+        //     'api/*', // <-- Exclude your API route
+        // ]);
         $middleware->alias([
             'admin'=>\App\Http\Middleware\AdminMiddleware::class,
             'shop_owner'=>\App\Http\Middleware\ShopOwnerMiddleware::class,

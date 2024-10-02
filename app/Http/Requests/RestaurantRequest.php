@@ -22,6 +22,7 @@ class RestaurantRequest extends FormRequest
     public function rules(): array
     {
 
+        // 'address_id' => 'required|integer',
         return [
             'address_id' => 'required|integer',
             'restaurant_type_id' => 'required|integer',

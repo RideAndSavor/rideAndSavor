@@ -36,12 +36,15 @@ use App\Http\Controllers\PaymentProviderController;
 use App\Http\Controllers\RestaurantAddressController;
 use App\Http\Controllers\CalculateDeliveryFeesController;
 use App\Http\Controllers\ToppingController;
+use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::post('register', [AuthController::class, 'register'])->name('register');
+Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
+
+Route::post('signup', [AuthController::class, 'register'])->name('register');
 Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::resource('paymentmodes', PaymentProviderController::class);
@@ -73,7 +76,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('size', SizeController::class);
     Route::resource('price', PriceController::class);
 
-    Route::resource('restaurant', RestaurantController::class);
     Route::get('restaurant_types', [RestaurantController::class, 'restaurantTypes']);
     Route::resource('foods', FoodController::class);
     Route::get('/popular-foods', [FoodController::class, 'getPopularFoods']);
@@ -89,6 +91,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Route::get('restaurants/{restaurant}/foods-with-ingredients/{food}', [RestaurantFoodController::class, 'showFoodIngredient']);
     // Route::put('restaurants/{restaurant}/foods-with-ingredients/{food}', [RestaurantFoodController::class, 'updateFoodIngredient']);
     // Route::delete('restaurants/{restaurant}/foods-with-ingredients/{food}', [RestaurantFoodController::class, 'destroyFoodIngredient']);
+
+    // Restaurant Info
+    Route::resource('restaurant', RestaurantController::class);
+
 
     //Restaurant_Food
     Route::controller(RestaurantFoodController::class)->group(function () {

@@ -21,14 +21,21 @@ class AuthController extends Controller
 
     public function register(AuthRequest $request)
     {
+        // Validate the request data, including password confirmation
         $validatedUserData = $request->validated();
-        $validatedUserData['password'] = Hash::make($request->password);
-        $userEamil = User::where('email', $request->email)->first();
-        if ($userEamil) {
+
+        // Hash the password
+        $validatedUserData['password'] = Hash::make($validatedUserData['password']);
+
+        // Check if the email already exists
+        $userEmail = User::where('email', $request->email)->first();
+        if ($userEmail) {
             return response()->json([
                 'message' => Config::get('variable.USER_EMAIL_ALREADY_EXIT')
-            ]);
+            ], 409); // 409 Conflict
         }
+
+        // Assign the role based on the request
         switch (strtolower($request->role)) {
             case Config::get('variable.ADMIN'):
                 $validatedUserData['role'] = Config::get('variable.TWO');
@@ -46,12 +53,23 @@ class AuthController extends Controller
                 $validatedUserData['role'] = Config::get('variable.ONE');
                 break;
         }
+
+        // Store the user data
         $user = $this->userInterface->store('User', $validatedUserData);
 
-        if (request()->expectsJson()) {
-            return new AuthResource($user);
+        // Generate a token for the user
+        $token = $user->createToken('rideandsavor')->plainTextToken;
+
+        // Return the user data and token in the response
+        if ($request->expectsJson()) {
+            return response()->json([
+                'user' => new AuthResource($user),
+                'token' => $token
+            ], 201); // 201 Created
         }
     }
+
+    
 
     public function login(Request $request)
     {
