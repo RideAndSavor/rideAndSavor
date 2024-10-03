@@ -95,6 +95,10 @@ return [
     'ODNF' => 'Order Detail Not Found',
     'ODDS' => 'Order Detail Deleted Successfully',
 
+    "TASTENF" => 'Taste Not Found',
+    "FDTASTE" => 'Failed to delete Taste',
+    "TASTEDS" => 'Taste Delete Successfully',
+
     "SZNF" => 'Size Not Found',
     'FTDSZ' => "Failed to delete Size",
     'SZDS' => "Size Deleted Successfully",
