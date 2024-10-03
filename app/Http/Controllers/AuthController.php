@@ -81,8 +81,10 @@ class AuthController extends Controller
             $user = User::find(auth()->user()->id);
             $token = $user->createToken('rideandsavor')->plainTextToken;
             return response()->json([
+                'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'user_role' => $user->roleInfo,
                 'message' => Config::get('variable.LOGIN_SUCCESSFULLY'),
                 'access_token' => $token,
                 'token_type' => 'Bearer',

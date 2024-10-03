@@ -30,7 +30,7 @@ class AuthResource extends JsonResource
     {
         return [
             'version' => '1.0.0',
-            'api_url' => url('http://api.dailyfairdeal.com/api/register'),
+            'api_url' => url('http://api.dailyfairdeal.com/api/signup'),
             'message' => "You are action is successful!"
         ];
     }
