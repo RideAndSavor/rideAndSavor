@@ -78,8 +78,8 @@ class User extends Authenticatable
         return  $arr[$column];
     }
 
-    public function role():BelongsTo{
-        return $this->belongsTo(Role::class);
+    public function roleInfo():BelongsTo{
+        return $this->belongsTo(Role::class, 'role');
     }
 
     public function addresses()
