@@ -50,10 +50,15 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::resource('paymentmodes', PaymentProviderController::class);
 
 
-// Route::middleware(['auth:sanctum','admin','shop_owner'])->group(function () {
+Route::middleware(['auth:sanctum','admin'])->group(function () { 
+
+    Route::post('/user/change-user-role', [UserController::class, 'changeUserRole']); 
+
+});
 Route::middleware(['auth:sanctum'])->group(function () {
     
-    Route::post('/user/change-role-to-driver', [UserController::class, 'changeRoleToDriver']); 
+    
+    // Route::post('/user/change-role-to-driver', [UserController::class, 'changeRoleToDriver']); 
     Route::post('/taxi-drivers/update-location', [TaxiDriverController::class, 'updateLocation'])
       ->middleware('throttle:60,1'); // Limit to 60 requests per minute
     Route::post('/taxi-drivers/nearby', [TaxiDriverController::class, 'getNearbyDrivers']);
