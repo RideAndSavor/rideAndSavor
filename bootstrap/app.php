@@ -20,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin'=>\App\Http\Middleware\AdminMiddleware::class,
             'shop_owner'=>\App\Http\Middleware\ShopOwnerMiddleware::class,
+            'recaptcha' => \App\Http\Middleware\VerifyRecaptcha::class,
     ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
