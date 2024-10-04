@@ -37,6 +37,9 @@ use App\Http\Controllers\RestaurantFoodController;
 use App\Http\Controllers\PaymentProviderController;
 use App\Http\Controllers\RestaurantAddressController;
 use App\Http\Controllers\CalculateDeliveryFeesController;
+
+use App\Http\Controllers\TasteController;
+use App\Http\Controllers\ToppingController; 
 use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 
 Route::get('/user', function (Request $request) {
@@ -86,6 +89,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('percentage', PercentageController::class);
     Route::resource('size', SizeController::class);
     Route::resource('price', PriceController::class);
+    Route::resource('taste', TasteController::class);
 
     Route::get('restaurant_types', [RestaurantController::class, 'restaurantTypes']);
     Route::resource('foods', FoodController::class);
