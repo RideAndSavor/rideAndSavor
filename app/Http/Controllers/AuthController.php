@@ -63,8 +63,8 @@ class AuthController extends Controller
         // Return the user data and token in the response
         if ($request->expectsJson()) {
             return response()->json([
-                'user' => new AuthResource($user),
-                'token' => $token
+                 new AuthResource($user),
+                'access_token' => $token
             ], 201); // 201 Created
         }
     }

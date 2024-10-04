@@ -19,6 +19,7 @@ use App\Http\Controllers\StreetController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\StatusControlller;
+use App\Http\Controllers\ToppingController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\TownshipController;
@@ -26,6 +27,7 @@ use App\Http\Controllers\PercentageController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\TaxiDriverController;
 use App\Http\Controllers\OrderDetailController;
+use App\Http\Controllers\SocialLoginController;
 use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\DeliverPriceController;
 use App\Http\Controllers\DiscountItemController;
@@ -35,7 +37,6 @@ use App\Http\Controllers\RestaurantFoodController;
 use App\Http\Controllers\PaymentProviderController;
 use App\Http\Controllers\RestaurantAddressController;
 use App\Http\Controllers\CalculateDeliveryFeesController;
-use App\Http\Controllers\ToppingController;
 use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 
 Route::get('/user', function (Request $request) {
@@ -43,6 +44,11 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
+
+// Social Login 
+
+Route::get('/auth/{provider}', [SocialLoginController::class, 'redirectToProvider']);
+Route::get('/auth/{provider}/callback', [SocialLoginController::class, 'handleProviderCallback']);
 
 Route::post('signup', [AuthController::class, 'register'])->name('register');
 Route::post('login', [AuthController::class, 'login'])->name('login');
