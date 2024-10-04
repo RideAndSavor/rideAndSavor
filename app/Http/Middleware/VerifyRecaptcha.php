@@ -27,7 +27,6 @@ class VerifyRecaptcha
             'form_params' => [
                 'secret' => env('RECAPTCHA_SECRET_KEY'),
                 'response' => $recaptchaToken,
-                'remoteip' => $request->ip(),
             ],
         ]);
 
