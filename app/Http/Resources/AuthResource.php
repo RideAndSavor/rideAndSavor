@@ -23,7 +23,7 @@ class AuthResource extends JsonResource
             'gender' => $this->gender,
             'age' => $this->age,
             'user_role' => $this->roleInfo,
-            'access_token' => $this->token,
+            'access_token' => $this->createToken('rideandsavor')->plainTextToken,
         ];
     }
 
