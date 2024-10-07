@@ -19,7 +19,7 @@ class VerifyRecaptcha
     {
         $recaptchaToken = $request->input('captchaToken');
 
-        Log::info('Recaptcha Token: ', $recaptchaToken);
+        Log::info($recaptchaToken);
         if (!$recaptchaToken) {
             return response()->json(['error' => 'reCAPTCHA token missing'], 400);
         }
