@@ -1,10 +1,10 @@
 <?php
 
+use Illuminate\Http\Request;
 use App\Exceptions\CustomException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -18,10 +18,14 @@ return Application::configure(basePath: dirname(__DIR__))
         //     'api/*', // <-- Exclude your API route
         // ]);
         $middleware->alias([
-            'admin'=>\App\Http\Middleware\AdminMiddleware::class,
-            'shop_owner'=>\App\Http\Middleware\ShopOwnerMiddleware::class,
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'shop_owner' => \App\Http\Middleware\ShopOwnerMiddleware::class,
             'recaptcha' => \App\Http\Middleware\VerifyRecaptcha::class,
-    ]);
+        ]);
+
+        $middleware->api([
+            \Illuminate\Session\Middleware\StartSession::class
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (CustomException $e, Request $request) {
@@ -37,7 +41,7 @@ return Application::configure(basePath: dirname(__DIR__))
         //             'error' => $e->getMessage(),
         //         ], $e->getCode());
         //     }
-
+    
         //     return $request->expectsJson();
         // });
     })->create();

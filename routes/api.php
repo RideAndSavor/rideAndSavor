@@ -13,12 +13,14 @@ use App\Http\Controllers\WardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PriceController;
 use App\Http\Controllers\StateController;
+use App\Http\Controllers\TasteController;
 use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\StreetController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\StatusControlller;
+use App\Http\Controllers\ToppingController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\TownshipController;
@@ -34,11 +36,9 @@ use App\Http\Controllers\DeliveryPriceController;
 use App\Http\Controllers\FoodRestaurantController;
 use App\Http\Controllers\RestaurantFoodController;
 use App\Http\Controllers\PaymentProviderController;
+
 use App\Http\Controllers\RestaurantAddressController;
 use App\Http\Controllers\CalculateDeliveryFeesController;
-
-use App\Http\Controllers\TasteController;
-use App\Http\Controllers\ToppingController; 
 use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 
 Route::get('/user', function (Request $request) {
@@ -48,9 +48,11 @@ Route::get('/user', function (Request $request) {
 Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 
 // Social Login 
-
-Route::get('/auth/{provider}', [SocialLoginController::class, 'redirectToProvider']);
-Route::get('/auth/{provider}/callback', [SocialLoginController::class, 'handleProviderCallback']);
+Route::get('/dashboard', function () {
+    return "dashboard";
+})->name('dashboard');
+Route::get('/login/google', [SocialLoginController::class, 'redirectToProvider'])->name('login.google');
+Route::get('/login/google/callback-url', [SocialLoginController::class, 'handleProviderCallback']);
 
 Route::post('signup', [AuthController::class, 'register'])->name('register')->middleware('recaptcha');
 Route::post('login', [AuthController::class, 'login'])->name('login');
@@ -58,17 +60,17 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::resource('paymentmodes', PaymentProviderController::class);
 
 
-Route::middleware(['auth:sanctum','admin'])->group(function () { 
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 
-    Route::post('/user/change-user-role', [UserController::class, 'changeUserRole']); 
+    Route::post('/user/change-user-role', [UserController::class, 'changeUserRole']);
 
 });
 Route::middleware(['auth:sanctum'])->group(function () {
-    
-    
+
+
     // Route::post('/user/change-role-to-driver', [UserController::class, 'changeRoleToDriver']); 
     Route::post('/taxi-drivers/update-location', [TaxiDriverController::class, 'updateLocation'])
-      ->middleware('throttle:60,1'); // Limit to 60 requests per minute
+        ->middleware('throttle:60,1'); // Limit to 60 requests per minute
     Route::post('/taxi-drivers/nearby', [TaxiDriverController::class, 'getNearbyDrivers']);
 
     Route::resource('country', CountryController::class);
@@ -132,5 +134,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/discounted-foods', [DiscountController::class, 'getDiscountFoods']);
 
     //recent_order
-   Route::get('users/{userId}/recent-orders',[OrderController::class,'getRecentOrder']);
+    Route::get('users/{userId}/recent-orders', [OrderController::class, 'getRecentOrder']);
 });
