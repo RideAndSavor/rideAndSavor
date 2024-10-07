@@ -3,8 +3,9 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
 use GuzzleHttp\Client;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class VerifyRecaptcha
@@ -31,6 +32,7 @@ class VerifyRecaptcha
         ]);
 
         $body = json_decode((string)$response->getBody());
+        Log::info('reCAPTCHA Response: ', (array)$body);
 
         if (!$body->success) {
             return response()->json(['error' => 'reCAPTCHA verification failed'], 400);
