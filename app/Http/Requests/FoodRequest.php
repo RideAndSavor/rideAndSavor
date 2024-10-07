@@ -25,7 +25,7 @@ class FoodRequest extends FormRequest
             'topping_id' => 'required|array',
             'topping_id.*' => 'nullable|integer|exists:toppings,id',
             'name'=>'required|string',
-            'quantity'=>'required|string',
+            // 'quantity'=>'required|string',
             'sub_category_id'=>'required|integer',
             'upload_url'=>'sometimes|required',
             'upload_url.*' => 'mimes:jpeg,png,jpg,gif,svg|max:2048' ,

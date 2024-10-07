@@ -21,7 +21,7 @@ class Food extends Model
     {
         $arr = [
             'name' => StringField::new(),
-            'quantity' => StringField::new(),
+            // 'quantity' => StringField::new(),
             'sub_category_id' => IntegerField::new(),
         ];
         if (!array_key_exists($column, $arr)) {

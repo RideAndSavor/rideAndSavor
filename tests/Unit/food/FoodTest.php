@@ -29,12 +29,11 @@ class FoodTest extends UnitTestCase
     {
         $food = [
             'name' => '',
-            'quantity' => '',
             'sub_category_id' => ''
         ];
         $response = $this->actingAs($this->user)->postJson(route('foods.store'), $food)
             ->assertStatus(422);
-        $response->assertJsonValidationErrors(['name', 'quantity', 'sub_category_id']);
+        $response->assertJsonValidationErrors(['name', 'sub_category_id']);
     }
 
     public function test_api_all_foods(): void
@@ -52,7 +51,7 @@ class FoodTest extends UnitTestCase
     {
         $food = [
             'name' => $this->food->name,
-            'quantity' => $this->food->quantity,
+            // 'quantity' => $this->food->quantity,
             'sub_category_id' => $this->subCategory->id
         ];
 
@@ -69,7 +68,7 @@ class FoodTest extends UnitTestCase
     {
         $food = [
             'name' => 'Update Food',
-            'quantity' => $this->food->quantity,
+            // 'quantity' => $this->food->quantity,
             'sub_category_id' => $this->food->sub_category_id
         ];
         

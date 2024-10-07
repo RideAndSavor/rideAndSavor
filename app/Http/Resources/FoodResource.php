@@ -20,7 +20,7 @@ class FoodResource extends JsonResource
         $foodDatas = $this->restaurants()->wherePivot('food_id', $this->id)->get();
         return [
             'name' => $this->name,
-            'quantity' => $this->quantity,
+            // 'quantity' => $this->quantity,
             'sizes_prcies' => $foodDatas->map(function ($foodData) {
                 $sizes_data = Size::find($foodData->pivot->size_id);
                 return [

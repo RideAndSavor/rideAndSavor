@@ -32,6 +32,7 @@ class RestaurantFoodToppingRequest extends FormRequest
             'food_restaurant' => 'required|array', // Validation for food_restaurant
             'food_restaurant.*.price' => 'required|string',
             'food_restaurant.*.size_id' => 'required|integer',
+            'food_restaurant.*.taste_id' => 'nullable|integer',
             'discount_item_id' => 'nullable|integer',
             'upload_url.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg', // uploading image for food
         ];
