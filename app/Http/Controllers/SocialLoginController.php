@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Response;
 use Exception;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\ResponseFactory;
 use Laravel\Socialite\Facades\Socialite;
 
 class SocialLoginController extends Controller
@@ -18,7 +21,7 @@ class SocialLoginController extends Controller
     }
 
     // Handle the callback from Google 
-    public function handleGoogleCallback()
+    public function handleGoogleCallback(): JsonResponse|Response|ResponseFactory
     {
         try {
             $user = Socialite::driver('google')->stateless()->user();
@@ -33,14 +36,13 @@ class SocialLoginController extends Controller
 
             Auth::login($user_exist);
             return response()->json([
-                'status' => 200,
                 'token' => $user->token,
                 'name' => $user_exist->name,
                 'email' => $user_exist->email,
                 'role' => $user->role == 0 ? 'user' : $user->role,
-            ]);
+            ], 200);
         } catch (Exception $exception) {
-            throw new Exception($exception->getMessage(), $exception->getCode());
+            return response($exception->getMessage(), $exception->getCode());
 
         }
 
@@ -53,7 +55,7 @@ class SocialLoginController extends Controller
     }
 
     // Handle the callback from Facebook 
-    public function handleFacebookCallback()
+    public function handleFacebookCallback(): JsonResponse|Response|ResponseFactory
     {
         try {
             $user = Socialite::driver('facebook')->stateless()->user();
@@ -68,14 +70,13 @@ class SocialLoginController extends Controller
 
             Auth::login($user_exist);
             return response()->json([
-                'status' => 200,
                 'token' => $user->token,
                 'name' => $user_exist->name,
                 'email' => $user_exist->email,
                 'role' => $user->role == 0 ? 'user' : $user->role,
-            ]);
+            ], 200);
         } catch (Exception $exception) {
-            throw new Exception($exception->getMessage(), $exception->getCode());
+            return response($exception->getMessage(), $exception->getCode());
 
         }
 
