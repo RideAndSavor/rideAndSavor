@@ -78,6 +78,7 @@ class RestaurantFoodController extends Controller
                 $restaurant->foods()->attach($food->id, [
                     'price' => $sizeData['price'],
                     'size_id' => $sizeData['size_id'],
+                    'taste_id' => $validatedData['taste_id'],
                     'discount_item_id' => $validatedData['discount_item_id'] ?? null,
                 ]);
             }
@@ -209,6 +210,8 @@ class RestaurantFoodController extends Controller
                 'size_id' => $food['size_id'],
                 'price' => $food['price'],
                 'discount_item_id' => $discount_item_id ?? null,
+                'description' => $food['description'],
+                'taste_id' => $taste_id ?? null
             ];
         })->toArray();
     }

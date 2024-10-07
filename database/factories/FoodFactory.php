@@ -18,7 +18,7 @@ class FoodFactory extends Factory
     {
         return [
             'name' => fake()->word(),
-            'quantity' => "3",
+            // 'quantity' => "3",
         ];
     }
 }
