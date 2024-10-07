@@ -26,7 +26,6 @@ class SocialLoginController extends Controller
                 ['email' => $socialUser->getEmail()],
                 [
                     'name' => $socialUser->getName(),
-                    'avatar' => $socialUser->getAvatar(),
                     $provider . '_id' => $socialUser->getId(),
                 ]
             );
