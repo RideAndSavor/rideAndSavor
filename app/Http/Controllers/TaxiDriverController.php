@@ -20,7 +20,7 @@ class TaxiDriverController extends Controller
         event(new trackingDriverCurrentLocation($validatedData));
     
         return response()->json([
-            'message' => 'Location updated successfully',
+            'message' => "Driver's Current Location updated successfully",
         ]);
     
     }
