@@ -14,8 +14,7 @@ jobs:
     
       - name: Compile CSS and Javascript
         run: |
-          npm install
-          npm run build      
+          npm install 
       
       - name: Configure PHP 8.2.0
         uses: shivammathur/setup-php@master
