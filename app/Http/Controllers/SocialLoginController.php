@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use Response;
 use Exception;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\ResponseFactory;
@@ -21,26 +20,28 @@ class SocialLoginController extends Controller
     }
 
     // Handle the callback from Google 
-    public function handleGoogleCallback(): JsonResponse|Response|ResponseFactory
+    public function handleGoogleCallback(): Response|ResponseFactory|UserResource
     {
         try {
             $user = Socialite::driver('google')->stateless()->user();
             $user_exist = User::where('email', '=', $user->email)->first();
             if (!$user_exist) {
-                $new_user = new User();
-                $new_user->name = $user->name;
-                $new_user->email = $user->email;
-                $new_user->google_id = $user->id;
-                $new_user->save();
+                $user_exist = new User();
+                $user_exist->name = $user->name;
+                $user_exist->email = $user->email;
+                $user_exist->google_id = $user->id;
+                $user_exist->save();
             }
 
             Auth::login($user_exist);
-            return response()->json([
-                'token' => $user->token,
-                'name' => $user_exist->name,
-                'email' => $user_exist->email,
-                'role' => $user->role == 0 ? 'user' : $user->role,
-            ], 200);
+            array_merge($user_exist, ['token' => $user->token]);
+            return new UserResource($user_exist);
+            // return response()->json([
+            //     'token' => $user->token,
+            //     'name' => $user_exist->name,
+            //     'email' => $user_exist->email,
+            //     'role' => $user->role == 0 ? 'user' : $user->role,
+            // ], 200);
         } catch (Exception $exception) {
             return response($exception->getMessage(), $exception->getCode());
 
@@ -55,26 +56,28 @@ class SocialLoginController extends Controller
     }
 
     // Handle the callback from Facebook 
-    public function handleFacebookCallback(): JsonResponse|Response|ResponseFactory
+    public function handleFacebookCallback(): Response|ResponseFactory|UserResource
     {
         try {
             $user = Socialite::driver('facebook')->stateless()->user();
             $user_exist = User::where('email', '=', $user->email)->first();
             if (!$user_exist) {
-                $new_user = new User();
-                $new_user->name = $user->name;
-                $new_user->email = $user->email;
-                $new_user->facebook_id = $user->id;
-                $new_user->save();
+                $user_exist = new User();
+                $user_exist->name = $user->name;
+                $user_exist->email = $user->email;
+                $user_exist->facebook_id = $user->id;
+                $user_exist->save();
             }
 
             Auth::login($user_exist);
-            return response()->json([
-                'token' => $user->token,
-                'name' => $user_exist->name,
-                'email' => $user_exist->email,
-                'role' => $user->role == 0 ? 'user' : $user->role,
-            ], 200);
+            array_merge($user_exist, ['token' => $user->token]);
+            return new UserResource($user_exist);
+            // return response()->json([
+            //     'token' => $user->token,
+            //     'name' => $user_exist->name,
+            //     'email' => $user_exist->email,
+            //     'role' => $user->role == 0 ? 'user' : $user->role,
+            // ], 200);
         } catch (Exception $exception) {
             return response($exception->getMessage(), $exception->getCode());
 
