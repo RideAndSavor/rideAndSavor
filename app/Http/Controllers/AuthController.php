@@ -58,14 +58,12 @@ class AuthController extends Controller
         $user = $this->userInterface->store('User', $validatedUserData);
 
         // Generate a token for the user
-        $token = $user->createToken('rideandsavor')->plainTextToken;
+        // $token = $user->createToken('rideandsavor')->plainTextToken;
 
         // Return the user data and token in the response
         if ($request->expectsJson()) {
-            return response()->json([
-                'user' => new AuthResource($user),
-                'token' => $token
-            ], 201); // 201 Created
+            return response()->json(
+                 new AuthResource($user)); // 201 Created
         }
     }
 
