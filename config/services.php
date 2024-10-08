@@ -38,7 +38,7 @@ return [
     'facebook' => [
         'client_id' => env('FACEBOOK_CLIENT_ID'),
         'client_secret' => env('FACEBOOK_CLIENT_SECRET'),
-        'redirect' => 'https://www.dailyfairdeal.com/login/facebook/callback-url',
+        'redirect' => 'https://www.dailyfairdeal.com/api/login/facebook/callback-url',
     ],
 
 ];

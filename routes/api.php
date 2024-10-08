@@ -3,6 +3,7 @@
 use App\Models\DiscountItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\OrderItAgain;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\FoodController;
@@ -121,6 +122,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('delivery_price', DeliveryPriceController::class);
     Route::resource('orderDetail', OrderDetailController::class);
 
+    Route::get('/order-it-again', OrderItAgain::class)->name('order-it-again');
 
     //Calculate_Delivery_Fees
     Route::post('/calculate-delivery-fee', [CalculateDeliveryFeesController::class, 'calculateDeliveryFee']);
