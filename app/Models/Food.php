@@ -17,6 +17,10 @@ class Food extends Model
 {
     use HasFactory, Searchable;
 
+    protected $fillable = [
+        'name', 'sub_category_id'
+    ];
+    
     public function saveableFields($column): object
     {
         $arr = [
