@@ -110,7 +110,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Restaurant Info
     Route::resource('restaurant', RestaurantController::class);
-
+    Route::resource('restaurant_food_topping', RestaurantFoodController::class);
 
     //Restaurant_Food
     Route::controller(RestaurantFoodController::class)->group(function () {

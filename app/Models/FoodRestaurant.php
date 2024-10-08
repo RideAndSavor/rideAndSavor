@@ -15,7 +15,7 @@ class FoodRestaurant extends Pivot
     protected $table = 'food_restaurant';
 
     protected $fillable = [
-        'restaurant_id', 'food_id', 'price', 'size_id', 'discount_item_id'
+        'restaurant_id', 'food_id', 'price', 'size_id', 'discount_item_id', 'description', 'taste_id'
     ];
 
     public function orderDetalis() : HasMany {

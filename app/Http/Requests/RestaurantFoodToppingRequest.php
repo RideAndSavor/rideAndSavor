@@ -24,16 +24,17 @@ class RestaurantFoodToppingRequest extends FormRequest
         return [
             'food' => 'required|array', // Validation for food
             'food.sub_category_id' => 'nullable|integer',
-            'food.name' => 'required|string|max:255',
-            'food.quantity' => 'nullable|string|max:255',
-            'toppings' => 'required|array', // Validation for toppings
-            'toppings.*.price' => 'required|string',
-            'toppings.*.name' => 'required|string|max:255',
+            'food.food_name' => 'required|string|max:255',
+            'toppings' => 'nullable|array', // Allow toppings to be null or an array
+            'toppings.*.topping_price' => 'nullable|string',
+            'toppings.*.topping_name' => 'nullable|string|max:255',
             'food_restaurant' => 'required|array', // Validation for food_restaurant
-            'food_restaurant.*.price' => 'required|string',
-            'food_restaurant.*.size_id' => 'required|integer',
-            'food_restaurant.*.taste_id' => 'nullable|integer',
-            'discount_item_id' => 'nullable|integer',
+            'food_restaurant.restaurant_id' => 'required|integer',
+            'food_restaurant.price' => 'required|string',
+            'food_restaurant.size_id' => 'required|integer',
+            'food_restaurant.taste_id' => 'nullable|integer',
+            'food_restaurant.description' => 'required|string|max:255',
+            'food_restaurant.discount_item_id' => 'nullable|integer',
             'upload_url.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg', // uploading image for food
         ];
     }

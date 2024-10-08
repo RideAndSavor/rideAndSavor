@@ -13,6 +13,7 @@ use App\Http\Resources\FoodResource;
 use App\Models\Food;
 use App\Models\FoodRestaurant;
 use App\Models\Images;
+use App\Models\Topping;
 use App\Traits\ImageTrait;
 use Illuminate\Support\Facades\Log;
 
@@ -214,5 +215,41 @@ class RestaurantFoodController extends Controller
                 'taste_id' => $taste_id ?? null
             ];
         })->toArray();
+    }
+
+    public function store(RestaurantFoodToppingRequest $request)
+    {
+        DB::beginTransaction();
+        try {
+            $food = Food::create([
+                'name' => $request->input('food.food_name'),
+                'sub_category_id' => $request->input('food.sub_category_id')
+            ]);
+            $restaurantFood = FoodRestaurant::create([
+                'restaurant_id' => $request->input('food_restaurant.restaurant_id'),
+                'size_id' => $request->input('food_restaurant.size_id'),
+                'food_id' => $food->id,
+                'discount_item_id' => $request->input('food_restaurant.discount_item_id') ?? null,
+                'price' => $request->input('food_restaurant.price'),
+                'description' => $request->input('food_restaurant.description'),
+                'taste_id' => $request->input('food_restaurant.taste_id') ?? null
+            ]);
+            if($request->has('toppings'))
+            {
+                foreach($request->input('toppings') as $toppingData)
+                {
+                    $topping = Topping::create([
+                        'name' => $toppingData['topping_name'],
+                        'price' => $toppingData['topping_price']
+                    ]);
+                    $food->toppings()->attach($topping->id);
+                }
+            }
+            DB::commit();
+            return response()->json(['message'=>'Data successfully stored'], 201);
+        }catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Data storing failed!', 'error' => $e->getMessage()], 500);
+        }
     }
 }
