@@ -48,7 +48,6 @@ Route::get('/user', function (Request $request) {
 Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 
 // Social Login
-// Route::get('/login/google', [SocialLoginController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('/login/{provider}/callback-url', [SocialLoginController::class, 'handleCallback']);
 
 Route::post('signup', [AuthController::class, 'register'])->name('register')->middleware('recaptcha');
