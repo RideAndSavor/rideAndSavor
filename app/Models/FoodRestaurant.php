@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\DB\Core\StringField;
+use App\DB\Core\IntegerField;
+use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class FoodRestaurant extends Pivot
 {
@@ -17,6 +20,24 @@ class FoodRestaurant extends Pivot
     protected $fillable = [
         'restaurant_id', 'food_id', 'price', 'size_id', 'discount_item_id', 'description', 'taste_id'
     ];
+
+    public function saveableFields($column): object
+    {
+        $arr = [
+            'restaurant_id' => IntegerField::new(),
+            'size_id' => IntegerField::new(),
+            'food_id' => IntegerField::new(),
+            'discount_item_id' => IntegerField::new(),
+            'price' => IntegerField::new(),
+            'description' => StringField::new(),
+            'taste_id' => IntegerField::new()
+        ];
+        if (!array_key_exists($column, $arr)) {
+            throw CrudException::missingAttributeException();
+        }
+
+        return  $arr[$column];
+    }
 
     public function orderDetalis() : HasMany {
         return $this->hasMany(OrderDetail::class,'food_id');
