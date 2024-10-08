@@ -219,32 +219,38 @@ class RestaurantFoodController extends Controller
 
     public function store(RestaurantFoodToppingRequest $request)
     {
+        $validatedData = $request->validated();
         DB::beginTransaction();
         try {
-            $food = Food::create([
-                'name' => $request->input('food.food_name'),
-                'sub_category_id' => $request->input('food.sub_category_id')
-            ]);
-            $restaurantFood = FoodRestaurant::create([
-                'restaurant_id' => $request->input('food_restaurant.restaurant_id'),
-                'size_id' => $request->input('food_restaurant.size_id'),
+            $foodData = [
+                'name' => $validatedData['food']['food_name'],
+                'sub_category_id' => $validatedData['food']['sub_category_id'], // Handle nullable sub_category_id
+            ];
+            $food = $this->foodRestaurantInterface->store('Food', $foodData);
+
+            $foodRestaurantData = [
+                'restaurant_id' => $validatedData['food_restaurant']['restaurant_id'],
+                'size_id' => $validatedData['food_restaurant']['size_id'],
                 'food_id' => $food->id,
-                'discount_item_id' => $request->input('food_restaurant.discount_item_id') ?? null,
-                'price' => $request->input('food_restaurant.price'),
-                'description' => $request->input('food_restaurant.description'),
-                'taste_id' => $request->input('food_restaurant.taste_id') ?? null
-            ]);
+                'discount_item_id' => $validatedData['food_restaurant']['discount_item_id'],
+                'price' => $validatedData['food_restaurant']['price'],
+                'description' => $validatedData['food_restaurant']['description'],
+                'taste_id' => $validatedData['food_restaurant']['taste_id'] ?? null,
+            ];
+            $foodRestaurant = $this->foodRestaurantInterface->store('FoodRestaurant', $foodRestaurantData);
+
             if($request->has('toppings'))
             {
                 foreach($request->input('toppings') as $toppingData)
                 {
-                    $topping = Topping::create([
+                    $topping = $this->foodRestaurantInterface->store('Topping', [
                         'name' => $toppingData['topping_name'],
                         'price' => $toppingData['topping_price']
                     ]);
                     $food->toppings()->attach($topping->id);
                 }
             }
+            
             DB::commit();
             return response()->json(['message'=>'Data successfully stored'], 201);
         }catch (\Exception $e) {
