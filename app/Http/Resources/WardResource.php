@@ -15,15 +15,15 @@ class WardResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'=>$this->id,
-            'name'=>$this->name,
-            'township_id'=>$this->township_id
+            'id' => $this->id,
+            'name' => $this->name,
+            'township_id' => $this->township_id
         ];
     }
 
     public function with(Request $request)
     {
-        return[
+        return [
             'version' => '1.0.0',
             'api_url' => url('http://api.dailyfairdeal.com/api/ward'),
             'message' => 'Your action is successful'

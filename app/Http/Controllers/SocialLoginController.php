@@ -2,42 +2,87 @@
 
 namespace App\Http\Controllers;
 
+use Response;
+use Exception;
 use App\Models\User;
-use Illuminate\Http\Request;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\ResponseFactory;
 use Laravel\Socialite\Facades\Socialite;
 
 class SocialLoginController extends Controller
 {
-    // Redirect to provider (Google, Facebook, etc.)
-    public function redirectToProvider($provider)
+    // Redirect to Google 
+    public function redirectToGoogle(): RedirectResponse
     {
-        return Socialite::driver($provider)->redirect();
+        return Socialite::driver('google')->redirect();
     }
 
-    // Handle the callback from provider (Google, Facebook, etc.)
-    public function handleProviderCallback($provider)
+    // Handle the callback from Google 
+    public function handleGoogleCallback(): Response|ResponseFactory|UserResource
     {
         try {
-            $socialUser = Socialite::driver($provider)->stateless()->user();
+            $user = Socialite::driver('google')->stateless()->user();
+            $user_exist = User::where('email', '=', $user->email)->first();
+            if (!$user_exist) {
+                $user_exist = new User();
+                $user_exist->name = $user->name;
+                $user_exist->email = $user->email;
+                $user_exist->google_id = $user->id;
+                $user_exist->save();
+            }
 
-            // Create or find the user in your database
-            $user = User::firstOrCreate(
-                ['email' => $socialUser->getEmail()],
-                [
-                    'name' => $socialUser->getName(),
-                    'avatar' => $socialUser->getAvatar(),
-                    $provider . '_id' => $socialUser->getId(),
-                ]
-            );
+            Auth::login($user_exist);
+            array_merge($user_exist, ['token' => $user->token]);
+            return new UserResource($user_exist);
+            // return response()->json([
+            //     'token' => $user->token,
+            //     'name' => $user_exist->name,
+            //     'email' => $user_exist->email,
+            //     'role' => $user->role == 0 ? 'user' : $user->role,
+            // ], 200);
+        } catch (Exception $exception) {
+            return response($exception->getMessage(), $exception->getCode());
 
-            // Log the user in
-            Auth::login($user);
-
-            return redirect()->intended('dashboard');
-        } catch (\Exception $e) {
-            return redirect('/login')->with('error', 'Unable to login using ' . $provider . '.');
         }
+
+    }
+
+    // Redirect to Facebook 
+    public function redirectToFacebook(): RedirectResponse
+    {
+        return Socialite::driver('facebook')->redirect();
+    }
+
+    // Handle the callback from Facebook 
+    public function handleFacebookCallback(): Response|ResponseFactory|UserResource
+    {
+        try {
+            $user = Socialite::driver('facebook')->stateless()->user();
+            $user_exist = User::where('email', '=', $user->email)->first();
+            if (!$user_exist) {
+                $user_exist = new User();
+                $user_exist->name = $user->name;
+                $user_exist->email = $user->email;
+                $user_exist->facebook_id = $user->id;
+                $user_exist->save();
+            }
+
+            Auth::login($user_exist);
+            array_merge($user_exist, ['token' => $user->token]);
+            return new UserResource($user_exist);
+            // return response()->json([
+            //     'token' => $user->token,
+            //     'name' => $user_exist->name,
+            //     'email' => $user_exist->email,
+            //     'role' => $user->role == 0 ? 'user' : $user->role,
+            // ], 200);
+        } catch (Exception $exception) {
+            return response($exception->getMessage(), $exception->getCode());
+
+        }
+
     }
 
 }

@@ -4,33 +4,24 @@ namespace App\Http\Controllers;
 use App\Models\TaxiDriver;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Events\trackingDriverCurrentLocation;
 
 class TaxiDriverController extends Controller
 {
     // Update the driver's location
     public function updateLocation(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
+            'driver_id' => 'required',
             'current_location.lat' => 'required|numeric|between:-90,90',
             'current_location.long' => 'required|numeric|between:-180,180',
         ]);
-    
-        // Get the authenticated driver (assuming they're logged in)
-        $user_id = Auth::id();
-    
-        // Update the driver's current location
-        TaxiDriver::where('user_id', $user_id)->update([
-            'current_location' => $request->input('current_location'),
-        ]);
-    
-        // Retrieve the updated driver record
-        $updatedDriver = TaxiDriver::where('user_id', $user_id)->first();
+
+        event(new trackingDriverCurrentLocation($validatedData));
     
         return response()->json([
-            'message' => 'Location updated successfully',
-            'data' => $updatedDriver,  // Return the updated driver record with the new location
+            'message' => "Driver's Current Location updated successfully",
         ]);
-    
     
     }
 
