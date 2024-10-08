@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Log;
 use Response;
 use Exception;
 use App\Models\User;
@@ -19,10 +20,11 @@ class SocialLoginController extends Controller
     // }
 
     // Handle the callback from (Google,Facebook)
-    public function handleCallback(string $provider): Response|ResponseFactory|UserResource
+    public function handleCallback(string $provider)
     {
         try {
             $user = Socialite::driver($provider)->stateless()->user();
+            info("User", [$user, $provider]);
             $user_exist = User::query()->where('email', '=', $user->email)->first();
             if (!$user_exist) {
                 $user_exist = new User();
@@ -35,6 +37,7 @@ class SocialLoginController extends Controller
                 }
                 $user_exist->save();
             }
+            info("User Exist", [$user_exist]);
             Auth::login($user_exist);
             array_merge($user_exist, ['token' => $user->token]);
             return new UserResource($user_exist);
