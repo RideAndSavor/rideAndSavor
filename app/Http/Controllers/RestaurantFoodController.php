@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Restaurant;
-use Illuminate\Support\Facades\DB;
-use App\Contracts\LocationInterface;
-use Illuminate\Support\Facades\Config;
-
-use function PHPUnit\Framework\isEmpty;
-use App\Http\Requests\RestaurantFoodToppingRequest;
-use App\Http\Resources\FoodResource;
 use App\Models\Food;
-use App\Models\FoodRestaurant;
 use App\Models\Images;
 use App\Models\Topping;
+use App\Models\Restaurant;
+
 use App\Traits\ImageTrait;
+use App\Models\FoodRestaurant;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Contracts\LocationInterface;
+use App\Http\Resources\FoodResource;
+use Illuminate\Support\Facades\Config;
+use function PHPUnit\Framework\isEmpty;
+use App\Http\Requests\RestaurantFoodToppingRequest;
+use Illuminate\Support\Facades\Request;
 
 class RestaurantFoodController extends Controller
 {
@@ -250,12 +251,70 @@ class RestaurantFoodController extends Controller
                     $food->toppings()->attach($topping->id);
                 }
             }
-            
+
             DB::commit();
-            return response()->json(['message'=>'Data successfully stored'], 201);
+            return response()->json([
+                'message' => Config::get('variable.FOOD_RESTAURANT_AND_TOPPING_CREATE_SUCCESSFULLY')
+            ], Config::get('variable.OK'));
         }catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['message' => 'Data storing failed!', 'error' => $e->getMessage()], 500);
+            return response()->json([
+                'message' => Config::get('variable.FAIL TO CREATE'),
+                'error' => $e->getMessage()
+            ], Config::get('variable.CLIENT_ERROR'));
+        }
+    }
+
+    public function update(RestaurantFoodToppingRequest $request, $foodRestaurantId)
+    {
+        $validatedData = $request->validated();
+        DB::beginTransaction();
+
+        try 
+        {
+            $foodRestaurant = $this->foodRestaurantInterface->findById('FoodRestaurant', $foodRestaurantId);
+            if (!$foodRestaurant) {
+                return response()->json(['message' => 'FoodRestaurant record not found!'], 404);
+            }
+
+            $foodRestaurantData = [
+                'restaurant_id' => $validatedData['food_restaurant']['restaurant_id'],
+                'size_id' => $validatedData['food_restaurant']['size_id'],
+                'price' => $validatedData['food_restaurant']['price'],
+                'description' => $validatedData['food_restaurant']['description'],
+                'taste_id' => $validatedData['food_restaurant']['taste_id'] ?? null,
+                'discount_item_id' => $validatedData['food_restaurant']['discount_item_id'] ?? null,
+            ];
+            $this->foodRestaurantInterface->update('FoodRestaurant', $foodRestaurantData, $foodRestaurant->id);
+
+            if ($validatedData['food']) {
+                $foodData = [
+                    'name' => $validatedData['food']['food_name'],
+                    'sub_category_id' => $validatedData['food']['sub_category_id'],
+                ];
+                $this->foodRestaurantInterface->update('Food', $foodData, $foodRestaurant->food_id);
+            }
+
+            if ($request->has('toppings')) {
+                $foodRestaurant->food->toppings()->detach();
+                foreach ($request->input('toppings') as $toppingData) {
+                    $topping = $this->foodRestaurantInterface->store('Topping', [
+                        'name' => $toppingData['topping_name'],
+                        'price' => $toppingData['topping_price']
+                    ]);
+                    $foodRestaurant->food->toppings()->attach($topping->id);
+                }
+            }
+            DB::commit();
+            return response()->json([
+                'message' => Config::get('variable.FOOD_RESTAURANT_AND_TOPPING_UPDATE_SUCCESSFULLY')
+            ], Config::get('variable.OK'));
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => Config::get('variable.FAIL TO UPDATE'),
+                'error' => $e->getMessage()
+            ], Config::get('variable.CLIENT_ERROR'));
         }
     }
 }
