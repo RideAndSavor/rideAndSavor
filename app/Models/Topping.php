@@ -14,6 +14,9 @@ class Topping extends Model
 {
     use HasFactory, Searchable;
 
+    protected $fillable = [
+        'name', 'price'
+    ];
     public function saveableFields($column): object
     {
         $arr = [
