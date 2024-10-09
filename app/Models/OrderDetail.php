@@ -6,10 +6,13 @@ use App\DB\Core\IntegerField;
 use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class OrderDetail extends Model
 {
     use HasFactory;
+    use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
+
 
     public function saveableFields($column): object
     {
@@ -23,7 +26,7 @@ class OrderDetail extends Model
             throw CrudException::missingAttributeException();
         }
 
-        return  $arr[$column];
+        return $arr[$column];
     }
 
     public function order()
@@ -33,6 +36,6 @@ class OrderDetail extends Model
 
     public function foodRestaurant()
     {
-        return $this->belongsTo(FoodRestaurant::class,'food_restaurant_id');
+        return $this->belongsTo(FoodRestaurant::class, 'food_restaurant_id');
     }
 }
