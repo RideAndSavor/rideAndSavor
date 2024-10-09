@@ -6,6 +6,7 @@ use Log;
 use Response;
 use Exception;
 use App\Models\User;
+use Illuminate\Http\Request;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\ResponseFactory;
@@ -20,10 +21,15 @@ class SocialLoginController extends Controller
     // }
 
     // Handle the callback from (Google,Facebook)
-    public function handleCallback(string $provider)
+    public function handleCallback(string $provider, Request $request)
     {
         try {
-            $user = Socialite::driver($provider)->stateless()->user();
+            $accessToken = $request->input('access_token');
+            // $provider = $request->input('provider');
+            // dd($accessToken, $provider);
+            $user = Socialite::driver($provider)->stateless()->userFromToken($accessToken);
+            // $user = Socialite::driver($provider)->stateless()->userFromToken($accessToken);
+            // dd($user);
             info("User", [$user, $provider]);
             $user_exist = User::query()->where('email', '=', $user->email)->first();
             if (!$user_exist) {
@@ -43,7 +49,9 @@ class SocialLoginController extends Controller
             return new UserResource($user_exist);
 
         } catch (Exception $exception) {
-            return response($exception->getMessage(), $exception->getCode());
+            // return response($exception->getMessage(), $exception->getCode());
+            throw new Exception($exception->getMessage(), 1);
+
 
         }
 

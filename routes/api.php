@@ -49,7 +49,7 @@ Route::get('/user', function (Request $request) {
 Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 
 // Social Login
-Route::get('/login/{provider}/callback-url', [SocialLoginController::class, 'handleCallback']);
+Route::post('/login/{provider}/callback-url', [SocialLoginController::class, 'handleCallback']);
 
 Route::post('signup', [AuthController::class, 'register'])->name('register')->middleware('recaptcha');
 Route::post('login', [AuthController::class, 'login'])->name('login');
