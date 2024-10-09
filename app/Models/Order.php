@@ -14,8 +14,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Order extends Model
 {
     use HasFactory;
-    use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
-
     public function saveableFields($column): object
     {
         $arr = [
@@ -46,17 +44,5 @@ class Order extends Model
     public function delivery_price(): BelongsTo
     {
         return $this->belongsTo(DeliveryPrice::class);
-    }
-    
-    //has many deep relationship 
-    //orders->orderDetails->foodRestaurants->foods
-    public function foods(): \Staudenmeir\EloquentHasManyDeep\HasManyDeep
-    {
-        return $this->hasManyDeepFromRelations($this->foodRe(), (new OrderDetail())->foodRestaurant());
-    }
-
-    public function orderDetails()
-    {
-        return $this->hasManyThrough(FoodRestaurant::class, OrderDetail::class);
     }
 }

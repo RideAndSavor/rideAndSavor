@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Food extends Model
 {
@@ -65,7 +66,7 @@ class Food extends Model
     {
         return $this->hasMany(Images::class, 'link_id');
     }
-    
+
     public function foodViewImages(): HasMany
     {
         return $this->hasMany(FoodImage::class);
