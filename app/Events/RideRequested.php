@@ -16,13 +16,17 @@ class RideRequested
 
     public $current_location;
     public $destination;
+    public $rider_id;
+    public $driver_id;
     /**
      * Create a new event instance.
      */
-    public function __construct($current_location, $destination)
+    public function __construct($driver_id, $current_location, $destination, $rider_id)
     {
         $this->current_location = $current_location; // Should be an array or object with latitude and longitude
         $this->destination = $destination;
+        $this->rider_id = $rider_id;
+        $this->driver_id = $driver_id;
     }
     /**
      * Get the channels the event should broadcast on.
@@ -31,7 +35,7 @@ class RideRequested
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('drivers-nearby');
+        return new PrivateChannel('driver.' . $this->driver_id);
     }
 
     /**
@@ -42,6 +46,7 @@ class RideRequested
         return [
             'current_location' => $this->current_location,
             'destination' => $this->destination, 
+            'rider_id' => $this->rider_id, 
         ];
     }
 
