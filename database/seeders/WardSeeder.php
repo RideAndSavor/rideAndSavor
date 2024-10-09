@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Ward;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class WardSeeder extends Seeder
 {
@@ -12,6 +13,9 @@ class WardSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Ward::create([
+            'township_id' => 1,
+            'name' => 'first ward'
+        ]);
     }
 }

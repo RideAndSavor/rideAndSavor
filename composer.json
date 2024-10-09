@@ -19,6 +19,7 @@
         "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.9",
         "pusher/pusher-php-server": "^7.2",
+        "staudenmeir/eloquent-has-many-deep": "^1.20",
         "toin0u/geocoder-laravel": "^4.7"
     },
     "require-dev": {
