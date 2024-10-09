@@ -3,9 +3,9 @@
 namespace Tests\Unit\address;
 
 use App\Enums\RoleType;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-// use Tests\TestCase;
 use Tests\UnitTestCase;
+// use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AddressTest extends UnitTestCase
 {
@@ -15,7 +15,7 @@ class AddressTest extends UnitTestCase
         parent::setUp();
 
         $this->user = $this->createAdmin();
-        dd($this->user->role);
+        // dd($this->user->role);
         $this->country = $this->createCountry();
         $this->state = $this->createState();
         $this->city = $this->createCity();

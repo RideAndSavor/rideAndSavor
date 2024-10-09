@@ -25,6 +25,11 @@ class DatabaseSeeder extends Seeder
             CountrySeeder::class,
             RoleSeeder::class,
             SalarySeeder::class,
+            StateSeeder::class,
+            CitySeeder::class,
+            TownshipSeeder::class,
+            WardSeeder::class,
+            StreetSeeder::class
         ]);
     }
 }
