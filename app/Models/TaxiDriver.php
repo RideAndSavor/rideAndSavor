@@ -19,4 +19,9 @@ class TaxiDriver extends Model
         'current_location' => 'json',
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
 }
