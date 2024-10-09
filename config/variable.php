@@ -136,6 +136,10 @@ return [
     'FOOD AND TOPPINGS SUCCESSFULLY DELETED' => 'Food and associated toppings successfully deleted',
     'FAIL TO DELETE FOOD AND INREDIENTS' => 'Failed to delete food and toppings',
 
+    'FOOD_RESTAURANT_AND_TOPPING_CREATE_SUCCESSFULLY' => 'Food , restaurant and topping successfully create',
+    'FAIL TO CREATE' => 'Fail to create',
+    'FOOD_RESTAURANT_AND_TOPPING_UPDATE_SUCCESSFULLY' => 'Food , restaurant and topping successfully update',
+    'FAIL TO UPDATE' => 'Fail to update',
     'IMAGE_DATA_NOT_FOUND' => 'Image Data Not Found'
 
 ];

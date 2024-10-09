@@ -22,13 +22,13 @@ class RestaurantFoodToppingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'food' => 'required|array', // Validation for food
-            'food.sub_category_id' => 'nullable|integer',
+            // 'food' => 'required|array', // Validation for food
+            'food.sub_category_id' => 'required|integer',
             'food.food_name' => 'required|string|max:255',
-            'toppings' => 'nullable|array', // Allow toppings to be null or an array
+            // 'toppings' => 'nullable|array', // Allow toppings to be null or an array
             'toppings.*.topping_price' => 'nullable|string',
             'toppings.*.topping_name' => 'nullable|string|max:255',
-            'food_restaurant' => 'required|array', // Validation for food_restaurant
+            // 'food_restaurant' => 'required|array', // Validation for food_restaurant
             'food_restaurant.restaurant_id' => 'required|integer',
             'food_restaurant.price' => 'required|string',
             'food_restaurant.size_id' => 'required|integer',
