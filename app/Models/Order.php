@@ -2,19 +2,18 @@
 
 namespace App\Models;
 
+use App\DB\Core\StringField;
 use App\DB\Core\DecimalField;
 use App\DB\Core\IntegerField;
-use App\DB\Core\StringField;
 use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
 {
     use HasFactory;
-
     public function saveableFields($column): object
     {
         $arr = [
@@ -29,7 +28,7 @@ class Order extends Model
             throw CrudException::missingAttributeException();
         }
 
-        return  $arr[$column];
+        return $arr[$column];
     }
 
     public function user(): BelongsTo
@@ -37,7 +36,8 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function orderDetalis():HasMany{
+    public function orderDetalis(): HasMany
+    {
         return $this->hasMany(OrderDetail::class);
     }
 

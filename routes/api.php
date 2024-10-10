@@ -9,6 +9,7 @@ use App\Http\Controllers\CityController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SizeController;
+use App\Http\Controllers\TripController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WardController;
 use App\Http\Controllers\OrderController;
@@ -36,8 +37,8 @@ use App\Http\Controllers\DiscountItemController;
 use App\Http\Controllers\DeliveryPriceController;
 use App\Http\Controllers\FoodRestaurantController;
 use App\Http\Controllers\RestaurantFoodController;
-use App\Http\Controllers\PaymentProviderController;
 
+use App\Http\Controllers\PaymentProviderController;
 use App\Http\Controllers\RestaurantAddressController;
 use App\Http\Controllers\CalculateDeliveryFeesController;
 use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
@@ -49,19 +50,14 @@ Route::get('/user', function (Request $request) {
 Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 
 // Social Login
-Route::get('/login/{provider}/callback-url', [SocialLoginController::class, 'handleCallback']);
+Route::get('login/google', [SocialLoginController::class, 'redirectToGoogle']);
+Route::post('/social/login/callback-url', [SocialLoginController::class, 'handleCallback']);
 
 Route::post('signup', [AuthController::class, 'register'])->name('register')->middleware('recaptcha');
 Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::resource('paymentmodes', PaymentProviderController::class);
 
-
-Route::middleware(['auth:sanctum', 'admin'])->group(function () {
-
-    Route::post('/user/change-user-role', [UserController::class, 'changeUserRole']);
-
-});
 Route::middleware(['auth:sanctum'])->group(function () {
 
 
@@ -136,3 +132,27 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //recent_order
     Route::get('users/{userId}/recent-orders', [OrderController::class, 'getRecentOrder']);
 });
+
+
+
+//tzm
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+
+    Route::post('/user/change-user-role', [UserController::class, 'changeUserRole']);
+
+});
+
+Route::middleware(['auth:sanctum', 'user'])->group(function () {
+
+    Route::post('/user/rider_request_taxi', [TripController::class, 'RiderRequestTaxi']);
+
+});
+
+
+Route::middleware(['auth:sanctum', 'driver'])->group(function () {
+
+    Route::post('/user/change-user-role', [UserController::class, 'changeUserRole']);
+
+});
+
+//end tzm

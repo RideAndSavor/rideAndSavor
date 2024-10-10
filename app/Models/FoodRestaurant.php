@@ -18,7 +18,13 @@ class FoodRestaurant extends Pivot
     protected $table = 'food_restaurant';
 
     protected $fillable = [
-        'restaurant_id', 'food_id', 'price', 'size_id', 'discount_item_id', 'description', 'taste_id'
+        'restaurant_id',
+        'food_id',
+        'price',
+        'size_id',
+        'discount_item_id',
+        'description',
+        'taste_id'
     ];
 
     public function saveableFields($column): object
@@ -36,11 +42,12 @@ class FoodRestaurant extends Pivot
             throw CrudException::missingAttributeException();
         }
 
-        return  $arr[$column];
+        return $arr[$column];
     }
 
-    public function orderDetalis() : HasMany {
-        return $this->hasMany(OrderDetail::class,'food_id');
+    public function orderDetalis(): HasMany
+    {
+        return $this->hasMany(OrderDetail::class, 'food_id');
     }
 
     public $timestamps = true;

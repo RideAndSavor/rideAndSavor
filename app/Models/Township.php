@@ -7,6 +7,7 @@ use App\DB\Core\IntegerField;
 use Laravel\Scout\Searchable;
 use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
+use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,7 +26,7 @@ class Township extends Model
             throw CrudException::missingAttributeException();
         }
 
-        return  $arr[$column];
+        return $arr[$column];
     }
 
     public function toSearchableArray()
@@ -44,4 +45,5 @@ class Township extends Model
     {
         return $this->hasMany(Ward::class);
     }
+
 }

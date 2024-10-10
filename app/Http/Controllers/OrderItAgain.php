@@ -2,20 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
-use App\Models\Order;
-use App\Models\Payment;
-use Illuminate\Http\Request;
+use App\Models\OrderDetail;
+use App\Traits\CanLoadRelationships;
+use App\Http\Resources\OrderDetailResource;
 
 class OrderItAgain extends Controller
 {
-    /**
-     * Handle the incoming request.
-     */
-    public function __invoke(Request $request)
+    use CanLoadRelationships;
+    private array $relations = [
+        'foodRestaurant',
+        'foodRestaurant.food',
+        'foodRestaurant.food.foodViewImages',
+    ];
+    public function __invoke()
     {
-        $start_date = Carbon::now();
-        $end_date = now()->subDays(7);
-        $confirm_orders = Payment::query()->whereBetween('created_at', [$start_date, $end_date])->pluck('order-id');
+        $start_date = now()->subDays(7);
+        $end_date = now();
+        $data = OrderDetail::query()
+            ->select('order_id', 'food_restaurant_id','discount_prices')
+            ->whereHas('order', function ($query) use ($start_date, $end_date) {
+                $query->select('id', 'user_id', 'created_at', 'status_id')
+                    ->where('status_id', config('variable.THREE'))
+                    ->whereBetween('created_at', [$start_date, $end_date]);
+            })
+            ->with(['foodRestaurant.food.foodViewImages'])
+            ->get();
+
+        return OrderDetailResource::collection($data);
+
     }
 }
+

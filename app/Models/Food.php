@@ -5,22 +5,24 @@ namespace App\Models;
 use App\Models\Images;
 use App\DB\Core\StringField;
 use App\DB\Core\IntegerField;
+use Laravel\Scout\Searchable;
 use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Laravel\Scout\Searchable;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Food extends Model
 {
     use HasFactory, Searchable;
 
     protected $fillable = [
-        'name', 'sub_category_id'
+        'name',
+        'sub_category_id'
     ];
-    
+
     public function saveableFields($column): object
     {
         $arr = [
@@ -32,7 +34,7 @@ class Food extends Model
             throw CrudException::missingAttributeException();
         }
 
-        return  $arr[$column];
+        return $arr[$column];
     }
 
     public function toSearchableArray()
@@ -42,7 +44,7 @@ class Food extends Model
         ];
     }
 
-    public function subCategory():BelongsTo
+    public function subCategory(): BelongsTo
     {
         return $this->belongsTo(SubCategory::class);
     }
@@ -65,6 +67,11 @@ class Food extends Model
         return $this->hasMany(Images::class, 'link_id');
     }
 
+    public function foodViewImages(): HasMany
+    {
+        return $this->hasMany(FoodImage::class);
+    }
+
     public function foodRestaurants()
     {
         return $this->hasMany(FoodRestaurant::class);
@@ -79,6 +86,6 @@ class Food extends Model
             'food_restaurant_id',
             'id', //(current model key): The local key on the current model.
             'id' // (intermediate model key): The local key on the FoodRestaurant model.
-            );
+        );
     }
 }

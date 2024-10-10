@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Street;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class StreetSeeder extends Seeder
 {
@@ -12,6 +13,9 @@ class StreetSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Street::create([
+            'ward_id' => 1,
+            'name' => 'first street'
+        ]);
     }
 }
