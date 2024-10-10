@@ -6,6 +6,7 @@ use App\Models\Trip;
 use App\Models\TaxiDriver;
 use App\Events\RideRequested;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redis;
 use App\Http\Requests\RiderTaxiRequest;
 
 class TripController extends Controller
@@ -42,5 +43,15 @@ class TripController extends Controller
         
         // Return nearby drivers in the response
         return $drivers;
+    }
+
+    public function storeDriverSettingPrice(){
+        Redis::set('name', 'Taylor');
+        $redisValue = Redis::get('name');
+        dd($redisValue);
+    }
+
+    public function getDriverPrices(){
+        dd("getDriverPrices");
     }
 }

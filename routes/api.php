@@ -145,13 +145,15 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 Route::middleware(['auth:sanctum', 'user'])->group(function () {
 
     Route::post('/user/rider_request_taxi', [TripController::class, 'RiderRequestTaxi']);
+    
+    Route::get('/user/prices', [TripController::class, 'getDriverPrices']);
 
 });
 
 
 Route::middleware(['auth:sanctum', 'driver'])->group(function () {
 
-    Route::post('/user/change-user-role', [UserController::class, 'changeUserRole']);
+    Route::post('/driver/setting-price', [TripController::class, 'storeDriverSettingPrice']);
 
 });
 
