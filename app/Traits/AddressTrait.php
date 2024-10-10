@@ -2,7 +2,6 @@
 
 namespace App\Traits;
 
-use App\Contracts\LocationInterface;
 use App\Models\Street;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Config;

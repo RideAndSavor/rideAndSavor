@@ -66,6 +66,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         ->middleware('throttle:60,1'); // Limit to 60 requests per minute
     Route::post('/taxi-drivers/nearby', [TaxiDriverController::class, 'getNearbyDrivers']);
 
+    Route::get('/state/{country_id}', [StateController::class, 'getStatesByCountry']);
+
     Route::resource('country', CountryController::class);
     Route::resource('state', StateController::class);
     Route::resource('city', CityController::class);
