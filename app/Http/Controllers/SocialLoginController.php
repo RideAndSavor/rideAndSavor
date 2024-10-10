@@ -22,7 +22,11 @@ class SocialLoginController extends Controller
     public function handleCallback(SocialLoginRequest $request): UserResource
     {
         try {
+<<<<<<< HEAD
             $accessToken = $request->input('access_token');
+=======
+            $idToken = $request->input('id_token'); // Get the ID token from the request
+>>>>>>> 0068a0325266aee7e8d11280ce06407e9d4f9468
             $provider = $request->input('provider');
             // $user = Socialite::driver('google')->stateless()->user();
             // dd($user);
