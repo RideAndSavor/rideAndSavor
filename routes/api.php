@@ -50,9 +50,6 @@ Route::get('/user', function (Request $request) {
 Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 
 // Social Login
-Route::get('/test', function () {
-    return "hello";
-});
 Route::get('login/google', [SocialLoginController::class, 'redirectToGoogle']);
 Route::post('/social/login/callback-url', [SocialLoginController::class, 'handleCallback']);
 
@@ -68,6 +65,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/taxi-drivers/update-location', [TaxiDriverController::class, 'updateLocation'])
         ->middleware('throttle:60,1'); // Limit to 60 requests per minute
     Route::post('/taxi-drivers/nearby', [TaxiDriverController::class, 'getNearbyDrivers']);
+
+    Route::get('/state/{country_id}', [StateController::class, 'getStatesByCountry']);
 
     Route::resource('country', CountryController::class);
     Route::resource('state', StateController::class);
