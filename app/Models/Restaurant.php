@@ -4,12 +4,13 @@ namespace App\Models;
 
 use App\DB\Core\StringField;
 use App\DB\Core\IntegerField;
+use Laravel\Scout\Searchable;
 use App\DB\Core\DateTimeField;
 use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Laravel\Scout\Searchable;
 
 class Restaurant extends Model
 {
@@ -29,7 +30,7 @@ class Restaurant extends Model
             throw CrudException::missingAttributeException();
         }
 
-        return  $arr[$column];
+        return $arr[$column];
     }
 
     public function toSearchableArray()
@@ -65,5 +66,20 @@ class Restaurant extends Model
     public function orderDetails()
     {
         return $this->hasManyThrough(OrderDetail::class, FoodRestaurant::class, 'restaurant_id', 'food_restaurant_id');
+    }
+
+    public function ratings(): HasMany
+    {
+        return $this->hasMany(RestaurantRating::class);
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(RestaurantComment::class);
+    }
+
+    public function restaurantImages(): HasMany
+    {
+        return $this->hasMany(RestaurantImage::class);
     }
 }

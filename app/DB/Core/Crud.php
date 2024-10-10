@@ -4,10 +4,8 @@ namespace App\DB\Core;
 
 use App\Exceptions\CrudException;
 use App\Exceptions\CustomException;
-use Exception;
-use illuminate\Database\Eloquent\Model;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Config;
+use illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 class Crud
