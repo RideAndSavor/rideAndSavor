@@ -50,9 +50,6 @@ Route::get('/user', function (Request $request) {
 Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 
 // Social Login
-Route::get('/test', function () {
-    return "hello";
-});
 Route::get('login/google', [SocialLoginController::class, 'redirectToGoogle']);
 Route::post('/social/login/callback-url', [SocialLoginController::class, 'handleCallback']);
 
