@@ -50,7 +50,11 @@ Route::get('/user', function (Request $request) {
 Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 
 // Social Login
-Route::post('/login/{provider}/callback-url', [SocialLoginController::class, 'handleCallback']);
+Route::get('/test', function () {
+    return "hello";
+});
+Route::get('login/google', [SocialLoginController::class, 'redirectToGoogle']);
+Route::post('/social/login/callback-url', [SocialLoginController::class, 'handleCallback']);
 
 Route::post('signup', [AuthController::class, 'register'])->name('register')->middleware('recaptcha');
 Route::post('login', [AuthController::class, 'login'])->name('login');
@@ -142,7 +146,7 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 Route::middleware(['auth:sanctum', 'user'])->group(function () {
 
     Route::post('/user/rider_request_taxi', [TripController::class, 'RiderRequestTaxi']);
-    
+
 });
 
 
