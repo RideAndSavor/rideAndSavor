@@ -66,6 +66,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         ->middleware('throttle:60,1'); // Limit to 60 requests per minute
     Route::post('/taxi-drivers/nearby', [TaxiDriverController::class, 'getNearbyDrivers']);
 
+    Route::get('/state/{country_id}', [StateController::class, 'getStatesByCountry']);
+    Route::get('/city/{state_id}', [CityController::class, 'getCitiesByState']);
+
     Route::resource('country', CountryController::class);
     Route::resource('state', StateController::class);
     Route::resource('city', CityController::class);
@@ -143,13 +146,15 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 Route::middleware(['auth:sanctum', 'user'])->group(function () {
 
     Route::post('/user/rider_request_taxi', [TripController::class, 'RiderRequestTaxi']);
+    
+    Route::get('/user/prices', [TripController::class, 'getDriverPrices']);
 
 });
 
 
 Route::middleware(['auth:sanctum', 'driver'])->group(function () {
 
-    Route::post('/user/change-user-role', [UserController::class, 'changeUserRole']);
+    Route::post('/driver/setting-price', [TripController::class, 'storeDriverSettingPrice']);
 
 });
 

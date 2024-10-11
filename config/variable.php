@@ -140,6 +140,8 @@ return [
     'FAIL TO CREATE' => 'Fail to create',
     'FOOD_RESTAURANT_AND_TOPPING_UPDATE_SUCCESSFULLY' => 'Food , restaurant and topping successfully update',
     'FAIL TO UPDATE' => 'Fail to update',
+    'DELETE_SUCCESSFULLY' => 'Food and its related data deleted successfully',
+    'DELETE_FAIL' => 'Data deletion failed!',
     'IMAGE_DATA_NOT_FOUND' => 'Image Data Not Found'
 
 ];

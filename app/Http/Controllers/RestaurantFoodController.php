@@ -229,11 +229,15 @@ class RestaurantFoodController extends Controller
             ];
             $food = $this->foodRestaurantInterface->store('Food', $foodData);
 
+            if ($request->hasFile('upload_url')) {
+                $this->storeImage($request, $food->id, $this->genre, $this->foodRestaurantInterface, $this->folder_name, $this->tableName);
+            }
+
             $foodRestaurantData = [
                 'restaurant_id' => $validatedData['food_restaurant']['restaurant_id'],
                 'size_id' => $validatedData['food_restaurant']['size_id'],
                 'food_id' => $food->id,
-                'discount_item_id' => $validatedData['food_restaurant']['discount_item_id'],
+                'discount_item_id' => $validatedData['food_restaurant']['discount_item_id'] ?? null,
                 'price' => $validatedData['food_restaurant']['price'],
                 'description' => $validatedData['food_restaurant']['description'],
                 'taste_id' => $validatedData['food_restaurant']['taste_id'] ?? null,
@@ -267,12 +271,14 @@ class RestaurantFoodController extends Controller
 
     public function update(RestaurantFoodToppingRequest $request, $foodRestaurantId)
     {
+        $folder_name = 'public/foods/';
+        $tableName = 'images';
         $validatedData = $request->validated();
         DB::beginTransaction();
 
-        try 
-        {
+        try {
             $foodRestaurant = $this->foodRestaurantInterface->findById('FoodRestaurant', $foodRestaurantId);
+            $imageData = $this->foodRestaurantInterface->findWhere('Images', $foodRestaurant->food_id);
             if (!$foodRestaurant) {
                 return response()->json(['message' => 'FoodRestaurant record not found!'], 404);
             }
@@ -286,35 +292,88 @@ class RestaurantFoodController extends Controller
                 'discount_item_id' => $validatedData['food_restaurant']['discount_item_id'] ?? null,
             ];
             $this->foodRestaurantInterface->update('FoodRestaurant', $foodRestaurantData, $foodRestaurant->id);
-
+            // Update food data
             if ($validatedData['food']) {
                 $foodData = [
                     'name' => $validatedData['food']['food_name'],
                     'sub_category_id' => $validatedData['food']['sub_category_id'],
                 ];
                 $this->foodRestaurantInterface->update('Food', $foodData, $foodRestaurant->food_id);
+                $foodId = $foodRestaurant->food_id;
             }
-
-            if ($request->has('toppings')) {
-                $foodRestaurant->food->toppings()->detach();
-                foreach ($request->input('toppings') as $toppingData) {
-                    $topping = $this->foodRestaurantInterface->store('Topping', [
-                        'name' => $toppingData['topping_name'],
-                        'price' => $toppingData['topping_price']
-                    ]);
-                    $foodRestaurant->food->toppings()->attach($topping->id);
+            if ($request->hasFile('upload_url')) {
+                $this->updateImage($request, $imageData, $foodId, $this->genre, $this->foodRestaurantInterface, $folder_name, $tableName, $foodRestaurantId); 
+            }
+ 
+            $toppings = $validatedData['toppings'] ?? [];
+            $food = $foodRestaurant->food;
+            $existingToppings = $food->toppings->keyBy('id');
+            $existingToppingIDs = $existingToppings->pluck('id')->toArray();
+            $newToppingIDs = [];
+            dd($validatedData['toppings']);
+            foreach ($toppings as $toppingData) {
+                if (isset($toppingData['id'])) {
+                    $toppingId = $toppingData['id'];
+            
+                    if (isset($existingToppings[$toppingId])) {
+                        $this->foodRestaurantInterface->update('Topping', $toppingData, $toppingId);
+                        $newToppingIDs[] = $toppingId;
+                    }
+                } else {
+                    $newTopping = $this->foodRestaurantInterface->store('Topping', $toppingData);
+                    $newToppingIDs[] = $newTopping->id;
                 }
             }
+
+            if (count($existingToppingIDs) > count($newToppingIDs)) {
+                $extraToppingIDs = array_diff($existingToppingIDs, $newToppingIDs);
+                foreach ($extraToppingIDs as $extraToppingID) {
+                    $this->foodRestaurantInterface->delete('Topping', $extraToppingID);
+                }
+                $food->toppings()->detach($extraToppingIDs);
+            }
+
+            $food->toppings()->sync($newToppingIDs);
+            
+
             DB::commit();
+
             return response()->json([
                 'message' => Config::get('variable.FOOD_RESTAURANT_AND_TOPPING_UPDATE_SUCCESSFULLY')
+            ], Config::get('variable.OK'));
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => Config::get('variable.FAIL_TO_UPDATE'),
+                'error' => $e->getMessage(),
+            ], Config::get('variable.CLIENT_ERROR'));
+        }
+    }
+
+    public function destroy($foodRestaurantId)
+    {
+        DB::beginTransaction();
+
+        try {
+            $foodRestaurant = $this->foodRestaurantInterface->findById('FoodRestaurant', $foodRestaurantId);
+            if (!$foodRestaurant) {
+                return response()->json(['message' => 'FoodRestaurant record not found!'], 404);
+            }
+            $this->foodRestaurantInterface->delete('FoodRestaurant', $foodRestaurantId);
+
+            DB::commit();
+            return response()->json([
+                'message' => Config::get('variable.DELETE_SUCCESSFULLY')
             ], Config::get('variable.OK'));
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
-                'message' => Config::get('variable.FAIL TO UPDATE'),
+                'message' => Config::get('variable.DELETE_FAIL'),
                 'error' => $e->getMessage()
             ], Config::get('variable.CLIENT_ERROR'));
         }
     }
+
 }
