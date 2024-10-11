@@ -67,6 +67,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/taxi-drivers/nearby', [TaxiDriverController::class, 'getNearbyDrivers']);
 
     Route::get('/state/{country_id}', [StateController::class, 'getStatesByCountry']);
+    Route::get('/city/{state_id}', [CityController::class, 'getCitiesByState']);
 
     Route::resource('country', CountryController::class);
     Route::resource('state', StateController::class);

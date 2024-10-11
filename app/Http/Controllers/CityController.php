@@ -8,14 +8,19 @@ use App\Exceptions\CrudException;
 use App\Http\Requests\CityRequest;
 use App\Contracts\LocationInterface;
 use App\Http\Resources\CityResource;
+use App\Services\CityService;
+use Exception;
+use Illuminate\Container\Attributes\Log;
 use Illuminate\Support\Facades\Config;
 
 class CityController extends Controller
 {
    private $locationInterface;
+   private $cityService;
 
-   public function __construct(LocationInterface $locationInterface ) {
+   public function __construct(LocationInterface $locationInterface, CityService $cityService ) {
     $this->locationInterface = $locationInterface;
+    $this->cityService = $cityService;
    }
     public function index()
     {
@@ -67,5 +72,11 @@ class CityController extends Controller
         return response()->json([
             'message'=>Config::get('variable.CITY_DELETED_SUCCESSFULLY')
         ],Config::get('variable.NO_CONTENT'));
+    }
+
+    public function getCitiesByState($state_id)
+    {
+            $cities = $this->cityService->getCitiesByState($state_id);
+            return response()->json($cities);
     }
 }
