@@ -70,6 +70,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/city/{state_id}', [CityController::class, 'getCitiesByState']);
     Route::get('/township/{city_id}', [TownshipController::class, 'getTownshipsByCity']);
     Route::get('/ward/{township_id}', [WardController::class, 'getWardsByTownship']);
+    Route::get('/street/{ward_id}', [StreetController::class, 'getStreetsByWard']);
 
     Route::resource('country', CountryController::class);
     Route::resource('state', StateController::class);
