@@ -54,7 +54,7 @@ Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 // Route::post('/social/login/callback-url', [SocialLoginController::class, 'handleCallback']);
 
 Route::post('/request', [SocialLoginController::class, 'redirectToGoogle']);
-Route::get('/oauth/callback', [SocialLoginController::class, 'handleGoogleCallback']);
+Route::get('/social/login/callback-url', [SocialLoginController::class, 'handleGoogleCallback']);
 
 Route::post('signup', [AuthController::class, 'register'])->name('register')->middleware('recaptcha');
 Route::post('login', [AuthController::class, 'login'])->name('login');
