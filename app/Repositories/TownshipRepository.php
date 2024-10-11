@@ -1,9 +1,10 @@
 <?php
 namespace App\Repositories;
 
+use App\Contracts\TownshipInterface;
 use App\Models\Township;
 
-class TownshipRepository
+class TownshipRepository implements TownshipInterface
 {
     public function getTownshipsByCity($city_id)
     {
