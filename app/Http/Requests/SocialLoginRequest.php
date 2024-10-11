@@ -22,7 +22,7 @@ class SocialLoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id_token' => ['bail', 'required', 'string'],
+            'code' => ['bail', 'required', 'string'],
             'provider' => ['required', 'string', 'alpha']
         ];
     }

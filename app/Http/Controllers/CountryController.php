@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Contracts\LocationInterface;
-use App\Exceptions\CrudException;
-use App\Exceptions\CustomException;
-use App\Helpers\ResponseHelper;
-use App\Http\Requests\CountryRequest;
-use App\Http\Resources\CountryResource;
+use Exception;
 use App\Models\Country;
 use ArgumentCountError;
-use Exception;
+use App\Helpers\ResponseHelper;
+use App\Exceptions\CrudException;
+use App\Exceptions\CustomException;
+use App\Contracts\LocationInterface;
+use App\Http\Requests\CountryRequest;
 use Illuminate\Support\Facades\Config;
+use App\Http\Resources\CountryResource;
 
 class CountryController extends Controller
 {
