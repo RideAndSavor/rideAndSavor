@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Restaurant;
+use Illuminate\Http\JsonResponse;
 use App\Traits\CanLoadRelationships;
 use App\Http\Resources\RestaurantResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -15,7 +16,7 @@ class OrderItAgain extends Controller
         'comments',
         'restaurantImages'
     ];
-    public function __invoke(): AnonymousResourceCollection
+    public function __invoke(): AnonymousResourceCollection|JsonResponse
     {
         $start_date = now()->subDays(config('variable.SEVEN'));
         $end_date = now();
