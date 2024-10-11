@@ -8,6 +8,7 @@ use App\Models\Topping;
 use App\Models\Restaurant;
 
 use App\Traits\ImageTrait;
+use Illuminate\Http\Request;
 use App\Models\FoodRestaurant;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -16,7 +17,6 @@ use App\Http\Resources\FoodResource;
 use Illuminate\Support\Facades\Config;
 use function PHPUnit\Framework\isEmpty;
 use App\Http\Requests\RestaurantFoodToppingRequest;
-use Illuminate\Support\Facades\Request;
 
 class RestaurantFoodController extends Controller
 {
@@ -305,35 +305,37 @@ class RestaurantFoodController extends Controller
                 $this->updateImage($request, $imageData, $foodId, $this->genre, $this->foodRestaurantInterface, $folder_name, $tableName, $foodRestaurantId); 
             }
  
-            $toppings = $validatedData['toppings'] ?? [];
             $food = $foodRestaurant->food;
             $existingToppings = $food->toppings->keyBy('id');
             $existingToppingIDs = $existingToppings->pluck('id')->toArray();
             $newToppingIDs = [];
-            dd($validatedData['toppings']);
-            foreach ($toppings as $toppingData) {
-                if (isset($toppingData['id'])) {
-                    $toppingId = $toppingData['id'];
-            
-                    if (isset($existingToppings[$toppingId])) {
-                        $this->foodRestaurantInterface->update('Topping', $toppingData, $toppingId);
-                        $newToppingIDs[] = $toppingId;
+            if ($request->has('toppings')) {
+                foreach ($request->input('toppings') as $toppingData) {
+                    if (isset($toppingData['id'])) {
+                        $this->foodRestaurantInterface->update('Topping', [
+                            'name' => $toppingData['topping_name'],
+                            'price' => $toppingData['topping_price']
+                        ], $toppingData['id']);
+                        $newToppingIDs[] = $toppingData['id'];
+                    } else {
+                        $newTopping = $this->foodRestaurantInterface->store('Topping', [
+                            'name' => $toppingData['topping_name'],
+                            'price' => $toppingData['topping_price']
+                        ]);
+                        $newToppingIDs[] = $newTopping->id;
+                        $food->toppings()->attach($newTopping->id);
                     }
-                } else {
-                    $newTopping = $this->foodRestaurantInterface->store('Topping', $toppingData);
-                    $newToppingIDs[] = $newTopping->id;
                 }
+                
             }
 
-            if (count($existingToppingIDs) > count($newToppingIDs)) {
-                $extraToppingIDs = array_diff($existingToppingIDs, $newToppingIDs);
+            $extraToppingIDs = array_diff($existingToppingIDs, $newToppingIDs);
+            if (count($extraToppingIDs) > 0) {
                 foreach ($extraToppingIDs as $extraToppingID) {
                     $this->foodRestaurantInterface->delete('Topping', $extraToppingID);
+                    $food->toppings()->detach($extraToppingID);
                 }
-                $food->toppings()->detach($extraToppingIDs);
             }
-
-            $food->toppings()->sync($newToppingIDs);
             
 
             DB::commit();
@@ -352,28 +354,45 @@ class RestaurantFoodController extends Controller
         }
     }
 
-    public function destroy($foodRestaurantId)
+    public function destroy($id, Request $request)
     {
+        $type = $request->input('type');
         DB::beginTransaction();
-
         try {
-            $foodRestaurant = $this->foodRestaurantInterface->findById('FoodRestaurant', $foodRestaurantId);
-            if (!$foodRestaurant) {
-                return response()->json(['message' => 'FoodRestaurant record not found!'], 404);
+            if ($type === 'food') {
+                $this->deleteFood($id);
+            } elseif ($type === 'restaurant') {
+                $this->deleteFoodRestaurant($id);
+            } else {
+                return response()->json(['message' => 'Invalid type specified.'], 400);
             }
-            $this->foodRestaurantInterface->delete('FoodRestaurant', $foodRestaurantId);
 
             DB::commit();
-            return response()->json([
-                'message' => Config::get('variable.DELETE_SUCCESSFULLY')
-            ], Config::get('variable.OK'));
+            return response()->json(['message' => 'Deleted successfully.'], 200);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'message' => Config::get('variable.DELETE_FAIL'),
-                'error' => $e->getMessage()
-            ], Config::get('variable.CLIENT_ERROR'));
+            return response()->json(['message' => 'Delete operation failed.', 'error' => $e->getMessage()], 500);
         }
     }
+
+    
+    private function deleteFood($foodId)
+    {
+        $this->foodRestaurantInterface->delete('Food', $foodId);
+        DB::commit();
+        return response()->json([
+            'message' => Config::get('variable.DELETE_SUCCESSFULLY')
+        ], Config::get('variable.OK'));
+    }
+    
+    private function deleteFoodRestaurant($foodRestaurantId)
+    {
+        $this->foodRestaurantInterface->delete('FoodRestaurant', $foodRestaurantId);
+        DB::commit();
+        return response()->json([
+            'message' => Config::get('variable.DELETE_SUCCESSFULLY')
+        ], Config::get('variable.OK'));
+    }
+    
 
 }
