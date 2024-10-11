@@ -59,11 +59,11 @@ class FoodRestaurant extends Pivot
 
     public function orderDetails()
     {
-        return $this->hasMany(OrderDetail::class);
+        return $this->hasMany(OrderDetail::class, 'food_restaurant_id');
     }
 
-    public function restaurant()
+    public function restaurant(): BelongsTo
     {
-        return $this->belongsTo(Restaurant::class);
+        return $this->belongsTo(Restaurant::class, 'restaurant_id');
     }
 }
