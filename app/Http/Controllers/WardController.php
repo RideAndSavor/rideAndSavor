@@ -7,14 +7,17 @@ use App\Exceptions\CrudException;
 use App\Http\Requests\WardRequest;
 use App\Contracts\LocationInterface;
 use App\Http\Resources\WardResource;
+use App\Services\WardService;
 use Illuminate\Support\Facades\Config;
 
 class WardController extends Controller
 {
 
     private $wardInterface;
-    public function __construct(LocationInterface $wardInterface) {
+    private $wardService;
+    public function __construct(LocationInterface $wardInterface , WardService $wardService) {
         $this->wardInterface = $wardInterface;
+        $this->wardService = $wardService;
     }
     public function index()
     {
@@ -64,6 +67,12 @@ class WardController extends Controller
         return response()->json([
             'message'=>Config::get('variable.WARD_DELETED_SUCCESSFULLY')
         ], Config::get('variable.NO_CONTENT'));
+    }
+
+    public function getWardsByTownship($township_id)
+    {
+        $wards = $this->wardService->getWardsByTownship($township_id);
+        return response()->json($wards);
     }
 
 }
