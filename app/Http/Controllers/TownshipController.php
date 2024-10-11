@@ -10,12 +10,15 @@ use App\Contracts\LocationInterface;
 use App\Http\Requests\TownshipRequest;
 use Illuminate\Support\Facades\Config;
 use App\Http\Resources\TownshipResource;
+use App\Services\TownshipService;
 
 class TownshipController extends Controller
 {
     private $locationInterface;
-    public function __construct(LocationInterface $locationInterface) {
+    private $townshipService;
+    public function __construct(LocationInterface $locationInterface, TownshipService $townshipService) {
         $this->locationInterface = $locationInterface;
+        $this->townshipService = $townshipService;
     }
 
     public function index()
@@ -67,6 +70,12 @@ class TownshipController extends Controller
         return response()->json([
             'message'=>Config::get('variable.TDS')
         ],Config::get('variable.NO_CONTENT'));
+    }
+
+    public function getTownshipsByCity($city_id)
+    {
+        $townships = $this->townshipService->getTownshipsByCity($city_id);
+        return response()->json($townships);
     }
 
 }
