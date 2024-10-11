@@ -2,33 +2,41 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\OrderDetail;
+use App\Models\Restaurant;
 use App\Traits\CanLoadRelationships;
-use App\Http\Resources\OrderDetailResource;
+use App\Http\Resources\RestaurantResource;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class OrderItAgain extends Controller
 {
     use CanLoadRelationships;
     private array $relations = [
-        'foodRestaurant',
-        'foodRestaurant.food',
-        'foodRestaurant.food.foodViewImages',
+        'ratings',
+        'comments',
+        'restaurantImages'
     ];
-    public function __invoke()
+    public function __invoke(): AnonymousResourceCollection
     {
-        $start_date = now()->subDays(7);
+        $start_date = now()->subDays(config('variable.SEVEN'));
         $end_date = now();
-        $data = OrderDetail::query()
-            ->select('order_id', 'food_restaurant_id','discount_prices')
-            ->whereHas('order', function ($query) use ($start_date, $end_date) {
-                $query->select('id', 'user_id', 'created_at', 'status_id')
-                    ->where('status_id', config('variable.THREE'))
-                    ->whereBetween('created_at', [$start_date, $end_date]);
-            })
-            ->with(['foodRestaurant.food.foodViewImages'])
-            ->get();
 
-        return OrderDetailResource::collection($data);
+        $restaurantsWithRatingCommentImages = $this->loadRelationships(Restaurant::mostFoodOrderRestaurantsByUser($start_date, $end_date))->get();
+        //dd($query->get());
+        // $restaurantsWithRatingCommentImages = cache()->remember(
+        //     'order-it-again',
+        //     now()->addMinutes(5),
+        //     fn(): Collection =>
+        //     Restaurant::mostFoodOrderRestaurantsByUser($start_date, $end_date)->get()
+        // );
+
+        if ($restaurantsWithRatingCommentImages->isEmpty()) {
+            return response()->json([
+                'message' => 'No restaurant match the given criteria',
+                'data' => [],
+            ], status: 204);
+        }
+        return RestaurantResource::collection($restaurantsWithRatingCommentImages);
+        // dd($restaurantsWithRatingCommentImages);
 
     }
 }
