@@ -18,9 +18,6 @@ trait CanLoadRelationships
       $for->when(
         $this->shouldIncludeRelation($relation),
         function ($q) use ($relation) {
-          // if (($for instanceof Model)) {
-          //   $for->load($relation);
-          // } else {
           if ($relation == 'ratings') {
             $q->withAvg($relation, 'rating_id');
           }
