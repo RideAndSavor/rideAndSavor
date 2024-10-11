@@ -3,40 +3,76 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use Google_Client;
 use App\Models\User;
-use GuzzleHttp\Client;
+use Illuminate\Http\Request;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Laravel\Socialite\Facades\Socialite;
 use App\Http\Requests\SocialLoginRequest;
-
 class SocialLoginController extends Controller
 {
-    // Redirect to Google 
+    // Redirect to Google for OAuth consent
     public function redirectToGoogle()
     {
-        return Socialite::driver('google')->redirect();
+        $client = new Google_Client();
+        $client->setClientId(env('GOOGLE_CLIENT_ID'));
+        $client->setClientSecret(env('GOOGLE_CLIENT_SECRET'));
+        $client->setRedirectUri(env('GOOGLE_REDIRECT_URL'));
+        $client->setAccessType('offline'); // Request refresh token
+        $client->setPrompt('consent');
+        $client->addScope('https://www.googleapis.com/auth/userinfo.profile');
+        $client->addScope('openid');
+
+        // Generate the Google OAuth URL
+        $authUrl = $client->createAuthUrl();
+
+        return response()->json(['url' => $authUrl]);
     }
 
-    // Handle the callback from (Google,Facebook)
-    public function handleCallback(SocialLoginRequest $request): UserResource
+    // Handle the OAuth callback
+    public function handleGoogleCallback(SocialLoginRequest $request)
     {
+        $client = new Google_Client();
+        $client->setClientId(env('GOOGLE_CLIENT_ID'));
+        $client->setClientSecret(env('GOOGLE_CLIENT_SECRET'));
+        $client->setRedirectUri(env('GOOGLE_REDIRECT_URL'));
+
+        // Get the code from the query parameter
+        $code = $request->input('code');
+        $provider = $request->input('provider');
+
         try {
-            $accessToken = $request->input('access_token');
-            $provider = $request->input('provider');
-            // $user = Socialite::driver('google')->stateless()->user();
-            // dd($user);
-            // dd($accessToken, $provider);
-            //ya29.a0AcM612z84IAfEvNyP1cuW2TSvs4x7uofXGHcV2JKNeQFuGiazqC7bdAP0AxXNNN-3jvkn_N3yf_GRTN9lq7lYJhuM7nQImsWZzqrwiQK8cvY1apGBMNzv_Ny26KmxjPrb0Xn_yCOEAEXtJcsv4wT7XQycoVKicCJswEaCgYKAYsSARESFQHGX2MiOTp4s-3EYLNLIx8x8o_GEA0170(google access_token)
-            //EAB3l6mo5V2wBOZBs466GYVncMJTUwl7iPowbgZAyAiLNY26zGXQeaaojiRCNpoYm5paPtHZAMbduI7KmcE6523gX02Gigf2ZBVkivI31JMZBZAfuMn8Vzf5wQPIrejr6THOjZCq6R8V6Hzn0wtz7hZChQZBZBHQvpfoA4F8FZB0Qr5GJ3l5Uoc6nAKeIPLpiG3L6NVGZCCJnAGyrAdO92QGE4atF6VHkGWkZD(facebook access_token)
+            // Exchange the authorization code for an access token
+            $token = $client->fetchAccessTokenWithAuthCode($code);
 
-            $user = Socialite::driver($provider)->stateless()->userFromToken($accessToken);
-            $data = $this->findOrCreate($user, $provider);
-            return new UserResource($data->setAttribute('token', $user->token));
+            // Set the access token on the client
+            $client->setAccessToken($token);
 
-        } catch (Exception $exception) {
-            throw new Exception($exception->getMessage(), $exception->getCode());
+            // Fetch the user information using the access token
+            $userData = $this->getUserData($token['access_token']);
+            $data = $this->findOrCreate($userData, $provider);
+            
+            if ($request->expectsJson()) {
+                return new UserResource($data->setAttribute('token', $token));
+            }
+            // return redirect('https://www.dailyfairdeal.com');
+        } catch (Exception $e) {
+            error_log('Error during Google OAuth: ' . $e->getMessage());
+            return redirect('/')->with('error', 'Failed to authenticate with Google.');
         }
+    }
+
+    // Helper function to fetch user profile data using access token
+    private function getUserData($accessToken)
+    {
+        // Make a request to Google to get user profile information
+        $response = Http::get('https://www.googleapis.com/oauth2/v3/userinfo', [
+            'access_token' => $accessToken,
+        ]);
+
+        return json_decode($response->getBody()->getContents(), false);
     }
 
     private function findOrCreate(object $user, string $provider): User
@@ -56,5 +92,4 @@ class SocialLoginController extends Controller
         Auth::login($userExist);
         return $userExist;
     }
-
 }

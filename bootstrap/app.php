@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use App\Exceptions\CustomException;
 use Illuminate\Foundation\Application;
+use Illuminate\Http\Middleware\HandleCors;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
@@ -17,6 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // $middleware->validateCsrfTokens(except: [
         //     'api/*', // <-- Exclude your API route
         // ]);
+        // $middleware->verifyCsrfTokens([
+        //     'api/*'
+        // ]);
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'user' => \App\Http\Middleware\UserMiddleware::class,
@@ -26,7 +30,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->api([
-            \Illuminate\Session\Middleware\StartSession::class
+            \Illuminate\Session\Middleware\StartSession::class,
+            HandleCors::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

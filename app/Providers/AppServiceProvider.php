@@ -3,11 +3,11 @@
 namespace App\Providers;
 
 use App\Contracts\CityInterface;
-use App\Contracts\CountryInterface;
 use App\Contracts\StateInterface;
+use App\Contracts\CountryInterface;
 use App\Repositories\CityRepository;
-use App\Repositories\CountryRepository;
 use App\Repositories\StateRepository;
+use App\Repositories\CountryRepository;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
@@ -29,8 +29,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // VerifyCsrfToken::except([
-        //     'api/*', // Exclude your API route
-        // ]);
+        VerifyCsrfToken::except([
+            'api/*', // Exclude your API route
+        ]);
     }
 }
