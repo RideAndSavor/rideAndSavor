@@ -3,24 +3,18 @@
 namespace App\Providers;
 
 use App\Contracts\CityInterface;
-use App\Contracts\StateInterface;
-<<<<<<< HEAD
-use App\Contracts\CountryInterface;
-=======
-use App\Contracts\StreetInterface;
-use App\Contracts\TownshipInterface;
 use App\Contracts\WardInterface;
->>>>>>> f90a6dfc91f8f0d3e639d0978af989ec9d332469
+use App\Contracts\StateInterface;
+use App\Contracts\StreetInterface;
+use App\Contracts\CountryInterface;
+use App\Contracts\TownshipInterface;
 use App\Repositories\CityRepository;
-use App\Repositories\StateRepository;
-<<<<<<< HEAD
-use App\Repositories\CountryRepository;
-=======
-use App\Repositories\StreetRepository;
-use App\Repositories\TownshipRepository;
 use App\Repositories\WardRepository;
->>>>>>> f90a6dfc91f8f0d3e639d0978af989ec9d332469
+use App\Repositories\StateRepository;
+use App\Repositories\StreetRepository;
+use App\Repositories\CountryRepository;
 use Illuminate\Support\ServiceProvider;
+use App\Repositories\TownshipRepository;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
 class AppServiceProvider extends ServiceProvider
