@@ -26,6 +26,7 @@ use App\Http\Controllers\StatusControlller;
 use App\Http\Controllers\ToppingController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\PopularRestaurants;
 use App\Http\Controllers\TownshipController;
 use App\Http\Controllers\PercentageController;
 use App\Http\Controllers\RestaurantController;
@@ -129,8 +130,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('orderDetail', OrderDetailController::class);
 
     Route::get('/order-it-again', OrderItAgain::class)->name('order-it-again');
-    Route::get('/favorite-cuisine',FavoriteCuisine::class)->name('food.favorite.cuisine');
-
+    Route::get('/favorite-cuisine', FavoriteCuisine::class)->name('food.favorite.cuisine');
+    Route::get('/popular-restaurants', PopularRestaurants::class)->name('restaurant.popular-restaurants');
+    
+    
     //Calculate_Delivery_Fees
     Route::post('/calculate-delivery-fee', [CalculateDeliveryFeesController::class, 'calculateDeliveryFee']);
 
@@ -154,7 +157,7 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 Route::middleware(['auth:sanctum', 'user'])->group(function () {
 
     Route::post('/user/rider_request_taxi', [TripController::class, 'RiderRequestTaxi']);
-    
+
     Route::get('/user/prices', [TripController::class, 'getDriverPrices']);
 
 });

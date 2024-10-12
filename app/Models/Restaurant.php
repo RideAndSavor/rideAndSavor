@@ -59,6 +59,19 @@ class Restaurant extends Model
         // ->withAvg('ratings', 'rating_id');
     }
 
+    public function scopePopularRestaurants(Builder $query): void
+    {
+        $query->with(
+            [
+                'foodRestaurants.orderDetails' => fn($query) =>
+                    $query->whereHas(
+                        'order',
+                        fn($query) =>
+                        $query->where('status_id', config('variable.THREE'))
+                    )
+            ]
+        );
+    }
 
     public function address(): BelongsTo
     {
