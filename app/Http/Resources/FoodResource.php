@@ -28,7 +28,7 @@ class FoodResource extends JsonResource
                     'size' => $sizes_data->name
                 ];
             }),
-            'sub_category_id ' => $sub_category->name,
+            'sub_category_id ' => $sub_category->name??'',
             'toppings' =>  ToppingResource::collection($this->toppings),
             'restaurant' => new RestaurantResource($this->restaurants->first())
         ];

@@ -12,6 +12,7 @@ use App\Http\Controllers\SizeController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WardController;
+use App\Http\Controllers\FavoriteCuisine;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PriceController;
 use App\Http\Controllers\StateController;
@@ -128,6 +129,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('orderDetail', OrderDetailController::class);
 
     Route::get('/order-it-again', OrderItAgain::class)->name('order-it-again');
+    Route::get('/favorite-cuisine',FavoriteCuisine::class)->name('food.favorite.cuisine');
 
     //Calculate_Delivery_Fees
     Route::post('/calculate-delivery-fee', [CalculateDeliveryFeesController::class, 'calculateDeliveryFee']);

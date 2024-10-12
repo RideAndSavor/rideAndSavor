@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Food;
+use App\Http\Resources\FavoriteCuisineResource;
 
 class FavoriteCuisine extends Controller
 {
-    /**
-     * Handle the incoming request.
-     */
-    public function __invoke(Request $request)
+    public function __invoke()
     {
-        //
+        $favoriteCuisinesWithImages = Food::favoriteCuisines()
+            ->get();
+
+        return FavoriteCuisineResource::collection($favoriteCuisinesWithImages);
     }
 }
