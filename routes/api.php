@@ -39,9 +39,10 @@ use App\Http\Controllers\DiscountItemController;
 use App\Http\Controllers\DeliveryPriceController;
 use App\Http\Controllers\FoodRestaurantController;
 use App\Http\Controllers\RestaurantFoodController;
-
 use App\Http\Controllers\PaymentProviderController;
+
 use App\Http\Controllers\RestaurantAddressController;
+use App\Http\Controllers\FeatureRestaurantsController;
 use App\Http\Controllers\CalculateDeliveryFeesController;
 use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 
@@ -132,6 +133,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/order-it-again', OrderItAgain::class)->name('order-it-again');
     Route::get('/favorite-cuisine', FavoriteCuisine::class)->name('food.favorite.cuisine');
     Route::get('/popular-restaurants', PopularRestaurants::class)->name('restaurant.popular-restaurants');
+    Route::get('/feature-restaurants', FeatureRestaurantsController::class)->name('restaurant.feature-restaurants');
     
     
     //Calculate_Delivery_Fees

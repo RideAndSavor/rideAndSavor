@@ -73,6 +73,9 @@ class Restaurant extends Model
         );
     }
 
+    public function scopeFeatureRestaurants(Builder $query){
+        $query->where('feature_status',1);
+    }
     public function address(): BelongsTo
     {
         return $this->belongsTo(Address::class);
