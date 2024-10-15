@@ -9,6 +9,7 @@ use App\Http\Controllers\CityController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SizeController;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WardController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\StreetController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CountryController;
+use App\Http\Controllers\FoodsInRestaurant;
 use App\Http\Controllers\StatusControlller;
 use App\Http\Controllers\ToppingController;
 use App\Http\Controllers\CategoryController;
@@ -40,6 +42,7 @@ use App\Http\Controllers\DeliveryPriceController;
 use App\Http\Controllers\FoodRestaurantController;
 use App\Http\Controllers\RestaurantFoodController;
 use App\Http\Controllers\PaymentProviderController;
+use App\Http\Controllers\RestaurantDetailWithFoods;
 
 use App\Http\Controllers\RestaurantAddressController;
 use App\Http\Controllers\FeatureRestaurantsController;
@@ -134,8 +137,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/favorite-cuisine', FavoriteCuisine::class)->name('food.favorite.cuisine');
     Route::get('/popular-restaurants', PopularRestaurants::class)->name('restaurant.popular-restaurants');
     Route::get('/feature-restaurants', FeatureRestaurantsController::class)->name('restaurant.feature-restaurants');
-    
-    
+    Route::get('/foods-in-restaurant', FoodsInRestaurant::class)->name('food.in-restaurant');
+
+
     //Calculate_Delivery_Fees
     Route::post('/calculate-delivery-fee', [CalculateDeliveryFeesController::class, 'calculateDeliveryFee']);
 

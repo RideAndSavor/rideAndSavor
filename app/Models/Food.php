@@ -92,7 +92,7 @@ class Food extends Model
 
     public function foodRestaurants()
     {
-        return $this->hasMany(FoodRestaurant::class);
+        return $this->hasMany(FoodRestaurant::class, 'restaurant_id', 'id');
     }
 
     public function orderDetails()
