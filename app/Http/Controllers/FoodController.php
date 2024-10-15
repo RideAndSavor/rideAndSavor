@@ -23,8 +23,7 @@ class FoodController extends Controller
         'toppings',
         'foodImages'
     ];
-    private $foodInterface;
-    private $genre;
+    private $foodInterface,$genre;
 
     public function __construct(LocationInterface $foodInterface)
     {
