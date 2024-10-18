@@ -25,9 +25,14 @@ class SearchController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('q');
+        $type = $request->input('type');  // 'food' or 'mall'
 
         if (!$query) {
             return response()->json(['error' => 'Query parameter "q" is required.'], 400);
+        }
+
+        if (!$type || !in_array($type, ['food', 'mall'])) {
+            return response()->json(['error' => 'Search type must be either "food" or "mall".'], 400);
         }
 
         $terms = explode(',', $query);
@@ -40,12 +45,30 @@ class SearchController extends Controller
             $terms = $this->filterSearchTerms($terms, $this->previousResults);
         }
 
-        // Define the models and their searchable fields
+        if ($type === 'food') {
+            $response = $this->searchFoodModels($terms);
+        } elseif ($type === 'mall') {
+            $response = $this->searchMall($terms);
+        }
+
+        $this->previousResults = $response;
+
+        if (empty($response)) {
+            return response()->json(['message' => 'No results found.'], 404);
+        }
+
+        return response()->json($response);
+    }
+
+    private function searchFoodModels($terms)
+    {
+        $response = [];
+
         $models = [
             'users' => [User::class, ['name', 'email']],
             'categories' => [Category::class, ['name']],
             'sub_categories' => [SubCategory::class, ['name']],
-            'foods' => [Food::class, ['name']], 
+            'foods' => [Food::class, ['name']],
             'discount_items' => [DiscountItem::class, ['name']],
             'toppings' => [Topping::class, ['name']],
             'restaurants' => [Restaurant::class, ['name']],
@@ -62,7 +85,7 @@ class SearchController extends Controller
             $model = $modelConfig[0];
             $searchableFields = $modelConfig[1];
 
-            $results = $model::where(function($q) use ($terms, $searchableFields) {
+            $results = $model::where(function ($q) use ($terms, $searchableFields) {
                 foreach ($terms as $term) {
                     foreach ($searchableFields as $field) {
                         $q->orWhere($field, 'like', '%' . $term . '%');
@@ -75,17 +98,35 @@ class SearchController extends Controller
             }
         }
 
-        // Save current results for future filtering
-        $this->previousResults = $response;
-
-        if (empty($response)) {
-            return response()->json(['message' => 'No results found.'], 404);
-        }
-
-        return response()->json($response);
+        return $response;
     }
 
-    // Filter search terms to previous search results
+    private function searchMall($terms)
+    {
+        $response = [];
+
+        $models = [];
+
+        foreach ($models as $key => $modelConfig) {
+            $model = $modelConfig[0];
+            $searchableFields = $modelConfig[1];
+
+            $results = $model::where(function ($q) use ($terms, $searchableFields) {
+                foreach ($terms as $term) {
+                    foreach ($searchableFields as $field) {
+                        $q->orWhere($field, 'like', '%' . $term . '%');
+                    }
+                }
+            })->get();
+
+            if ($results->isNotEmpty()) {
+                $response[$key] = $results;
+            }
+        }
+
+        return $response;
+    }
+
     private function filterSearchTerms($terms, $previousResults)
     {
         $filteredTerms = [];
