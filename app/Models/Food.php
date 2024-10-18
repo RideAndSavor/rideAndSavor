@@ -7,7 +7,9 @@ use App\DB\Core\StringField;
 use App\DB\Core\IntegerField;
 use Laravel\Scout\Searchable;
 use App\Exceptions\CrudException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -44,6 +46,22 @@ class Food extends Model
         ];
     }
 
+    public function scopeFavoriteCuisines(Builder $query): void
+    {
+        $query->whereHas(
+            'foodRestaurants.orderDetails.order',
+            fn($query) =>
+            $query->where('status_id', config('variable.THREE'))
+                ->where('user_id', auth()->id())
+
+        )
+            ->with('foodImages')
+            ->join('food_restaurant', 'food_restaurant.food_id', '=', 'food.id')
+            ->join('order_details', 'order_details.food_restaurant_id', '=', 'food_restaurant.id')
+            ->select('food.id', 'food.name', DB::raw('SUM(order_details.quantity) as food_count')) // Sum the quantity ordered
+            ->groupBy('food.id', 'food.name');
+    }
+
     public function subCategory(): BelongsTo
     {
         return $this->belongsTo(SubCategory::class);
@@ -67,14 +85,14 @@ class Food extends Model
         return $this->hasMany(Images::class, 'link_id');
     }
 
-    public function foodViewImages(): HasMany
+    public function foodImages(): HasMany
     {
         return $this->hasMany(FoodImage::class);
     }
 
     public function foodRestaurants()
     {
-        return $this->hasMany(FoodRestaurant::class);
+        return $this->hasMany(FoodRestaurant::class, 'restaurant_id', 'id');
     }
 
     public function orderDetails()

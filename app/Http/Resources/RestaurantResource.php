@@ -24,7 +24,7 @@ class RestaurantResource extends JsonResource
             // 'address_id' => $this->address_id,
             'name' => $this->name,
             'restaurant_type' => $this->restaurantType->name,
-            'avg_rating' => $this->ratings_avg_rating_id ?? 0,
+            'avg_rating' => $this->ratings_avg_rating_id,
             'open_time' => $this->open_time,
             'close_time' => $this->close_time,
             'phone_number' => $this->phone_number,
@@ -33,6 +33,8 @@ class RestaurantResource extends JsonResource
             'images' => ImageResource::collection($this->whenLoaded('restaurantImages')),
             'comments' => CommentResource::collection($this->whenLoaded('comments')),
             //to write with address resources
+            //'address' => new AddressResource($this->whenLoaded('address')),
+            
             'Street_Name' => $address->street->name,
             'Ward_Name' => $address->street->ward->name,
             'TownShip_Name' => $address->street->ward->township->name,

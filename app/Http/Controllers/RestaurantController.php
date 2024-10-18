@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Exceptions\CrudException;
 use Illuminate\Support\Facades\DB;
 use App\Contracts\LocationInterface;
+use App\Traits\CanLoadRelationships;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use App\Http\Requests\RestaurantRequest;
@@ -17,9 +18,14 @@ use Illuminate\Support\Carbon as SupportCarbon;
 
 class RestaurantController extends Controller
 {
-    use AddressTrait;
+    use AddressTrait, CanLoadRelationships;
 
     private $restaurantInterface;
+    private array $relations = [
+        'ratings',
+        'comments',
+        'restaurantImages'
+    ];
 
     public function __construct(LocationInterface $restaurantInterface)
     {
@@ -36,7 +42,7 @@ class RestaurantController extends Controller
     }
 
     public function store(RestaurantRequest $request)
-    { 
+    {
         $validatedData = $request->validated();
         $validatedData['user_id'] = Auth::id();
         $validatedData = $this->dateFormat($validatedData);
@@ -52,7 +58,7 @@ class RestaurantController extends Controller
     public function update(RestaurantRequest $restaurantRequest, string $id)
     {
         $validatedData = $restaurantRequest->validated();
-        $validatedData =  $this->dateFormat($validatedData);
+        $validatedData = $this->dateFormat($validatedData);
         $restaurant = $this->restaurantInterface->findById('Restaurant', $id);
         if (!$restaurant) {
             return response()->json([
@@ -62,6 +68,12 @@ class RestaurantController extends Controller
         $restaurant = $this->restaurantInterface->update('Restaurant', $validatedData, $id);
         return new RestaurantResource($restaurant);
     }
+
+    public function show(Restaurant $restaurant): RestaurantResource
+    {
+        return new RestaurantResource($this->loadRelationships(Restaurant::where('id', $restaurant->id))->first());
+    }
+
 
     public function destroy(string $id)
     {
@@ -76,7 +88,7 @@ class RestaurantController extends Controller
             'message' => Config::get('variable.RESTAURANT_DELETED_SUCCESSFULLY')
         ], Config::get('variable.NO_CONTENT'));
     }
-    
+
     public function featureRestaurants()
     {
         $featureRestaurants = Restaurant::withCount('orderDetails as orders_count')
@@ -87,13 +99,14 @@ class RestaurantController extends Controller
         return response()->json($featureRestaurants);
     }
 
-    public function restaurantTypes(){
+    public function restaurantTypes()
+    {
         // Correct the spelling of 'restaurant_types'
         $restaurantTypes = DB::table('restaurant_types')->get();
-        
+
         // Return the correct variable
         return response()->json($restaurantTypes);
     }
-    
+
 
 }

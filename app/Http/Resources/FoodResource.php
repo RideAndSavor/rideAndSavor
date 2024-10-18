@@ -16,11 +16,12 @@ class FoodResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $sub_category = SubCategory::find($this->sub_category_id);
         $foodDatas = $this->restaurants()->wherePivot('food_id', $this->id)->get();
         return [
-            'name' => $this->name,
-            // 'quantity' => $this->quantity,
+            'food_name' => $this->name,
+            'food_image' => ImageResource::collection($this->whenLoaded('foodImages')),
+            'category' => new CategoryResource($this->whenLoaded('subCategory', fn() => $this->subCategory?->category)),
+            'sub_category' => new SubCategoryResource($this->whenLoaded('subCategory')),
             'sizes_prcies' => $foodDatas->map(function ($foodData) {
                 $sizes_data = Size::find($foodData->pivot->size_id);
                 return [
@@ -28,8 +29,7 @@ class FoodResource extends JsonResource
                     'size' => $sizes_data->name
                 ];
             }),
-            'sub_category_id ' => $sub_category->name,
-            'toppings' =>  ToppingResource::collection($this->toppings),
+            'toppings' => ToppingResource::collection($this->whenLoaded('toppings')),
             'restaurant' => new RestaurantResource($this->restaurants->first())
         ];
     }

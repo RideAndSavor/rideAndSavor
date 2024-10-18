@@ -10,20 +10,23 @@ use App\Helpers\ResponseHelper;
 use App\Exceptions\CrudException;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\FoodRequest;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Contracts\LocationInterface;
 use App\Http\Resources\FoodResource;
+use App\Traits\CanLoadRelationships;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Storage;
 
 class FoodController extends Controller
 {
-    use AddressTrait,ImageTrait;
-    private $foodInterface;
-    private $genre;
+    use AddressTrait, ImageTrait, CanLoadRelationships;
+    private array $relations = [
+        'toppings',
+        'foodImages'
+    ];
+    private $foodInterface,$genre;
 
-    public function __construct(LocationInterface $foodInterface) {
+    public function __construct(LocationInterface $foodInterface)
+    {
         $this->foodInterface = $foodInterface;
         $this->genre = Config::get('variable.FOOD_IMAGE');
     }
@@ -39,31 +42,31 @@ class FoodController extends Controller
     }
 
     public function store(FoodRequest $request)
-{
-    $folder_name = 'public/foods/';
-    $tableName= 'images';
-    $validateData = $request->validated();
+    {
+        $folder_name = 'public/foods/';
+        $tableName = 'images';
+        $validateData = $request->validated();
 
-    $toppingIds = $validateData['topping_id'] ?? [];
-    unset($validateData['upload_url']);
-    unset($validateData['topping_id']);
+        $toppingIds = $validateData['topping_id'] ?? [];
+        unset($validateData['upload_url']);
+        unset($validateData['topping_id']);
 
-    try {
-        $food = $this->foodInterface->store('Food', $validateData);
+        try {
+            $food = $this->foodInterface->store('Food', $validateData);
 
-        if($request->hasFile('upload_url')){
-            $this->storeImage($request,$food->id,$this->genre,$this->foodInterface,$folder_name,$tableName);
+            if ($request->hasFile('upload_url')) {
+                $this->storeImage($request, $food->id, $this->genre, $this->foodInterface, $folder_name, $tableName);
+            }
+
+            if (!empty($toppingIds)) {
+                $food->toppings()->attach($toppingIds);
+            }
+            return new FoodResource($food);
+        } catch (\Exception $e) {
+            Log::error('Error in FoodController@store: ' . $e->getMessage());
+            throw CrudException::argumentCountError();
         }
-
-        if (!empty($toppingIds)) {
-            $food->toppings()->attach($toppingIds);
-        }
-        return new FoodResource($food);
-    } catch (\Exception $e) {
-        Log::error('Error in FoodController@store: ' . $e->getMessage());
-        throw CrudException::argumentCountError();
     }
-}
 
     public function update(FoodRequest $request, string $id)
     {
@@ -71,13 +74,13 @@ class FoodController extends Controller
         $tableName = 'images';
         $validateData = $request->validated();
 
-        $food = $this->updateFoodTopping($validateData,$id);
-        if($food instanceof JsonResponse){
+        $food = $this->updateFoodTopping($validateData, $id);
+        if ($food instanceof JsonResponse) {
             return $food;
         }
 
-        if($request->hasFile('upload_url')){
-            $this->updateImage($request,$food->id,$this->genre,$this->foodInterface,$folder_name,$tableName,$id);
+        if ($request->hasFile('upload_url')) {
+            $this->updateImage($request, $food->id, $this->genre, $this->foodInterface, $folder_name, $tableName, $id);
         }
 
         if ($request->hasFile('upload_url')) {
@@ -94,15 +97,21 @@ class FoodController extends Controller
         return new FoodResource($food);
     }
 
-    public function destroy(String $id)
+    public function show(Food $food): FoodResource
+    {
+
+        return new FoodResource($this->loadRelationships(Food::where('id', $food->id))->first());
+    }
+
+    public function destroy(string $id)
     {
         $food = $this->deletedFoodTopping($id);
-        if($food instanceof JsonResponse){
-        return $food;
-         }
+        if ($food instanceof JsonResponse) {
+            return $food;
+        }
 
-         $imageId = $food->image_id;
-         $this->deleteImage(Images::class,$imageId,'upload_url');
+        $imageId = $food->image_id;
+        $this->deleteImage(Images::class, $imageId, 'upload_url');
         return response()->json([
             'message' => Config::get('variable.FOOD_DELETED_SUCCESSFULLY')
         ], Config::get('variable.OK'));
