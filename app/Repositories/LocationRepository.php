@@ -4,9 +4,9 @@ namespace App\Repositories;
 
 use App\DB\Core\Crud;
 use App\Models\Country;
+use App\Exceptions\CrudException;
 use App\Contracts\CountryInterface;
 use App\Contracts\LocationInterface;
-use App\Exceptions\CrudException;
 use Illuminate\Support\Facades\Config;
 
 class LocationRepository implements LocationInterface

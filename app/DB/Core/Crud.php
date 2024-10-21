@@ -53,7 +53,7 @@ class Crud
                 return $this->handleStoreMode();
             }
         } catch (\Exception $e) {
-            throw new Exception($e->getMessage());
+            throw new \Exception($e->getMessage());
         }
     }
 

@@ -106,4 +106,14 @@ class Food extends Model
             'id' // (intermediate model key): The local key on the FoodRestaurant model.
         );
     }
+
+    public function carts(): HasMany
+    {
+        return $this->hasMany(Cart::class);
+    }
+
+    public function restaurantss(): HasMany
+    {
+        return $this->hasMany(Restaurant::class);
+    }
 }

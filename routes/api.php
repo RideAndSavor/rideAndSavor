@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderItAgain;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\RoleController;
@@ -30,6 +31,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\PopularRestaurants;
 use App\Http\Controllers\TownshipController;
+use App\Http\Controllers\CartItemsController;
 use App\Http\Controllers\PercentageController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\TaxiDriverController;
@@ -61,7 +63,7 @@ Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 Route::post('/request', [SocialLoginController::class, 'redirectToGoogle']);
 Route::get('/social/login/callback-url', [SocialLoginController::class, 'handleGoogleCallback']);
 
-Route::post('signup', [AuthController::class, 'register'])->name('register');
+Route::post('signup', [AuthController::class, 'register'])->name('register')->middleware('recaptcha');
 Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::resource('paymentmodes', PaymentProviderController::class);
@@ -127,6 +129,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('restaurants/{restaurant}/foods-with-toppings/{food}', 'updateFoodTopping');
         Route::delete('restaurants/{restaurant}/foods-with-toppings/{food}', 'destroyFoodTopping');
     });
+
+
+    Route::apiResource('carts', CartController::class)->except(['show','destroy']);
+    Route::apiResource('cart-items', CartItemsController::class)->only('destroy');
+
 
     Route::resource('order', OrderController::class);
     Route::resource('delivery_price', DeliveryPriceController::class);
