@@ -5,6 +5,7 @@ use App\Models\Food;
 use Illuminate\Http\Request;
 use App\Models\FoodRestaurant;
 use App\Http\Resources\FoodResource;
+use App\Http\Resources\FoodRestaurantResource;
 
 class FoodsInRestaurant extends Controller
 {
@@ -13,9 +14,9 @@ class FoodsInRestaurant extends Controller
         $request->validate([
             'restaurant_id' => ['required', 'integer']
         ]);
-        $foodIDs = FoodRestaurant::where('restaurant_id', $request->input('restaurant_id'))->pluck('food_id');
-        $foodsInRestaurant = Food::query()->whereIn('id', $foodIDs)
-            ->with(['subCategory.category'])->get();
-        return FoodResource::collection($foodsInRestaurant);
+
+        $foodsInRestaurant = FoodRestaurant::where('restaurant_id', $request->input('restaurant_id'))
+            ->with(['restaurant', 'food.subCategory.category', 'size', 'discount.percentage'])->first();
+        return new FoodRestaurantResource($foodsInRestaurant);
     }
 }

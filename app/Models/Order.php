@@ -18,6 +18,7 @@ class Order extends Model
     {
         $arr = [
             'user_id' => IntegerField::new(),
+            'cart_id' => IntegerField::new(),
             'status_id' => IntegerField::new(),
             'delivery_price_id' => IntegerField::new(),
             'total_amount' => DecimalField::new(),

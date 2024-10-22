@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Helpers\ResponseHelper;
 use App\Exceptions\CrudException;
+use Illuminate\Support\Facades\DB;
 use App\Http\Requests\OrderRequest;
 use App\Contracts\LocationInterface;
 use App\Http\Resources\OrderResource;
@@ -14,9 +16,9 @@ class OrderController extends Controller
 {
     private $orderInterface;
 
-    public function __construct(LocationInterface $orderInterface )
+    public function __construct(LocationInterface $orderInterface)
     {
-     $this->orderInterface = $orderInterface;
+        $this->orderInterface = $orderInterface;
     }
     public function index()
     {
@@ -26,48 +28,62 @@ class OrderController extends Controller
         } catch (\Exception $e) {
             return ResponseHelper::jsonResponseWithConfigError($e);
         }
-     }
+    }
 
     public function store(OrderRequest $request)
     {
         $validateData = $request->validated();
+        $validateData['order']['user_id'] = auth()->id();
+        $validateData['order']['status_id'] = 1;
         try {
-            $order = $this->orderInterface->store('Order',$validateData);
-        return new OrderResource($order);
-        } catch (\Exception $e) {
-            throw CrudException::argumentCountError();
+            DB::beginTransaction();
+            $order = $this->orderInterface->store('Order', $validateData['order']);
+
+            foreach ($validateData['order_item'] as $orderItem) {
+                $orderItem['order_id'] = $order->id;
+                $this->orderInterface->store('OrderDetail', $orderItem);
+            }
+            DB::commit();
+            return new OrderResource($order);
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            throw new \Exception($exception->getMessage(), $exception->getCode());
         }
     }
 
-    public function update(OrderRequest $request, string $id)
+    public function update(OrderRequest $request, Order $order)
     {
-    try {
-        $validateData = $request->validated();
-        $order = $this->orderInterface->findById('Order',$id);
-        if(!$order){
-            return response()->json([
-                'message'=>Config::get('variable.ONF')
-            ],Config::get('variable.CLIENT_ERROR'));
-        }
-        $order = $this->orderInterface->update('Order',$validateData,$id);
-        return new OrderResource($order);
-        } catch (\Exception $e) {
-            return ResponseHelper::jsonResponseWithConfigError($e);
+        $validatedData = $request->validated();
+        $validatedData['order']['user_id'] = auth()->user()->id;
+        $validatedData['order']['status_id'] = 1;
+        try {
+            DB::beginTransaction();
+            $order = $this->orderInterface->update('Order', $validatedData['order'], $order->id);
+            $orderItemIDs = OrderDetail::query()->where('order_id', '=', $order->id)->pluck('id')->toArray();
+            foreach ($validatedData['order_item'] as $index => $orderItem) {
+                $orderItem['order_id'] = $order->id;
+                $this->orderInterface->update('OrderDetail', $orderItem, $orderItemIDs[$index]);
+            }
+            DB::commit();
+            return new OrderResource($order);
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            throw new \Exception($exception->getMessage(), $exception->getCode());
         }
     }
 
     public function destroy(string $id)
     {
-        $order = $this->orderInterface->findById('Order',$id);
-        if(!$order){
+        $order = $this->orderInterface->findById('Order', $id);
+        if (!$order) {
             return response()->json([
-                'message'=>Config::get('variable.ONF')
-            ],Config::get('variable.SEVER_ERROR'));
+                'message' => Config::get('variable.ONF')
+            ], Config::get('variable.SEVER_ERROR'));
         }
-        $order = $this->orderInterface->delete('Order',$id);
+        $order = $this->orderInterface->delete('Order', $id);
         return response()->json([
-            'message'=>Config::get('variable.ODS')
-        ],Config::get('variable.OK'));
+            'message' => Config::get('variable.ODS')
+        ], Config::get('variable.OK'));
     }
 
     public function getRecentOrder($userId)

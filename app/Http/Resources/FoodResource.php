@@ -30,7 +30,7 @@ class FoodResource extends JsonResource
                 ];
             }),
             'toppings' => ToppingResource::collection($this->whenLoaded('toppings')),
-            'restaurant' => new RestaurantResource($this->restaurants->first())
+            // 'restaurant' => new RestaurantResource($this->restaurants->first())
         ];
     }
 

@@ -135,7 +135,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('cart-items', CartItemsController::class)->only('destroy');
 
 
-    Route::resource('order', OrderController::class);
+    Route::resource('orders', OrderController::class);
     Route::resource('delivery_price', DeliveryPriceController::class);
     Route::resource('orderDetail', OrderDetailController::class);
 

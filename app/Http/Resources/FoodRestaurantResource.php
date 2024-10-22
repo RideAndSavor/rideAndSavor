@@ -15,11 +15,12 @@ class FoodRestaurantResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'restaurant_id'=>$this->restaurant_id,
-            'food_id'=>$this->food_id,
-            'price'=>$this->price,
-            'size_id'=>$this->size_id,
-            'discount_item_id'=>$this->discount_item_id,
+            'id' => $this->id,
+            'price' => $this->price,
+            'restaurant' => new RestaurantResource($this->whenLoaded('restaurant')),
+            'food' => new FoodResource($this->whenLoaded('food')),
+            'size' => new SizeResource($this->whenLoaded('size')),
+            'discount' => new DiscountItemResource($this->whenLoaded('discount')),
         ];
     }
 

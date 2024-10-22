@@ -66,4 +66,14 @@ class FoodRestaurant extends Pivot
     {
         return $this->belongsTo(Restaurant::class, 'restaurant_id');
     }
+
+    public function discount(): BelongsTo
+    {
+        return $this->belongsTo(DiscountItem::class, 'discount_item_id');
+    }
+
+    public function size(): BelongsTo
+    {
+        return $this->belongsTo(Size::class, 'size_id');
+    }
 }

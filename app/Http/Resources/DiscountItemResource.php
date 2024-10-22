@@ -15,13 +15,11 @@ class DiscountItemResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $percentage = Percentage::findOrFail($this->percentage_id);
         return [
-            'percentage_id' => $this->percentage_id,
             'name' => $this->name,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
-            'discount_percentage' => $percentage->discount_percentage
+            'percentage' => new PercentageResource($this->whenLoaded('percentage')),
 
         ];
     }

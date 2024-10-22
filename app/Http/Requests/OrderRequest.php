@@ -22,12 +22,17 @@ class OrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id'=>'required|integer',
-            'status_id'=>'required|integer',
-            'delivery_price_id'=>'required|integer',
-            'total_amount'=>'required|numeric|between:0,99999999.99',
-            'total_discount_amount'=>'required|numeric|between:0,99999999.99',
-            'comment'=>'required|string'
-         ];
+            'order' => ['required', 'array'],
+            'order.cart_id' => ['required', 'integer'],
+            'order.delivery_price_id' => ['required', 'integer'],
+            'order.total_amount' => ['required', 'numeric'],
+            'order.total_discount_amount' => ['required', 'numeric'],
+            'order.comment' => ['nullable', 'string'],
+            'order_item' => ['required', 'array'],
+            'order_item.*.food_restaurant_id' => ['required', 'integer'],
+            'order_item.*.quantity' => ['required', 'integer'],
+            'order_item.*.price' => ['required', 'numeric'],
+            'order_item.*.discount_prices' => ['required', 'numeric']
+        ];
     }
 }
