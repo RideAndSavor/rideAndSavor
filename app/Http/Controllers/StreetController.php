@@ -7,14 +7,17 @@ use App\Exceptions\CrudException;
 use App\Contracts\LocationInterface;
 use App\Http\Requests\StreetRequest;
 use App\Http\Resources\StreetResource;
+use App\Services\StreetService;
 use Illuminate\Support\Facades\Config;
 
 class StreetController extends Controller
 {
     private $streetInterface;
+    private $streetService;
 
-    public function __construct(LocationInterface $streetInterface) {
+    public function __construct(LocationInterface $streetInterface , StreetService $streetService) {
         $this->streetInterface = $streetInterface;
+        $this->streetService = $streetService;
     }
 
     public function index()
@@ -46,7 +49,6 @@ class StreetController extends Controller
         return new StreetResource($updateStreet);
     }
 
-
     public function destroy(string $id)
     {
         $street =$this->streetInterface->findById('Street',$id);
@@ -61,5 +63,11 @@ class StreetController extends Controller
         return response()->json([
             'message'=>Config::get('variable.STREET_DELETED_SUCCESSFULLY')
         ],Config::get('variable.NO_CONTENT'));
+    }
+
+    public function getStreetsByWard($ward_id)
+    {
+        $streets = $this->streetService->getStreetsByWard($ward_id);
+        return response()->json($streets);
     }
 }

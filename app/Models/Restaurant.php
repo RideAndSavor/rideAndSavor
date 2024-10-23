@@ -8,6 +8,7 @@ use Laravel\Scout\Searchable;
 use App\DB\Core\DateTimeField;
 use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -40,6 +41,41 @@ class Restaurant extends Model
         ];
     }
 
+    public function scopeMostFoodOrderRestaurantsByUser(Builder $query, string $start_date, string $end_date): void
+    {
+        $query->with(
+            [
+                'foodRestaurants.orderDetails' => fn($query) =>
+                    $query->whereHas(
+                        'order',
+                        fn($query) =>
+                        $query->where('status_id', config('variable.THREE'))
+                            ->where('user_id', auth()->id())
+                            ->whereBetween('created_at', [$start_date, $end_date])
+                    )
+            ]
+        );
+        // ->with(['ratings', 'comments', 'restaurantImages'])
+        // ->withAvg('ratings', 'rating_id');
+    }
+
+    public function scopePopularRestaurants(Builder $query): void
+    {
+        $query->with(
+            [
+                'foodRestaurants.orderDetails' => fn($query) =>
+                    $query->whereHas(
+                        'order',
+                        fn($query) =>
+                        $query->where('status_id', config('variable.THREE'))
+                    )
+            ]
+        );
+    }
+
+    public function scopeFeatureRestaurants(Builder $query){
+        $query->where('feature_status',1);
+    }
     public function address(): BelongsTo
     {
         return $this->belongsTo(Address::class);
@@ -81,5 +117,10 @@ class Restaurant extends Model
     public function restaurantImages(): HasMany
     {
         return $this->hasMany(RestaurantImage::class);
+    }
+
+    public function restaurantType(): BelongsTo
+    {
+        return $this->belongsTo(RestaurantType::class);
     }
 }

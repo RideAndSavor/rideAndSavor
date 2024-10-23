@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class SubCategoryResource extends JsonResource
+class CommentResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,17 +15,18 @@ class SubCategoryResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            // 'category_id'=>$this->category_id,
-            'name'=>$this->name
+            // 'venue_id' => $this->venue_id,
+            // 'platform_user_id' => $this->platform_user_id,
+            'comment' => $this->comment
         ];
     }
 
     public function with(Request $request)
     {
-        return[
+        return [
             'version' => '1.0.0',
-            'api_url' => url('http://api.dailyfairdeal.com/api/subcategory'),
-            'message' => 'Your action is successful'
+            'api_url' => url('http://127.0.0.1:8000/api/venue_rating'),
+            'message' => 'Your action is successful!'
         ];
     }
 }

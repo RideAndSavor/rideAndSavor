@@ -13,7 +13,7 @@ return new class extends Migration {
         DB::statement('
         CREATE VIEW vw_restaurant_images AS
         SELECT
-        restaurant.id as restaurant_id,
+        restaurants.id as restaurant_id,
         images.link_id as link_id,
         images.gener as gener,
         images.upload_url as upload_url
