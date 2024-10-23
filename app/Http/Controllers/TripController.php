@@ -53,5 +53,8 @@ class TripController extends Controller
 
     public function getDriverPrices(){
         dd("getDriverPrices");
+        dd("getDriverPrices");
+        dd("getDriverPrices");
+        dd("getDriverPrices");
     }
 }
