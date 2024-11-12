@@ -63,7 +63,7 @@ Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 Route::post('/request', [SocialLoginController::class, 'redirectToGoogle']);
 Route::get('/social/login/callback-url', [SocialLoginController::class, 'handleGoogleCallback']);
 
-Route::post('signup', [AuthController::class, 'register'])->name('register')->middleware('recaptcha');
+Route::post('signup', [AuthController::class, 'register'])->name('register');
 Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::resource('paymentmodes', PaymentProviderController::class);
@@ -71,7 +71,7 @@ Route::resource('paymentmodes', PaymentProviderController::class);
 Route::middleware(['auth:sanctum'])->group(function () {
 
 
-    // Route::post('/user/change-role-to-driver', [UserController::class, 'changeRoleToDriver']); 
+    // Route::post('/user/change-role-to-driver', [UserController::class, 'changeRoleToDriver']);
     Route::post('/taxi-drivers/update-location', [TaxiDriverController::class, 'updateLocation'])
         ->middleware('throttle:60,1'); // Limit to 60 requests per minute
     Route::post('/taxi-drivers/nearby', [TaxiDriverController::class, 'getNearbyDrivers']);
@@ -131,7 +131,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
 
-    Route::apiResource('carts', CartController::class)->except(['show','destroy']);
+    Route::apiResource('carts', CartController::class)->except(['show', 'destroy']);
     Route::apiResource('cart-items', CartItemsController::class)->only('destroy');
 
 
@@ -163,22 +163,21 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 
     Route::post('/user/change-user-role', [UserController::class, 'changeUserRole']);
-
 });
 
 Route::middleware(['auth:sanctum', 'user'])->group(function () {
 
     Route::post('/user/rider_request_taxi', [TripController::class, 'RiderRequestTaxi']);
 
-    Route::get('/user/prices', [TripController::class, 'getDriverPrices']);
+    Route::get('/user/trip_differentprice', [TripController::class, 'tripDifferentPrice']);
 
+    Route::get('/user/driver_detail/{driver_id}', [TripController::class, 'driverDeatil']);
 });
 
 
 Route::middleware(['auth:sanctum', 'driver'])->group(function () {
 
     Route::post('/driver/setting-price', [TripController::class, 'storeDriverSettingPrice']);
-
 });
 
 //end tzm
