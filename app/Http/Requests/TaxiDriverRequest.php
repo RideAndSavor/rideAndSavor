@@ -23,7 +23,9 @@ class TaxiDriverRequest extends FormRequest
     {
         return [
             // 'rider_id' => 'required|exists:users,id',
-            'current_location' => 'nullable|string|max:255',
+            'current_location' => 'nullable|array',
+            'current_location.latitude' => 'required_with:current_location|numeric',
+            'current_location.longitude' => 'required_with:current_location|numeric', 
             'is_available' => 'required|boolean',
             'car_year' => 'nullable|integer|min:1886|max:' . date('Y'),
             'car_make' => 'nullable|string|max:255',
