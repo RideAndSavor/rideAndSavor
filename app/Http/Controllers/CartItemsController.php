@@ -56,7 +56,7 @@ class CartItemsController extends Controller
             return response('no content', 204);
         } catch (\Exception $exception) {
             DB::rollBack();
-            return throw new \Exception($exception->getMessage(), $exception->getCode());
+            // return throw new \Exception($exception->getMessage(), $exception->getCode());
         }
     }
 }
