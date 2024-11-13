@@ -33,6 +33,9 @@ return [
 
     'ISE' => 'Internal Server Error',
 
+    "TAXI_DRIVER_NOT_FOUND" => "Taxi Driver not found",
+    "TAXI_DRIVER_DELETED_SUCCESSFULLY" => "Taxi Driver Deleted Successfully",
+
     'DINF' => 'Discount Item Not Found',
     'DIDSF' => 'Discount Item Deleted Successfully',
 
