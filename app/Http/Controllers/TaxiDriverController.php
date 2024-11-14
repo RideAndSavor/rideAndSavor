@@ -30,6 +30,7 @@ class TaxiDriverController extends Controller
         return TaxiDriverResource::collection($taxi_drivers);
     }
 
+    // Add taxi_Driver with car information
     public function store(TaxiDriverRequest $taxiDriverRequest)
     {
         $validatedData = $taxiDriverRequest->validated();
@@ -44,6 +45,7 @@ class TaxiDriverController extends Controller
         }
     }
 
+    /* Update taxi_Driver with car information */
     public function update(TaxiDriverRequest $request, string $id)
     {
         $validatedData = $request->validated();
@@ -58,7 +60,7 @@ class TaxiDriverController extends Controller
         return new TaxiDriverResource($updatedTaxiDriver);
     }
 
-
+    /* Delete taxi_Driver with car information */
     public function destroy(string $id)
     {
         $taxi_driver = $this->taxi_driverInterface->findById('TaxiDriver', $id);
