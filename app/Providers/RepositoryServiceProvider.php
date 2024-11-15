@@ -24,6 +24,10 @@ class RepositoryServiceProvider extends ServiceProvider
             'App\Contracts\PaymentProviderInterface',
             'App\Repositories\PaymentProviderRepository'
         );
+        $this->app->bind(
+            'App\Contracts\TripInterface',
+            'App\Repositories\TripRepository'
+        );
     }
 
     /**
