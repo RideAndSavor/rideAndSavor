@@ -8,8 +8,8 @@ Broadcast::channel('online-users', function ($user) {
         Log::error('Broadcasting failed: user not authenticated');
     }
     return [
-        'id' => $user->id,
-        'name' => $user->name,
+        // 'id' => $user->id,
+        'name' => "Test",
     ];
 });
 
