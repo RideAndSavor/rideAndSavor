@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::channel('online-users', function ($user) {
-    Log::info("hello");
     // Authorize user to join the channel
     if ($user) {
         // Here you could log the user's status if you wish to store it
