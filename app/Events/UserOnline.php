@@ -1,19 +1,12 @@
 <?php
 
-namespace App\Events;
-
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
+namespace App\Events; 
+use Illuminate\Support\Facades\Cache; 
+use Illuminate\Broadcasting\PresenceChannel; 
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
 
-class UserOnline
+class UserOnline implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
-
     public $user;
 
     public function __construct($user)
@@ -23,16 +16,17 @@ class UserOnline
 
     public function broadcastOn()
     {
-        // You can choose a private or public channel
-        return new Channel('online-users');
+        return new PresenceChannel('online-users');
     }
 
     public function broadcastWith()
     {
+        // Cache the user as online
+        Cache::put('user-online-' . $this->user->id, true, now()->addMinutes(5));  // Expire after 5 mins
         return [
-            'name' => $this->user->name,  // Example dynamic data
-            'id' => $this->user->id,      // You can include user ID or other data
+            'name' => $this->user->name,
+            'id' => $this->user->id,
         ];
     }
-
 }
+
