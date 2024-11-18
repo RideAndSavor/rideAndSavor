@@ -19,6 +19,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PriceController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\TasteController;
+use Illuminate\Support\Facades\Broadcast;
 use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\StreetController;
@@ -43,8 +44,8 @@ use App\Http\Controllers\DiscountItemController;
 use App\Http\Controllers\DeliveryPriceController;
 use App\Http\Controllers\FoodRestaurantController;
 use App\Http\Controllers\RestaurantFoodController;
-use App\Http\Controllers\PaymentProviderController;
 
+use App\Http\Controllers\PaymentProviderController;
 use App\Http\Controllers\RestaurantAddressController;
 use App\Http\Controllers\FeatureRestaurantsController;
 use App\Http\Controllers\CalculateDeliveryFeesController;
@@ -68,8 +69,11 @@ Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::resource('paymentmodes', PaymentProviderController::class);
 
+// Broadcasting routes
+Broadcast::routes(['middleware' => ['auth:sanctum']]);
 Route::middleware(['auth:sanctum'])->group(function () {
 
+     
 
     // Route::post('/user/change-role-to-driver', [UserController::class, 'changeRoleToDriver']);
     Route::post('/taxi-drivers/update-location', [TaxiDriverController::class, 'updateLocation'])
