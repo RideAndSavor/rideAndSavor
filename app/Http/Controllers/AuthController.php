@@ -104,15 +104,13 @@ class AuthController extends Controller
 
     public function logout()
 {
-    // Check if the user is authenticated
-    if (!JWTAuth::check()) {
-        return response()->json([
-            'message' => Config::get('variable.NO_AUTHENTICATED_USER')
-        ], Config::get('variable.CLIENT_ERROR'));
+    $token = JWTAuth::getToken();
+    if (!$token) {
+        return response()->json(['error' => 'Token not provided'], 401);
     }
 
-    // JWT tokens are stateless and don't need to be explicitly invalidated.
-    // Simply return a success message
+    // Invalidate the token
+    JWTAuth::invalidate($token); 
     return response()->json([
         'message' => Config::get('variable.LOGGED_OUT_SUCCESSFULLY')
     ], Config::get('variable.OK'));
