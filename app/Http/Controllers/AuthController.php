@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Contracts\UserInterface;
-use App\Http\Requests\AuthRequest;
-use App\Http\Resources\AuthResource;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
+use App\Contracts\UserInterface;
+use App\Http\Requests\AuthRequest; 
+use App\Http\Resources\AuthResource;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Config;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+use PHPOpenSourceSaver\JWTAuth\Contracts\Providers\Auth;
 
 class AuthController extends Controller
 {
@@ -25,15 +26,7 @@ class AuthController extends Controller
         $validatedUserData = $request->validated();
 
         // Hash the password
-        $validatedUserData['password'] = Hash::make($validatedUserData['password']);
-
-        // Check if the email already exists
-        // $userEmail = User::where('email', $request->email)->first();
-        // if ($userEmail) {
-        //     return response()->json([
-        //         'message' => Config::get('variable.USER_EMAIL_ALREADY_EXIT')
-        //     ], 409); // 409 Conflict
-        // }
+        $validatedUserData['password'] = Hash::make($validatedUserData['password']); 
 
         // Assign the role based on the request
         switch (strtolower($request->role)) {
@@ -56,14 +49,15 @@ class AuthController extends Controller
 
         // Store the user data
         $user = $this->userInterface->store('User', $validatedUserData);
-
+         // Generate a JWT token for the newly registered user
+        $token = JWTAuth::fromUser($user);
         // Generate a token for the user
         // $token = $user->createToken('rideandsavor')->plainTextToken;
 
         // Return the user data and token in the response
         if ($request->expectsJson()) {
             return response()->json(
-                 new AuthResource($user)); // 201 Created
+                 new AuthResource($user, $token)); // 201 Created
         }
     }
 
@@ -75,9 +69,8 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:255',
             'password' => 'required|string|min:6'
         ]);
-        if (Auth::attempt($userData)) {
+        if ($token = JWTAuth::attempt($userData)) {
             $user = User::find(auth()->user()->id);
-            $token = $user->createToken('rideandsavor')->plainTextToken;
             return response()->json([
                 'id' => $user->id,
                 'name' => $user->name,
@@ -93,19 +86,36 @@ class AuthController extends Controller
         ], Config::get('variable.CLIENT_ERROR'));
     }
 
+    // public function logout()
+    // {
+    //     $user = User::find(auth()->user()->id);
+    //     if (!$user) {
+    //         return response()->json([
+    //             'message' => Config::get('variable.NO_AUTHENTICATED_USER')
+    //         ], Config::get('variable.CLIENT_ERROR'));
+    //     }
+    //     $user->tokens->each(function ($token) {
+    //         $token->delete();
+    //     });
+    //     return response()->json([
+    //         'message' => Config::get('variable.LOGGED_OUT_SUCCESSFULLY')
+    //     ], Config::get('variable.OK'));
+    // }
+
     public function logout()
-    {
-        $user = User::find(auth()->user()->id);
-        if (!$user) {
-            return response()->json([
-                'message' => Config::get('variable.NO_AUTHENTICATED_USER')
-            ], Config::get('variable.CLIENT_ERROR'));
-        }
-        $user->tokens->each(function ($token) {
-            $token->delete();
-        });
+{
+    // Check if the user is authenticated
+    if (!JWTAuth::check()) {
         return response()->json([
-            'message' => Config::get('variable.LOGGED_OUT_SUCCESSFULLY')
-        ], Config::get('variable.OK'));
+            'message' => Config::get('variable.NO_AUTHENTICATED_USER')
+        ], Config::get('variable.CLIENT_ERROR'));
     }
+
+    // JWT tokens are stateless and don't need to be explicitly invalidated.
+    // Simply return a success message
+    return response()->json([
+        'message' => Config::get('variable.LOGGED_OUT_SUCCESSFULLY')
+    ], Config::get('variable.OK'));
+}
+
 }

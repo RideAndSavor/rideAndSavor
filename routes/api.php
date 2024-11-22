@@ -53,7 +53,7 @@ use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
-})->middleware('auth:sanctum');
+})->middleware('auth:jwt');
 
 Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 
