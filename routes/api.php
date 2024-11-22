@@ -167,6 +167,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 
 //tzm
+Route::post('/validate-users', [UserController::class, 'validateUsers']);
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 
     Route::post('/user/change-user-role', [UserController::class, 'changeUserRole']);
