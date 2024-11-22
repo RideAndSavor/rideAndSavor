@@ -7,7 +7,6 @@ namespace App\Models;
 use App\DB\Core\IntegerField;
 use App\DB\Core\StringField;
 use App\Exceptions\CrudException;
-use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,10 +14,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Scout\Searchable;
 use Laravel\Scout\Attributes\SearchUsingPrefix;
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject; 
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable, HasApiTokens, Searchable;
+    use HasFactory, Notifiable, Searchable;
 
     /**
      * The attributes that are mass assignable.
@@ -76,6 +76,16 @@ class User extends Authenticatable
         }
 
         return  $arr[$column];
+    }
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 
     public function roleInfo():BelongsTo{
