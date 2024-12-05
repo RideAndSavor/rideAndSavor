@@ -19,6 +19,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PriceController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\TasteController;
+use Illuminate\Support\Facades\Broadcast;
 use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\StreetController;
@@ -43,8 +44,8 @@ use App\Http\Controllers\DiscountItemController;
 use App\Http\Controllers\DeliveryPriceController;
 use App\Http\Controllers\FoodRestaurantController;
 use App\Http\Controllers\RestaurantFoodController;
-use App\Http\Controllers\PaymentProviderController;
 
+use App\Http\Controllers\PaymentProviderController;
 use App\Http\Controllers\RestaurantAddressController;
 use App\Http\Controllers\FeatureRestaurantsController;
 use App\Http\Controllers\CalculateDeliveryFeesController;
@@ -52,7 +53,7 @@ use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
-})->middleware('auth:sanctum');
+})->middleware('auth:api');
 
 Route::get('/sanctum/csrf-cookie', [CsrfCookieController::class, 'show']);
 
@@ -65,11 +66,14 @@ Route::get('/social/login/callback-url', [SocialLoginController::class, 'handleG
 
 Route::post('signup', [AuthController::class, 'register'])->name('register');
 Route::post('login', [AuthController::class, 'login'])->name('login');
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
 Route::resource('paymentmodes', PaymentProviderController::class);
 
-Route::middleware(['auth:sanctum'])->group(function () {
+// Broadcasting routes
+Broadcast::routes(['middleware' => ['auth:api']]);
+Route::middleware(['auth:api'])->group(function () {
 
+     
 
     // Route::post('/user/change-role-to-driver', [UserController::class, 'changeRoleToDriver']);
     Route::post('/taxi-drivers/update-location', [TaxiDriverController::class, 'updateLocation'])
@@ -163,12 +167,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 
 //tzm
-Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+Route::post('/validate-users', [UserController::class, 'validateUsers']);
+Route::middleware(['auth:api', 'admin'])->group(function () {
 
     Route::post('/user/change-user-role', [UserController::class, 'changeUserRole']);
 });
 
-Route::middleware(['auth:sanctum', 'user'])->group(function () {
+Route::middleware(['auth:api', 'user'])->group(function () {
 
     Route::post('/user/rider_request_taxi', [TripController::class, 'RiderRequestTaxi']);
 
@@ -178,7 +183,7 @@ Route::middleware(['auth:sanctum', 'user'])->group(function () {
 });
 
 
-Route::middleware(['auth:sanctum', 'driver'])->group(function () {
+Route::middleware(['auth:api', 'driver'])->group(function () {
 
     Route::post('/driver/setting-price', [TripController::class, 'storeDriverSettingPrice']);
 });
