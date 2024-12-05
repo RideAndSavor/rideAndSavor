@@ -2,55 +2,56 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\User;
-use App\Models\Category;
-use App\Models\SubCategory;
-use App\Models\Food;
-use App\Models\DiscountItem;
-use App\Models\Restaurant;
-use App\Models\Country;
-use App\Models\State;
 use App\Models\City;
-use App\Models\Township;
+use App\Models\Food;
+use App\Models\User;
 use App\Models\Ward;
+use App\Models\State;
 use App\Models\Street;
 use App\Models\Address;
+use App\Models\Country;
 use App\Models\Topping;
+use App\Models\Category;
+use App\Models\Township;
+use App\Models\Restaurant;
+use App\Models\SubCategory;
+use App\Traits\SearchTrait;
+use App\Models\DiscountItem;
+use Illuminate\Http\Request;
 
 class SearchController extends Controller
 {
+    use SearchTrait;
+
     private $previousResults = [];
 
     public function search(Request $request)
     {
         $query = $request->input('q');
-        $type = $request->input('type');  // 'food' or 'mall'
+        $type = $request->input('type', 'main'); // Default to 'main'
 
         if (!$query) {
             return response()->json(['error' => 'Query parameter "q" is required.'], 400);
         }
 
-        if (!$type || !in_array($type, ['food', 'mall'])) {
-            return response()->json(['error' => 'Search type must be either "food" or "mall".'], 400);
-        }
+        $terms = array_map('trim', explode(',', $query)); // Split and trim terms
 
-        $terms = explode(',', $query);
-        $terms = array_map('trim', $terms); // Trim whitespace around each term
-
-        $response = [];
-
-        // If previous results are available, filter search terms to those results
+        // Filter terms based on previous results
         if (!empty($this->previousResults)) {
             $terms = $this->filterSearchTerms($terms, $this->previousResults);
         }
 
-        if ($type === 'food') {
-            $response = $this->searchFoodModels($terms);
-        } elseif ($type === 'mall') {
-            $response = $this->searchMall($terms);
+        // Get the list of models to search based on type
+        $models = $this->getSearchModels($type);
+
+        if (empty($models)) {
+            return response()->json(['error' => 'No results found.'], 400);
         }
 
+        // Perform the search using the trait's method
+        $response = $this->searchModels($models, $terms);
+
+        // Store the results for potential future filtering
         $this->previousResults = $response;
 
         if (empty($response)) {
@@ -60,71 +61,39 @@ class SearchController extends Controller
         return response()->json($response);
     }
 
-    private function searchFoodModels($terms)
+    private function getSearchModels($type)
     {
-        $response = [];
-
-        $models = [
-            'users' => [User::class, ['name', 'email']],
-            'categories' => [Category::class, ['name']],
-            'sub_categories' => [SubCategory::class, ['name']],
-            'foods' => [Food::class, ['name']],
-            'discount_items' => [DiscountItem::class, ['name']],
-            'toppings' => [Topping::class, ['name']],
-            'restaurants' => [Restaurant::class, ['name']],
+        $foodModels = [
             'countries' => [Country::class, ['name']],
             'states' => [State::class, ['name']],
             'cities' => [City::class, ['name']],
             'townships' => [Township::class, ['name']],
             'wards' => [Ward::class, ['name']],
             'streets' => [Street::class, ['name']],
-            'addresses' => [Address::class, ['block_no', 'floor']],
+            'categories' => [Category::class, ['name']],
+            'sub_categories' => [SubCategory::class, ['name']],
+            'foods' => [Food::class, ['name']],
+            'discount_items' => [DiscountItem::class, ['name']],
+            'restaurants' => [Restaurant::class, ['name']],
         ];
 
-        foreach ($models as $key => $modelConfig) {
-            $model = $modelConfig[0];
-            $searchableFields = $modelConfig[1];
+        $mallModels = [
+            
+        ];
 
-            $results = $model::where(function ($q) use ($terms, $searchableFields) {
-                foreach ($terms as $term) {
-                    foreach ($searchableFields as $field) {
-                        $q->orWhere($field, 'like', '%' . $term . '%');
-                    }
-                }
-            })->get();
+        switch ($type) {
+            case 'food':
+                return $foodModels;
 
-            if ($results->isNotEmpty()) {
-                $response[$key] = $results;
-            }
+            case 'mall':
+                return $mallModels;
+
+            case 'main':
+                return array_merge($foodModels, $mallModels);
+
+            default:
+                return [];
         }
-
-        return $response;
-    }
-
-    private function searchMall($terms)
-    {
-        $response = [];
-
-        $models = [];
-
-        foreach ($models as $key => $modelConfig) {
-            $model = $modelConfig[0];
-            $searchableFields = $modelConfig[1];
-
-            $results = $model::where(function ($q) use ($terms, $searchableFields) {
-                foreach ($terms as $term) {
-                    foreach ($searchableFields as $field) {
-                        $q->orWhere($field, 'like', '%' . $term . '%');
-                    }
-                }
-            })->get();
-
-            if ($results->isNotEmpty()) {
-                $response[$key] = $results;
-            }
-        }
-
-        return $response;
     }
 
     private function filterSearchTerms($terms, $previousResults)
@@ -132,9 +101,9 @@ class SearchController extends Controller
         $filteredTerms = [];
 
         foreach ($terms as $term) {
-            foreach ($previousResults as $result) {
-                foreach ($result as $data) {
-                    if (strpos(strtolower($data->name), strtolower($term)) !== false) {
+            foreach ($previousResults as $results) {
+                foreach ($results as $data) {
+                    if (stripos($data->name ?? '', $term) !== false) {
                         $filteredTerms[] = $term;
                         break;
                     }

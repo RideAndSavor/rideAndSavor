@@ -19,4 +19,13 @@ class CategoryResource extends JsonResource
             'name'=>$this->name
         ];
     }
+
+    public function with(Request $request)
+    {
+        return[
+            'version' => '1.0.0',
+            'api_url' => url('http://api.dailyfairdeal.com/api/category'),
+            'message' => 'Your action is successful'
+        ];
+    }
 }
