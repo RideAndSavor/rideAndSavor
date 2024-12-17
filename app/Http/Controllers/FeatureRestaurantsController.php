@@ -17,7 +17,6 @@ class FeatureRestaurantsController extends Controller
     public function __invoke()
     {
         $featureRestaurants = $this->loadRelationships(Restaurant::featureRestaurants())->get();
-        // dd($featureRestaurants);
         return RestaurantResource::collection($featureRestaurants);
     }
 }
