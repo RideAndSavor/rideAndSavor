@@ -28,6 +28,12 @@ class Images extends Model
         return  $arr[$column];
     }
 
+    public function imageable()
+    {
+        return $this->morphTo();
+    }
+
+
     public function food():BelongsTo
     {
         return $this->belongsTo(Food::class,'link_id');

@@ -10,6 +10,7 @@ use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -76,6 +77,13 @@ class Restaurant extends Model
     public function scopeFeatureRestaurants(Builder $query){
         $query->where('feature_status',1);
     }
+
+    // polymorph relationship
+    public function image(): MorphOne
+    {
+        return $this->morphOne(Images::class, 'imageable');
+    }
+    
     public function address(): BelongsTo
     {
         return $this->belongsTo(Address::class);

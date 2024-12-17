@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\Address;
 use App\Models\Restaurant;
+use Illuminate\Support\Arr;
 use App\Traits\AddressTrait;
 use Illuminate\Http\Request;
 use App\Exceptions\CrudException;
@@ -45,7 +47,23 @@ class RestaurantController extends Controller
     {
         $validatedData = $request->validated();
         $validatedData['user_id'] = Auth::id();
-        $validatedData = $this->dateFormat($validatedData);
+        $addressData = Arr::pull($validatedData, 'addressData');
+        $address = Address::firstOrCreate(
+            [
+                'street_id' => $addressData['street_id'],
+                'block_no' => $addressData['block_no'],
+                'floor' => $addressData['floor'],
+            ],
+            [
+                'latitude' => $addressData['latitude'],
+                'longitude' => $addressData['longitude'],
+            ]
+        );
+        
+        // Add the address ID to the main data
+        $validatedData['address_id'] = $address->id;
+        
+        $validatedData = $this->dateFormat($validatedData); 
         $restaurant = $this->restaurantInterface->store('Restaurant', $validatedData);
         if (!$restaurant) {
             return response()->json([

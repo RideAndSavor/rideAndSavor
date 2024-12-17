@@ -1,46 +1,31 @@
 <?php
 
-namespace App\DB\Core;
+namespace App\Db\Core;
 
+use Exception;
+use App\Services\ImageService;
 use App\Exceptions\CrudException;
 use App\Exceptions\CustomException;
-use Illuminate\Support\Facades\Config;
 use illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
+
 
 class Crud
 {
     public function __construct(
         private Model $model,
-        private ?array $data,
-        private ?int $id,
-        private $editMode,
-        private $deleteMode,
+        private ?array $data = null,
+        private ?int $id = null,
+        private ?string $relation = null,
+        private bool $storeMode = false,
+        private bool $twoModelsStoreMode = false,
+        private bool $editMode = false,
+        private bool $deleteMode = false,
     ) {
-        // dd($data);
-        // $this->model = $model;
-        // $this->data = $data;
-        // $this->id = $id;
-        // $this->editMode = $editMode;
-        // $this->deleteMode = $deleteMode;
-        self::$tableName = $model->getTable();
     }
 
-    public static string $imageDirectory = '';
-    public static string $tableName = '';
     private ?Model $record = null;
 
-    public function setImageDirectory(string $directoryPath, string $tablename)
-    {
-        self::$imageDirectory = $directoryPath;
-        self::$tableName = $tablename;
-    }
 
-    public function getData(string $model, string $id)
-    {
-        $modelInstance = new $model;
-        return $modelInstance->findOrFail($id);
-    }
 
     public function execute(): mixed
     {
@@ -49,61 +34,65 @@ class Crud
                 return $this->handleEditMode();
             } elseif ($this->deleteMode) {
                 return $this->handleDeleteMode();
-            } else {
+            } elseif ($this->storeMode) {
                 return $this->handleStoreMode();
+            } else {
+                return $this->handleTwoModelsStoreMode();
             }
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
         }
     }
 
     protected function iterateData(array $data, ?Model $record = null): Model
     {
         $target = $record ?? $this->model;
+
         foreach ($data as $column => $value) {
-            // var_dump($column,$value);
-            $target->{$column} = $this->savableField($column)->setValue($value)->execute();
-        }
-        if (!$target) {
-            throw CrudException::prepareDataFormat();
+            if (!is_object($value) || $column === 'upload_url') {
+                $target->{$column} = $this->savableField($column)->setValue($value)->execute();
+            } else {
+                $target->$column = $value;
+            }
         }
         return $target;
     }
 
     protected function handleStoreMode(): Model|bool
     {
+
+        // Save the main model data
         $model = $this->iterateData($this->data, null);
         $model = $model->save() ? $this->model : false;
-        if (!$model) {
+
+        if (!$model->wasRecentlyCreated) {
             throw CrudException::internalServerError();
         }
+
         return $model;
+    }
+
+    protected function handleTwoModelsStoreMode(): Model
+    {
+        $instance = $this->model->findOrFail($this->id);
+        $relationName = $this->relation;
+        if (!method_exists($instance, $relationName)) {
+            throw CrudException::methodNotFound();
+        }
+        return tap($instance)->$relationName()->attach($this->data);
     }
 
     protected function handleEditMode(): Model|bool
     {
-        $this->record = $this->model->find($this->id);
-        if (!$this->record) {
-            throw CustomException::notFound();
-        }
-        if ($this->model->getTable() === Config::get('variables.IMAGE')) {
-            $this->deleteImage();
-        }
-
+        $this->record = $this->model->findOrFail($this->id);
         $record = $this->iterateData($this->data, $this->record);
-        $record = $record->save() ? $this->record : false;
-        if (!$record) {
-            throw CrudException::internalServerError();
-        }
-        return $record;
+        return $record->save() ? $this->record : false;
     }
 
-    protected function handleDeleteMode(): bool
+    // : bool
+    protected function handleDeleteMode()
     {
-        $this->record = $this->model->find($this->id);
-        if (!$this->record) {
-            throw CustomException::notFound();
-        }
+        $this->record = $this->model->findOrFail($this->id);
         $success = $this->record->delete() ? true : false;
         if (!$success) {
             throw CustomException::internalServerError();
@@ -114,16 +103,5 @@ class Crud
     public function savableField($column): object
     {
         return $this->model->saveableFields($column);
-    }
-
-    public function deleteImage(): bool
-    {
-        $old_image = $this->record->upload_url;
-        return Storage::delete($old_image);
-    }
-
-    public static function storeImage($value, $imageDirectory, $imageName)
-    {
-        $value->storeAs($imageDirectory, $imageName);
     }
 }

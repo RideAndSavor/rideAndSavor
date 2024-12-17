@@ -23,13 +23,18 @@ class RestaurantRequest extends FormRequest
     {
 
         // 
-        return [
-            'address_id' => 'nullable|integer',
+        return [ 
             'restaurant_type_id' => 'required|integer',
             'name' => 'required|string|max:255',
             'open_time' => 'required|date_format:g:i A', // 12-hour format with AM/PM
             'close_time' => 'required|date_format:g:i A', // 12-hour format with AM/PM
             'phone_number' => 'required|string|max:20',
+            'addressData' => 'required|array',
+            'addressData.street_id' => 'required|integer',
+            'addressData.block_no' => 'required|string',
+            'addressData.floor' => 'required|string',
+            'addressData.latitude' => 'nullable|numeric',
+            'addressData.longitude' => 'nullable|numeric',
         ];
     }
 }

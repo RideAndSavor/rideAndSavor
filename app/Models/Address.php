@@ -15,6 +15,7 @@ use Laravel\Scout\Searchable;
 class Address extends Model
 {
     use HasFactory, Searchable;
+    protected $guarded = ['id'];
 
     public function saveableFields($column): object
     {

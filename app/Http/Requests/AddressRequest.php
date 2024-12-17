@@ -25,8 +25,8 @@ class AddressRequest extends FormRequest
             'street_id' => 'required',
             'block_no' => 'required',
             'floor' => 'required',
-            'latitude' => 'nullable',
-            'longitude' => 'nullable'
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
         ];
     }
 }
