@@ -62,7 +62,7 @@ class Crud
     {
 
         // Save the main model data
-        $model = $this->iterateData($this->data, null);
+        $model = $this->iterateData($this->data, null); 
         $model = $model->save() ? $this->model : false;
 
         if (!$model->wasRecentlyCreated) {

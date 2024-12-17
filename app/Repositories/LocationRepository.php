@@ -10,7 +10,7 @@ use App\Contracts\LocationInterface;
 use Illuminate\Support\Facades\Config;
 
 class LocationRepository implements LocationInterface
-{
+{    
     public function findByIdWithRelation(string $modelName, string $relationName, int $id)
     {
         $model = app("App\Models\\{$modelName}");
@@ -46,10 +46,10 @@ class LocationRepository implements LocationInterface
         if (empty($data)) {
             throw CrudException::emptyData();
         }
-        $model = app("App\Models\\{$modelName}");
+        $model = app("App\\Models\\{$modelName}");
 
         if (get_class($model) !== Config::get('variable.IMAGE_MODEL')) {
-            return (new Crud($model, $data, null, false, false))->execute();
+            return (new Crud(model: $model,  data: $data, storeMode: true))->execute();
         }
         $crud = new Crud($model, $data, null, false, false);
         $crud->setImageDirectory($folder_name, $tablename);
