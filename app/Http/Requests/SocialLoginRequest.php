@@ -22,8 +22,12 @@ class SocialLoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => ['bail', 'required', 'string'],
-            'provider' => ['required', 'string', 'alpha']
+            'code' => ['required', 'string'], // Validate as required query parameter
+            'provider' => ['nullable', 'string', 'alpha'], // Optional provider parameter
         ];
+        // return [
+        //     'code' => ['bail', 'required', 'string'],
+        //     'provider' => ['required', 'string', 'alpha']
+        // ];
     }
 }
