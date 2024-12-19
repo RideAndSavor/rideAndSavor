@@ -33,8 +33,7 @@ class SocialLoginController extends Controller
 
     // Handle the OAuth callback
     public function handleGoogleCallback(SocialLoginRequest $request)
-    {
-        dd("hello");
+    { 
         $client = new Google_Client();
         $client->setClientId(env('GOOGLE_CLIENT_ID'));
         $client->setClientSecret(env('GOOGLE_CLIENT_SECRET'));
@@ -45,7 +44,7 @@ class SocialLoginController extends Controller
         $provider = $request->input('provider');
 
         try {
-            dd($_GET['code']);
+            dd($code);
             // Exchange the authorization code for an access token
             // $token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
 
