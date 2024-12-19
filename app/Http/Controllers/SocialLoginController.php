@@ -53,10 +53,11 @@ class SocialLoginController extends Controller
             $userData = $this->getUserData($token['access_token']);  
             $data = $this->findOrCreate($userData, $provider);  
             if ($request->expectsJson()) {
+                dd($data);
                 return new UserResource($data->setAttribute('token', $token));
             }
             dd($token, $userData, $data);
-            return redirect('https://www.dailyfairdeal.com');
+            // return redirect('https://www.dailyfairdeal.com');
         } 
         catch (Exception $e) {
             error_log('Error during Google OAuth: ' . $e->getMessage());
@@ -86,7 +87,7 @@ class SocialLoginController extends Controller
                 $userExist->google_id = $user->id;
             } else {
                 $userExist->facebook_id = $user->id;
-            }
+            } 
            return $userExist->save();
         }
 
