@@ -44,21 +44,22 @@ class SocialLoginController extends Controller
         $provider = $request->input('provider');
 
         try {
+            dd($_GET['code']);
             // Exchange the authorization code for an access token
-            $token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
+            // $token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
 
-            dd($token);
-            // Set the access token on the client
-            // $client->setAccessToken($token);
+            // dd($token);
+            // // Set the access token on the client
+            // // $client->setAccessToken($token);
 
-            // Fetch the user information using the access token
-            // $userData = $this->getUserData($token['access_token']);
-            // dd($userData);
-            $data = $this->findOrCreate($userData, $provider);
-            dd($data);
-            if ($request->expectsJson()) {
-                return new UserResource($data->setAttribute('token', $token));
-            }
+            // // Fetch the user information using the access token
+            // // $userData = $this->getUserData($token['access_token']);
+            // // dd($userData);
+            // $data = $this->findOrCreate($userData, $provider);
+            // dd($data);
+            // if ($request->expectsJson()) {
+            //     return new UserResource($data->setAttribute('token', $token));
+            // }
             // return redirect('https://www.dailyfairdeal.com');
         } catch (Exception $e) {
             error_log('Error during Google OAuth: ' . $e->getMessage());
