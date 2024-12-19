@@ -47,11 +47,12 @@ class SocialLoginController extends Controller
             // Exchange the authorization code for an access token
             $token = $client->fetchAccessTokenWithAuthCode($code);
             // Set the access token on the client
-            $client->setAccessToken($token);
+            dd($token);    
+            // $client->setAccessToken($token);
 
-            // Fetch the user information using the access token
-            $userData = $this->getUserData($token['access_token']);  
-            dd($userData);
+            // // Fetch the user information using the access token
+            // $userData = $this->getUserData($token['access_token']);  
+            // dd($userData);
             // $data = $this->findOrCreate($userData, $provider);  
             // if ($request->expectsJson()) {
             //     dd($data);
