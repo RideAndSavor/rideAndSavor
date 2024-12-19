@@ -75,24 +75,25 @@ class SocialLoginController extends Controller
 
         return json_decode($response->getBody()->getContents(), false);
     }
-
-    private function findOrCreate(object $user, string $provider): User
+    // : User
+    private function findOrCreate(object $user, string $provider)
     {
         $userExist = User::query()->where('email', '=', $user->email)->first();
         if (!$userExist) {
             $userExist = new User();
             $userExist->name = $user->name;
             $userExist->email = $user->email;
-            if ($provider === 'google') {
-                $userExist->google_id = $user->id;
-            } else {
-                $userExist->facebook_id = $user->id;
-            } 
             dd($userExist);
-           return $userExist->save();
+        //     if ($provider === 'google') {
+        //         $userExist->google_id = $user->id;
+        //     } else {
+        //         $userExist->facebook_id = $user->id;
+        //     } 
+        //     dd($userExist);
+        //    return $userExist->save();
         }
 
-        Auth::login($userExist);
-        return $userExist;
+        // Auth::login($userExist);
+        // return $userExist;
     }
 }
