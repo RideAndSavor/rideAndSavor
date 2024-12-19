@@ -52,12 +52,12 @@ class SocialLoginController extends Controller
             // Fetch the user information using the access token
             $userData = $this->getUserData($token['access_token']);  
             dd($userData);
-            $data = $this->findOrCreate($userData, $provider);  
-            if ($request->expectsJson()) {
-                dd($data);
-                return new UserResource($data->setAttribute('token', $token));
-            }
-            dd($token, $userData, $data);
+            // $data = $this->findOrCreate($userData, $provider);  
+            // if ($request->expectsJson()) {
+            //     dd($data);
+            //     return new UserResource($data->setAttribute('token', $token));
+            // }
+            // dd($token, $userData, $data);
             // return redirect('https://www.dailyfairdeal.com');
         } 
         catch (Exception $e) {
