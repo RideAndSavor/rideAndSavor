@@ -49,7 +49,7 @@ class SocialLoginController extends Controller
 
             dd($token);
             // Set the access token on the client
-            $client->setAccessToken($token);
+            // $client->setAccessToken($token);
 
             // Fetch the user information using the access token
             // $userData = $this->getUserData($token['access_token']);
