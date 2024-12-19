@@ -45,7 +45,7 @@ class SocialLoginController extends Controller
 
         try {
             // Exchange the authorization code for an access token
-            $token = $client->fetchAccessTokenWithAuthCode($code);
+            $token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
 
             dd($token);
             // Set the access token on the client
