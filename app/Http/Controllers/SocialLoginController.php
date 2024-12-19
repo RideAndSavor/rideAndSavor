@@ -53,7 +53,7 @@ class SocialLoginController extends Controller
             // Fetch the user information using the access token
             $userData = $this->getUserData($token['access_token']);
             $data = $this->findOrCreate($userData, $provider);
-            
+            dd($data);
             if ($request->expectsJson()) {
                 return new UserResource($data->setAttribute('token', $token));
             }
