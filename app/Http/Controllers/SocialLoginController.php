@@ -88,6 +88,7 @@ class SocialLoginController extends Controller
             } else {
                 $userExist->facebook_id = $user->id;
             } 
+            dd($userExist);
            return $userExist->save();
         }
 
