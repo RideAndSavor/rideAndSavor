@@ -43,12 +43,12 @@ class SocialLoginController extends Controller
         $code = $request->input('code');
         $provider = $request->input('provider');
          // Add debugging info
-    dd([
-        'client_id' => env('GOOGLE_CLIENT_ID'),
-        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-        'redirect_uri' => env('GOOGLE_REDIRECT_URL'),
-        'code' => $code,
-    ]);
+    // dd([
+    //     'client_id' => env('GOOGLE_CLIENT_ID'),
+    //     'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+    //     'redirect_uri' => env('GOOGLE_REDIRECT_URL'),
+    //     'code' => $code,
+    // ]);
     
     try {
         $token = $client->fetchAccessTokenWithAuthCode($code);
