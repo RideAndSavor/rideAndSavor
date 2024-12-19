@@ -42,37 +42,21 @@ class SocialLoginController extends Controller
         // Get the code from the query parameter
         $code = $request->input('code');
         $provider = $request->input('provider');
-         // Add debugging info
-    // dd([
-    //     'client_id' => env('GOOGLE_CLIENT_ID'),
-    //     'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-    //     'redirect_uri' => env('GOOGLE_REDIRECT_URL'),
-    //     'code' => $code,
-    // ]);
-    
-    try {
-        $token = $client->fetchAccessTokenWithAuthCode($code);
-        dd($token);  // If everything is fine, you should see the token
-    }
 
-        // try { 
-        //     // Exchange the authorization code for an access token
-        //     $token = $client->fetchAccessTokenWithAuthCode($code);
+        try { 
+            // Exchange the authorization code for an access token
+            $token = $client->fetchAccessTokenWithAuthCode($code);
+            // Set the access token on the client
+            $client->setAccessToken($token);
 
-        //     dd($token);
-        //     // // Set the access token on the client
-        //     // // $client->setAccessToken($token);
-
-        //     // // Fetch the user information using the access token
-        //     // // $userData = $this->getUserData($token['access_token']);
-        //     // // dd($userData);
-        //     // $data = $this->findOrCreate($userData, $provider);
-        //     // dd($data);
-        //     // if ($request->expectsJson()) {
-        //     //     return new UserResource($data->setAttribute('token', $token));
-        //     // }
-        //     // return redirect('https://www.dailyfairdeal.com');
-        // } 
+            // Fetch the user information using the access token
+            $userData = $this->getUserData($token['access_token']); 
+            $data = $this->findOrCreate($userData, $provider); 
+            if ($request->expectsJson()) {
+                return new UserResource($data->setAttribute('token', $token));
+            }
+            return redirect('https://www.dailyfairdeal.com');
+        } 
         catch (Exception $e) {
             error_log('Error during Google OAuth: ' . $e->getMessage());
             return redirect('/')->with('error', 'Failed to authenticate with Google.');
@@ -80,15 +64,15 @@ class SocialLoginController extends Controller
     }
 
     // Helper function to fetch user profile data using access token
-    // private function getUserData($accessToken)
-    // {
-    //     // Make a request to Google to get user profile information
-    //     $response = Http::get('https://www.googleapis.com/oauth2/v3/userinfo', [
-    //         'access_token' => $accessToken,
-    //     ]);
+    private function getUserData($accessToken)
+    {
+        // Make a request to Google to get user profile information
+        $response = Http::get('https://www.googleapis.com/oauth2/v3/userinfo', [
+            'access_token' => $accessToken,
+        ]);
 
-    //     return json_decode($response->getBody()->getContents(), false);
-    // }
+        return json_decode($response->getBody()->getContents(), false);
+    }
 
     private function findOrCreate(object $user, string $provider): User
     {
