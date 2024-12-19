@@ -47,12 +47,13 @@ class SocialLoginController extends Controller
             // Exchange the authorization code for an access token
             $token = $client->fetchAccessTokenWithAuthCode($code);
 
+            dd($token);
             // Set the access token on the client
             $client->setAccessToken($token);
 
             // Fetch the user information using the access token
-            $userData = $this->getUserData($token['access_token']);
-            dd($userData);
+            // $userData = $this->getUserData($token['access_token']);
+            // dd($userData);
             $data = $this->findOrCreate($userData, $provider);
             dd($data);
             if ($request->expectsJson()) {
@@ -66,15 +67,15 @@ class SocialLoginController extends Controller
     }
 
     // Helper function to fetch user profile data using access token
-    private function getUserData($accessToken)
-    {
-        // Make a request to Google to get user profile information
-        $response = Http::get('https://www.googleapis.com/oauth2/v3/userinfo', [
-            'access_token' => $accessToken,
-        ]);
+    // private function getUserData($accessToken)
+    // {
+    //     // Make a request to Google to get user profile information
+    //     $response = Http::get('https://www.googleapis.com/oauth2/v3/userinfo', [
+    //         'access_token' => $accessToken,
+    //     ]);
 
-        return json_decode($response->getBody()->getContents(), false);
-    }
+    //     return json_decode($response->getBody()->getContents(), false);
+    // }
 
     private function findOrCreate(object $user, string $provider): User
     {
