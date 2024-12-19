@@ -51,8 +51,7 @@ class SocialLoginController extends Controller
 
             // Fetch the user information using the access token
             $userData = $this->getUserData($token['access_token']);  
-            $data = $this->findOrCreate($userData, $provider); 
-            dd($data);
+            $data = $this->findOrCreate($userData, $provider);  
             if ($request->expectsJson()) {
                 return new UserResource($data->setAttribute('token', $token));
             }
@@ -88,8 +87,9 @@ class SocialLoginController extends Controller
             } else {
                 $userExist->facebook_id = $user->id;
             }
-            $userExist->save();
+           return $userExist->save();
         }
+
         Auth::login($userExist);
         return $userExist;
     }
