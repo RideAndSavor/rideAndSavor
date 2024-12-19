@@ -34,6 +34,7 @@ class SocialLoginController extends Controller
     // Handle the OAuth callback
     public function handleGoogleCallback(SocialLoginRequest $request)
     {
+        dd("hello");
         $client = new Google_Client();
         $client->setClientId(env('GOOGLE_CLIENT_ID'));
         $client->setClientSecret(env('GOOGLE_CLIENT_SECRET'));
