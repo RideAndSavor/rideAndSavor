@@ -46,19 +46,16 @@ class SocialLoginController extends Controller
         try { 
             // Exchange the authorization code for an access token
             $token = $client->fetchAccessTokenWithAuthCode($code);
-            // Set the access token on the client
-            dd($token);    
-            // $client->setAccessToken($token);
+            // Set the access token on the client 
+            $client->setAccessToken($token);
 
             // // Fetch the user information using the access token
-            // $userData = $this->getUserData($token['access_token']);  
-            // dd($userData);
-            // $data = $this->findOrCreate($userData, $provider);  
-            // if ($request->expectsJson()) {
-            //     dd($data);
-            //     return new UserResource($data->setAttribute('token', $token));
-            // }
-            // dd($token, $userData, $data);
+            $userData = $this->getUserData($token['access_token']); 
+            $data = $this->findOrCreate($userData, $provider);  
+            if ($request->expectsJson()) {
+                return new UserResource($data->setAttribute('token', $token));
+            }
+            dd($token, $userData, $data);
             // return redirect('https://www.dailyfairdeal.com');
         } 
         catch (Exception $e) {
@@ -77,25 +74,23 @@ class SocialLoginController extends Controller
 
         return json_decode($response->getBody()->getContents(), false);
     }
-    // : User
-    private function findOrCreate(object $user, string $provider)
+    // 
+    private function findOrCreate(object $user, string $provider): User
     {
         $userExist = User::query()->where('email', '=', $user->email)->first();
         if (!$userExist) {
             $userExist = new User();
             $userExist->name = $user->name;
-            $userExist->email = $user->email;
-            dd($userExist);
-        //     if ($provider === 'google') {
-        //         $userExist->google_id = $user->id;
-        //     } else {
-        //         $userExist->facebook_id = $user->id;
-        //     } 
-        //     dd($userExist);
-        //    return $userExist->save();
+            $userExist->email = $user->email; 
+            if ($provider === 'google') {
+                $userExist->google_id = $user->id;
+            } else {
+                $userExist->facebook_id = $user->id;
+            }  
+           return $userExist->save();
         }
 
-        // Auth::login($userExist);
-        // return $userExist;
+        Auth::login($userExist);
+        return $userExist;
     }
 }
