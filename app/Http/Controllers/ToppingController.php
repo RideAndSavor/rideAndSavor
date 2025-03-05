@@ -19,10 +19,10 @@ class ToppingController extends Controller
 
     public function index()
     {
-        $topping =$this->toppingInterface->all('Topping');
-        return ToppingResource::collection($topping);
-
+        $topping = $this->toppingInterface->all('Topping');
+        return response()->json(ToppingResource::collection($topping)->toArray(request()), 200);
     }
+
 
     public function store(ToppingRequest $request)
     {
@@ -39,6 +39,8 @@ class ToppingController extends Controller
     public function update(ToppingRequest $request, string $id)
     {
         $validateData = $request->validated();
+        // dd($validateData);
+
 
         $topping = $this->toppingInterface->findById('Topping',$id);
         if(!$topping){
@@ -52,7 +54,9 @@ class ToppingController extends Controller
 
     public function destroy(string $id)
     {
+        // dd($id);
         $topping = $this->toppingInterface->findById('Topping',$id);
+        // dd($topping);
         if(!$topping){
             return response()->json([
                 'message'=>Config::get('variable.FAIL_TO_DELETED_TOPPING')
@@ -60,6 +64,7 @@ class ToppingController extends Controller
         }
 
         $this->toppingInterface->delete('Topping',$id);
+        // dd($this->toppingInterface);
         return response()->json([
             'message'=>Config::get('variable.TOPPING_DELETED_SUCCESSFULLY')
         ],Config::get('variable.NO_CONTENT'));

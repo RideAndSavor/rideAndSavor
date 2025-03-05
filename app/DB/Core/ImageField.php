@@ -25,10 +25,17 @@ class ImageField extends Field
 
     if ($this->tableName === Config::get('variable.IMAGES_TABLE')) {
       $uploadedFile = $this->value;
+    //   dd($uploadedFile);
       $imageName = round(microtime(true) * 1000)  . '.' . $uploadedFile->extension();
+    //   dd($imageName);
       $finalImagePath = $this->imageDirectory . $imageName;
+    //   dd($finalImagePath);
       Crud::storeImage($uploadedFile, $this->imageDirectory, $imageName);
-      return $this->value = $finalImagePath;
+    //   $imagePath=Crud::storeImage($uploadedFile, $this->imageDirectory, $imageName);
+    //   dd($imagePath);
+      $this->value = $finalImagePath;
+      return $this->value;
+    //   dd($this->value);
     }
   }
 }

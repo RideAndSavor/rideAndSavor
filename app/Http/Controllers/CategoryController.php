@@ -20,7 +20,7 @@ class CategoryController extends Controller
     public function index()
     {
         $category =$this->categoryInterface->all('Category');
-        return CategoryResource::collection($category);
+        return response()->json(CategoryResource::collection($category)->toArray(request()), 200);
 
     }
 

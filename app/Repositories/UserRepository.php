@@ -17,6 +17,6 @@ class UserRepository implements UserInterface
     public function store(string $modelName, array $data)
     {
         $model = app("App\\Models\\{$modelName}");
-        return (new Crud($model, $data, null, false, false))->execute();
+        return (new Crud($model, $data, null, false, true))->execute();
     }
 }

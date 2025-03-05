@@ -35,6 +35,7 @@ class RestaurantFoodToppingRequest extends FormRequest
             'food_restaurant.taste_id' => 'nullable|integer',
             'food_restaurant.description' => 'required|string|max:255',
             'food_restaurant.discount_item_id' => 'nullable|integer',
+            'upload_url' => 'nullable|array',
             'upload_url.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg', // uploading image for food
         ];
     }

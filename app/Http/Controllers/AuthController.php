@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Contracts\UserInterface;
-use App\Http\Requests\AuthRequest; 
+use App\Http\Requests\AuthRequest;
 use App\Http\Resources\AuthResource;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Config;
@@ -24,17 +24,20 @@ class AuthController extends Controller
     {
         // Validate the request data, including password confirmation
         $validatedUserData = $request->validated();
+        // dd($validatedUserData);
 
         // Hash the password
-        $validatedUserData['password'] = Hash::make($validatedUserData['password']); 
-
+        $validatedUserData['password'] = Hash::make($validatedUserData['password']);
+        // dd($validatedUserData['password']);
         // Assign the role based on the request
         switch (strtolower($request->role)) {
             case Config::get('variable.ADMIN'):
                 $validatedUserData['role'] = Config::get('variable.TWO');
+                // dd($validatedUserData['role']);
                 break;
             case Config::get('variable.OWNER'):
                 $validatedUserData['role'] = Config::get('variable.THREE');
+                dd($validatedUserData['role']);
                 break;
             case Config::get('variable.RIDER'):
                 $validatedUserData['role'] = Config::get('variable.FOUR');
@@ -44,11 +47,15 @@ class AuthController extends Controller
                 break;
             default:
                 $validatedUserData['role'] = Config::get('variable.ONE');
+                // dd($validatedUserData['role'] );
+
                 break;
         }
+        // dd($validatedUserData);
 
         // Store the user data
         $user = $this->userInterface->store('User', $validatedUserData);
+        // dd($user);
          // Generate a JWT token for the newly registered user
         $token = JWTAuth::fromUser($user);
         // Generate a token for the user
@@ -61,7 +68,7 @@ class AuthController extends Controller
         }
     }
 
-    
+
 
     public function login(Request $request)
     {
@@ -110,7 +117,7 @@ class AuthController extends Controller
     }
 
     // Invalidate the token
-    JWTAuth::invalidate($token); 
+    JWTAuth::invalidate($token);
     return response()->json([
         'message' => Config::get('variable.LOGGED_OUT_SUCCESSFULLY')
     ], Config::get('variable.OK'));

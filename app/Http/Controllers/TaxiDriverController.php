@@ -6,6 +6,7 @@ use App\Models\TaxiDriver;
 use Illuminate\Http\Request;
 use App\Events\RideRequested;
 use App\Exceptions\CrudException;
+use App\Services\TaxiDriverService;
 use Illuminate\Support\Facades\Log;
 use App\Contracts\LocationInterface;
 use Illuminate\Support\Facades\Auth;
@@ -17,10 +18,12 @@ use App\Events\trackingDriverCurrentLocation;
 class TaxiDriverController extends Controller
 {
     private $taxi_driverInterface;
+    protected $taxiDriverService;
 
-    public function __construct(LocationInterface $taxi_driverInterface)
+    public function __construct(LocationInterface $taxi_driverInterface,TaxiDriverService $taxiDriverService)
     {
         $this->taxi_driverInterface = $taxi_driverInterface;
+        $this->taxiDriverService = $taxiDriverService;
     }
 
     public function index()
@@ -48,6 +51,7 @@ class TaxiDriverController extends Controller
     /* Update taxi_Driver with car information */
     public function update(TaxiDriverRequest $request, string $id)
     {
+        // dd($request);
         $validatedData = $request->validated();
         // dd($validatedData);
         $taxi_driver = $this->taxi_driverInterface->findById('TaxiDriver', $id);
@@ -77,71 +81,50 @@ class TaxiDriverController extends Controller
     // Update the driver's location
     public function updateLocation(Request $request)
     {
+        // dd($request);
         $validatedData = $request->validate([
             'driver_id' => 'required',
             'current_location.lat' => 'required|numeric|between:-90,90',
             'current_location.long' => 'required|numeric|between:-180,180',
+            'is_available'=> 'required|boolean'
         ]);
+        // dd($validatedData);
 
         event(new trackingDriverCurrentLocation($validatedData));
-    
+
         return response()->json([
             'message' => "Driver's Current Location updated successfully",
         ]);
-    
+
     }
 
+       // Get nearby drivers within 1km radius
     public function getNearbyDrivers(Request $request)
-{
-    $validatedData = $request->validate([
-        'rider_id' => 'required|string',
-        'current_location.lat' => 'required|numeric|between:-90,90',
-        'current_location.long' => 'required|numeric|between:-180,180',
-        'destination.lat' => 'required|numeric|between:-90,90',
-        'destination.long' => 'required|numeric|between:-180,180',
-    ]);
+    {
+        // dd($request);
+        $validatedData = $request->validate([
+            'rider_id' => 'required|string',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180'
+        ]);
 
-    $latitude = $validatedData['current_location']['lat'];
-    $longitude = $validatedData['current_location']['long'];
-    $radius = 1; // 1km radius
-    
-    // Get nearby available drivers within 1km
-    $drivers = TaxiDriver::nearby($latitude, $longitude, $radius)->get();
-    
-    // Broadcast event to each nearby driver
-    foreach ($drivers as $driver) {
-        // Notify each driver individually
-        // event(new RideRequested($validatedData['2']->current_location, $validatedData['2']->destination))
-        //     ->toOthers()
-        //     ->onChannel('driver.' . $driver->id); // Dynamic channel for each driver
+        $latitude = $validatedData['latitude'];
+        // dd($latitude);
+        $longitude = $validatedData['longitude'];
+        $radius = 1; // 1km radius
+
+        // Fetch nearby available drivers within the 1km radius
+        $drivers = $this->taxiDriverService->getNearbyDrivers($latitude, $longitude, $radius);
+
+        // Broadcast event to each nearby driver
+        foreach ($drivers as $driver) {
+            // Notify each driver individually with event or other logic
+            // event(new RideRequested($validatedData['current_location'], $validatedData['destination']))
+            //     ->toOthers()
+            //     ->onChannel('driver.' . $driver->id); // Dynamic channel for each driver
+        }
+
+        // Return nearby drivers in the response
+        return response()->json($drivers);
     }
-    
-    // Return nearby drivers in the response
-    return response()->json($drivers);
-}
-
-
-    // public function getNearbyDrivers(Request $request)
-    // {
-    //     $validatedData = $request->validate([
-    //         'rider_id' => 'required|string',
-    //         'current_location.lat' => 'required|numeric|between:-90,90',
-    //         'current_location.long' => 'required|numeric|between:-180,180',
-    //         'destination.lat' => 'required|numeric|between:-90,90',
-    //         'destination.long' => 'required|numeric|between:-180,180',
-    //     ]);
-
-    //     $latitude = $validatedData['current_location']['lat'];
-    //     $longitude = $validatedData['current_location']['long'];
-    //     $radius = 1; // Default to 1km
-        
-    //     // Get nearby available drivers
-    //     $drivers = TaxiDriver::nearby($latitude, $longitude, $radius)->get();
-        
-    //     // Broadcast event to nearby drivers
-    //     event(new RideRequested($validatedData['current_location'], $validatedData['destination']));
-        
-    //     return response()->json($drivers);
-    // }
-
 }

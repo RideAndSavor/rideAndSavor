@@ -25,7 +25,7 @@ class CountryController extends Controller
     {
         // try {
             $countries = $this->locationInterface->all('Country');
-            return CountryResource::collection($countries);
+            return response()->json(CountryResource::collection($countries)->toArray(request()), 200);
         // } catch (\Exception $e) {
             // return ResponseHelper::jsonResponseWithConfigError($e);
         // }

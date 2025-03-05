@@ -10,6 +10,7 @@ use App\Models\Restaurant;
 use App\Traits\ImageTrait;
 use Illuminate\Http\Request;
 use App\Models\FoodRestaurant;
+use App\Services\ImageService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Contracts\LocationInterface;
@@ -25,13 +26,15 @@ class RestaurantFoodController extends Controller
     private $genre;
     private $tableName;
     private $folder_name;
+    protected $imageService;
 
-    public function __construct(LocationInterface $locationInterface)
+    public function __construct(LocationInterface $locationInterface,ImageService $imageService)
     {
         $this->foodRestaurantInterface = $locationInterface;
         $this->genre = Config::get('variable.FOOD_IMAGE');
         $this->folder_name = 'public/foods/';
         $this->tableName = 'images';
+        $this->imageService = $imageService;
     }
 
     public function showAllFoodToppings(Restaurant $restaurant)
@@ -221,6 +224,9 @@ class RestaurantFoodController extends Controller
     public function store(RestaurantFoodToppingRequest $request)
     {
         $validatedData = $request->validated();
+        // dd($validatedData);
+        $image[] = $validatedData['upload_url'] ?? [];
+        unset($validatedData['upload_url']);
         DB::beginTransaction();
         try {
             $foodData = [
@@ -229,8 +235,15 @@ class RestaurantFoodController extends Controller
             ];
             $food = $this->foodRestaurantInterface->store('Food', $foodData);
 
-            if ($request->hasFile('upload_url')) {
-                $this->storeImage($request, $food->id, $this->genre, $this->foodRestaurantInterface, $this->folder_name, $this->tableName);
+            // if ($request->hasFile('upload_url')) {
+            //     $this->storeImage($request, $food->id, $this->genre, $this->foodRestaurantInterface, $this->folder_name, $this->tableName);
+            // }
+
+            // dd($image);
+            if (!empty($image)) {
+                // dd($image);
+                // dd($food);
+                $this->createImageTest($food, $image, 'food/');
             }
 
             $foodRestaurantData = [
@@ -244,10 +257,8 @@ class RestaurantFoodController extends Controller
             ];
             $foodRestaurant = $this->foodRestaurantInterface->store('FoodRestaurant', $foodRestaurantData);
 
-            if($request->has('toppings'))
-            {
-                foreach($request->input('toppings') as $toppingData)
-                {
+            if ($request->has('toppings')) {
+                foreach ($request->input('toppings') as $toppingData) {
                     $topping = $this->foodRestaurantInterface->store('Topping', [
                         'name' => $toppingData['topping_name'],
                         'price' => $toppingData['topping_price']
@@ -256,11 +267,12 @@ class RestaurantFoodController extends Controller
                 }
             }
 
+
             DB::commit();
             return response()->json([
                 'message' => Config::get('variable.FOOD_RESTAURANT_AND_TOPPING_CREATE_SUCCESSFULLY')
             ], Config::get('variable.OK'));
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'message' => Config::get('variable.FAIL TO CREATE'),
@@ -302,9 +314,9 @@ class RestaurantFoodController extends Controller
                 $foodId = $foodRestaurant->food_id;
             }
             if ($request->hasFile('upload_url')) {
-                $this->updateImage($request, $imageData, $foodId, $this->genre, $this->foodRestaurantInterface, $folder_name, $tableName, $foodRestaurantId); 
+                $this->updateImage($request, $imageData, $foodId, $this->genre, $this->foodRestaurantInterface, $folder_name, $tableName, $foodRestaurantId);
             }
- 
+
             $food = $foodRestaurant->food;
             $existingToppings = $food->toppings->keyBy('id');
             $existingToppingIDs = $existingToppings->pluck('id')->toArray();
@@ -326,7 +338,7 @@ class RestaurantFoodController extends Controller
                         $food->toppings()->attach($newTopping->id);
                     }
                 }
-                
+
             }
 
             $extraToppingIDs = array_diff($existingToppingIDs, $newToppingIDs);
@@ -336,7 +348,7 @@ class RestaurantFoodController extends Controller
                     $food->toppings()->detach($extraToppingID);
                 }
             }
-            
+
 
             DB::commit();
 
@@ -375,7 +387,7 @@ class RestaurantFoodController extends Controller
         }
     }
 
-    
+
     private function deleteFood($foodId)
     {
         $this->foodRestaurantInterface->delete('Food', $foodId);
@@ -384,7 +396,7 @@ class RestaurantFoodController extends Controller
             'message' => Config::get('variable.DELETE_SUCCESSFULLY')
         ], Config::get('variable.OK'));
     }
-    
+
     private function deleteFoodRestaurant($foodRestaurantId)
     {
         $this->foodRestaurantInterface->delete('FoodRestaurant', $foodRestaurantId);
@@ -393,6 +405,6 @@ class RestaurantFoodController extends Controller
             'message' => Config::get('variable.DELETE_SUCCESSFULLY')
         ], Config::get('variable.OK'));
     }
-    
+
 
 }

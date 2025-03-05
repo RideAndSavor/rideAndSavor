@@ -13,19 +13,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Images extends Model
 {
     use HasFactory;
+    protected $guarded = [];
+    // protected $fillable = [ 'genre', 'model_id', 'model_type'];
 
     public function saveableFields($column): object
     {
+        // dd($column);  "link_id" // app\Models\Images.php:19
         $arr = [
             'link_id' => IntegerField::new(),
             'gener' => StringField::new(),
-            'upload_url'=>ImageField::new(),
+            'upload_url'=> ImageField::new(),
         ];
+
         if (!array_key_exists($column, $arr)) {
             throw CrudException::missingAttributeException();
         }
 
-        return  $arr[$column];
+        return $arr[$column];
     }
 
     public function imageable()
@@ -33,9 +37,8 @@ class Images extends Model
         return $this->morphTo();
     }
 
-
-    public function food():BelongsTo
+    public function food(): BelongsTo
     {
-        return $this->belongsTo(Food::class,'link_id');
+        return $this->belongsTo(Food::class, 'link_id');
     }
 }

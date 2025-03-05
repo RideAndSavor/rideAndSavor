@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Db\Core\Crud;
 use App\Helper\ReadOnlyArray;
 use App\Contracts\BaseInterface;
-use Illuminate\Database\Eloquent\Model; 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 
 class BaseRepository implements BaseInterface
@@ -27,7 +27,10 @@ class BaseRepository implements BaseInterface
 
   public function all()
   {
-    $this->currentModel->all();
+    // dd("ok");
+    // dd($this->currentModel);
+    // dd($this->currentModel->all());
+    return $this->currentModel->all();
   }
 
   public function getById($id)
@@ -47,10 +50,15 @@ class BaseRepository implements BaseInterface
 
   public function store(array $data, string $imageDir = null, string $diskName = null)
   {
+    // dd($data);
     $this->currentModel = new $this->currentModel;
+    // dd($this->currentModel);
+    // dump(class_exists('App\Helper\ReadOnlyArray'));
     new ReadOnlyArray($data);
+
     /* Data Preparation */
     $crud = new Crud(model: $this->currentModel, data: $data, storeMode: true);
+    // dd($crud);
     /* Data Execution */
     return $crud->execute();
   }

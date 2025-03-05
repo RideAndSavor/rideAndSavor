@@ -29,7 +29,8 @@ class DatabaseSeeder extends Seeder
             CitySeeder::class,
             TownshipSeeder::class,
             WardSeeder::class,
-            StreetSeeder::class
+            StreetSeeder::class,
+            TaxiDriverSeeder::class
         ]);
     }
 }

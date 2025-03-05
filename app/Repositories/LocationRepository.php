@@ -10,7 +10,7 @@ use App\Contracts\LocationInterface;
 use Illuminate\Support\Facades\Config;
 
 class LocationRepository implements LocationInterface
-{    
+{
     public function findByIdWithRelation(string $modelName, string $relationName, int $id)
     {
         $model = app("App\Models\\{$modelName}");
@@ -43,16 +43,29 @@ class LocationRepository implements LocationInterface
 
     public function store(string $modelName, array $data, $folder_name = null, $tablename = null)
     {
+        // dd($folder_name);
+        // dd($data);
+        // dd($_REQUEST);
         if (empty($data)) {
+            // dd($data);
             throw CrudException::emptyData();
         }
         $model = app("App\\Models\\{$modelName}");
+        // dd($model);
 
         if (get_class($model) !== Config::get('variable.IMAGE_MODEL')) {
+            // dd($data);
+            // dd($model);
             return (new Crud(model: $model,  data: $data, storeMode: true))->execute();
         }
-        $crud = new Crud($model, $data, null, false, false);
-        $crud->setImageDirectory($folder_name, $tablename);
+        $crud = new Crud($model, $data, null, false, true);
+        // dd($data);
+        // dd($model);
+        // dd(request());
+        // dd($tablename);
+        // dd($folder_name);
+        $crud->setImageDirectory($folder_name,$tablename);
+        // dd($crud->execute());
         return $crud->execute();
     }
 
@@ -64,17 +77,19 @@ class LocationRepository implements LocationInterface
         $model = app("App\Models\\{$modelName}");
 
         if (get_class($model) !== Config::get('variable.IMAGE_MODEL')) {
-            return (new Crud($model, $data, $id, true, false))->execute();
+            return (new Crud($model, $data, $id, true, editMode:true))->execute();
         }
-        $curd = new Crud($model, $data, $id, true, false);
+        $curd = new Crud($model, $data, $id, true,editMode:true);
         $curd->setImageDirectory($folder_name, $tablename);
         return $curd->execute();
     }
 
     public function delete(string $modelName, int $id)
     {
-        $model = app("App\Models\\{$modelName}");
 
-        return (new Crud($model, null, $id, false, true))->execute();
+        $model = app("App\Models\\{$modelName}");
+        // dd($model);
+
+        return (new Crud($model, [], $id, false, deleteMode:true))->execute();
     }
 }

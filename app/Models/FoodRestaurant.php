@@ -29,6 +29,7 @@ class FoodRestaurant extends Pivot
 
     public function saveableFields($column): object
     {
+        // dd($column);
         $arr = [
             'restaurant_id' => IntegerField::new(),
             'size_id' => IntegerField::new(),
@@ -76,4 +77,9 @@ class FoodRestaurant extends Pivot
     {
         return $this->belongsTo(Size::class, 'size_id');
     }
+    public function images()
+    {
+        return $this->morphMany(Images::class, 'imageable');
+    }
+
 }

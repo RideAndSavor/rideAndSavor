@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AcceptDriverController;
 use App\Models\DiscountItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +24,7 @@ use Illuminate\Support\Facades\Broadcast;
 use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\StreetController;
+use App\Http\Controllers\TravelController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\FoodsInRestaurant;
@@ -43,11 +45,12 @@ use App\Http\Controllers\DeliverPriceController;
 use App\Http\Controllers\DiscountItemController;
 use App\Http\Controllers\DeliveryPriceController;
 use App\Http\Controllers\FoodRestaurantController;
-use App\Http\Controllers\RestaurantFoodController;
 
+use App\Http\Controllers\RestaurantFoodController;
 use App\Http\Controllers\PaymentProviderController;
 use App\Http\Controllers\RestaurantAddressController;
 use App\Http\Controllers\FeatureRestaurantsController;
+use App\Http\Controllers\BiddingPriceByDriverController;
 use App\Http\Controllers\CalculateDeliveryFeesController;
 use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 
@@ -73,12 +76,16 @@ Route::resource('paymentmodes', PaymentProviderController::class);
 Broadcast::routes(['middleware' => ['auth:api']]);
 Route::middleware(['auth:api'])->group(function () {
 
-     
+
 
     // Route::post('/user/change-role-to-driver', [UserController::class, 'changeRoleToDriver']);
     Route::post('/taxi-drivers/update-location', [TaxiDriverController::class, 'updateLocation'])
         ->middleware('throttle:60,1'); // Limit to 60 requests per minute
     Route::post('/taxi-drivers/nearby', [TaxiDriverController::class, 'getNearbyDrivers']);
+
+    Route::apiResource('travels', TravelController::class);
+    Route::apiResource('biddings', BiddingPriceByDriverController::class);
+    Route::apiResource('accept_drivers', AcceptDriverController::class);
 
     /* pp */
     Route::resource('/taxi-drivers', TaxiDriverController::class);

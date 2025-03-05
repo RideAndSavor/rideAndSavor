@@ -59,11 +59,11 @@ class RestaurantController extends Controller
                 'longitude' => $addressData['longitude'],
             ]
         );
-        
+
         // Add the address ID to the main data
         $validatedData['address_id'] = $address->id;
-        
-        $validatedData = $this->dateFormat($validatedData); 
+
+        $validatedData = $this->dateFormat($validatedData);
         $restaurant = $this->restaurantInterface->store('Restaurant', $validatedData);
         if (!$restaurant) {
             return response()->json([
