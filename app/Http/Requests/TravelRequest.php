@@ -22,7 +22,7 @@ class TravelRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|exists:users,id',
+            // 'user_id' => 'required|exists:users,id',
             'pickup_latitude' => 'required|numeric',
             'pickup_longitude' => 'required|numeric',
             'destination_latitude' => 'required|numeric',

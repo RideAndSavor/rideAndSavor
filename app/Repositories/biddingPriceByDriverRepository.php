@@ -15,6 +15,7 @@ class BiddingPriceByDriverRepository extends BaseRepository implements BiddingPr
 
     public function deleteByTravelId(int $travelId)
     {
+        // dd($travelId);
         // Delete the bidding price entry where the travel_id matches
         return BiddingPriceByDriver::where('travel_id', $travelId)->delete();
     }

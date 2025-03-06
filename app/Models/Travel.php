@@ -48,5 +48,10 @@ class Travel extends Model
     {
         return $this->hasOne(AcceptDriver::class, 'travel_id');
     }
+    public function nearbyTaxis()
+    {
+        return $this->hasMany(NearbyTaxi::class, 'travel_id');
+    }
+
 }
 

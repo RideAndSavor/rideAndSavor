@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Scout\Searchable;
 use Laravel\Scout\Attributes\SearchUsingPrefix;
-use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject; 
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -112,6 +112,12 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Order::class);
 
     }
+    // In the User model
+    public function travels()
+    {
+        return $this->hasMany(Travel::class, 'user_id'); // 'user_id' is the foreign key in the travels table
+    }
+
 
     // public function foods()
     // {

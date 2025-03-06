@@ -2,9 +2,10 @@
 
 namespace App\Repositories;
 
-use App\Contracts\TravelInterface;
-use App\Models\Travel;
 use App\Models\User;
+use App\Models\Travel;
+use App\Models\TaxiDriver;
+use App\Contracts\TravelInterface;
 
 class TravelRepository extends BaseRepository implements TravelInterface
 {
@@ -24,14 +25,23 @@ class TravelRepository extends BaseRepository implements TravelInterface
         return null;
     }
 
-    public function findNearbyDrivers($latitude, $longitude, $radius)
+    public function getNearbyDrivers($latitude, $longitude, $radius = 1)
     {
-        return User::selectRaw("id,
-                (6371 * acos(cos(radians(?)) * cos(radians(latitude))
-                * cos(radians(longitude) - radians(?)) + sin(radians(?))
-                * sin(radians(latitude)))) AS distance", [$latitude, $longitude, $latitude])
-            ->having("distance", "<", $radius)
-            ->orderBy("distance", "asc")
+        // Earth's radius in kilometers
+        $earthRadius = 6371;
+        // dd($latitude, $longitude);
+        return TaxiDriver::selectRaw("
+            taxi_drivers.*,
+            ($earthRadius * acos(
+                cos(radians(?))
+                * cos(radians(taxi_drivers.latitude))
+                * cos(radians(taxi_drivers.longitude) - radians(?))
+                + sin(radians(?))
+                * sin(radians(taxi_drivers.latitude))
+            )) AS distance", [$latitude, $longitude, $latitude])
+            ->where('is_available', 1) // Only available drivers
+            ->having('distance', '<=', $radius) // Filter by radius
+            ->orderBy('distance', 'asc') // Order by distance, closest first
             ->get();
     }
 }

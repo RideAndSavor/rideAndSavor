@@ -68,5 +68,10 @@ class TaxiDriver extends Model
      {
          return $this->hasMany(BiddingPriceByDriver::class, 'taxi_driver_id');
      }
+     public function nearbyTaxis()
+    {
+        return $this->hasMany(NearbyTaxi::class, 'taxi_driver_id');
+    }
+
 
 }

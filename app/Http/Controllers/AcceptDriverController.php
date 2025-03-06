@@ -4,22 +4,28 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\TravelService;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use App\Services\AcceptDriverService;
 use App\Http\Requests\AcceptDriverRequest;
 use App\Http\Resources\AcceptDriverResource;
 use App\Services\BiddingPriceByDriverService;
+use App\Services\NearbyTaxiService;
 
 class AcceptDriverController extends Controller
 {
     protected $acceptDriverService;
     protected $travelService;
     protected $biddingPriceByDriverService;
+    protected $nearbyTaxiService;
 
-    public function __construct(AcceptDriverService $acceptDriverService,TravelService $travelService,BiddingPriceByDriverService $biddingPriceByDriverService)
+    public function __construct(AcceptDriverService $acceptDriverService,TravelService $travelService,BiddingPriceByDriverService $biddingPriceByDriverService,NearbyTaxiService $nearbyTaxiService)
     {
+        // dd("ok");
         $this->acceptDriverService = $acceptDriverService;
         $this->travelService = $travelService;
         $this->biddingPriceByDriverService = $biddingPriceByDriverService;
+        $this->nearbyTaxiService = $nearbyTaxiService;
     }
 
     // Get all accepted drivers
@@ -34,32 +40,37 @@ class AcceptDriverController extends Controller
     }
 
     public function store(AcceptDriverRequest $request)
-{
-    try {
-        // Validate and assign authenticated user's ID to the request data
-        $validatedData = $request->validated();
-        $validatedData['user_id'] = auth()->user()->id; // Add the authenticated user's ID
+    {
+        try {
+            // Validate and assign authenticated user's ID to the request data
+            $validatedData = $request->validated();
+            $validatedData['user_id'] = Auth::id(); // Add the authenticated user's ID
 
-        // Update the travel status to 'accepted'
-        $travel = $this->travelService->updateStatus($validatedData['travel_id'], 'accepted');
+            // dd($validatedData);
+            // Update the travel status to 'accepted'
+            $travel = $this->travelService->updateStatus($validatedData['travel_id'], 'accepted');
 
-        if ($travel) {
-            // Now delete the bidding entry from the bidding_prices table based on travel_id
-            $this->biddingPriceByDriverService->deleteByTravelId($validatedData['travel_id']);
+            if ($travel) {
+                // Now delete the bidding entry from the bidding_prices table based on travel_id
+                $this->biddingPriceByDriverService->deleteByTravelId($validatedData['travel_id']);
+                // dd($validatedData['travel_id']);
+                $this->nearbyTaxiService->deleteByTravelId($validatedData['travel_id']);
 
-            $acceptedDriver = $this->acceptDriverService->store($validatedData);
+                // DB::table('nearby_taxi')->where('travel_id', $validatedData['travel_id'])->delete();
 
-            return response()->json([
-                'message' => 'Driver accepted and bidding entry deleted successfully!',
-                'data' => $acceptedDriver
-            ], 200);
+                $acceptedDriver = $this->acceptDriverService->store($validatedData);
+
+                return response()->json([
+                    'message' => 'Driver accepted and bidding entry deleted successfully!',
+                    'data' => $acceptedDriver
+                ], 200);
+            }
+
+            return response()->json(['error' => 'Travel not found or something went wrong!'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Something went wrong while accepting the driver!'], 500);
         }
-
-        return response()->json(['error' => 'Travel not found or something went wrong!'], 404);
-    } catch (\Exception $e) {
-        return response()->json(['error' => 'Something went wrong while accepting the driver!'], 500);
     }
-}
 
 
 
