@@ -19,9 +19,8 @@ class AcceptDriverController extends Controller
     protected $biddingPriceByDriverService;
     protected $nearbyTaxiService;
 
-    public function __construct(AcceptDriverService $acceptDriverService,TravelService $travelService,BiddingPriceByDriverService $biddingPriceByDriverService,NearbyTaxiService $nearbyTaxiService)
+    public function __construct(AcceptDriverService $acceptDriverService, TravelService $travelService, BiddingPriceByDriverService $biddingPriceByDriverService, NearbyTaxiService $nearbyTaxiService)
     {
-        // dd("ok");
         $this->acceptDriverService = $acceptDriverService;
         $this->travelService = $travelService;
         $this->biddingPriceByDriverService = $biddingPriceByDriverService;
@@ -46,7 +45,6 @@ class AcceptDriverController extends Controller
             $validatedData = $request->validated();
             $validatedData['user_id'] = Auth::id(); // Add the authenticated user's ID
 
-            // dd($validatedData);
             // Update the travel status to 'accepted'
             $travel = $this->travelService->updateStatus($validatedData['travel_id'], 'accepted');
 
