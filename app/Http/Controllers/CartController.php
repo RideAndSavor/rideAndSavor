@@ -9,6 +9,7 @@ use App\Http\Requests\CartRequest;
 use Illuminate\Support\Facades\DB;
 use App\Contracts\LocationInterface;
 use App\Http\Resources\CartResource;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
@@ -18,7 +19,7 @@ class CartController extends Controller
     }
     public function index()
     {
-        $cartWithItems = Cart::query()->where('user_id', auth()->id())->with(['cartItems.food', 'cartItems.restaurant'])
+        $cartWithItems = Cart::query()->where('user_id', Auth::id())->with(['cartItems.food', 'cartItems.restaurant'])
             ->latest('updated_at')->first(); //only return the cart object where latest updated_at with cartItems.food and cartItems.restaurant
         return new CartResource($cartWithItems);
     }
@@ -29,7 +30,7 @@ class CartController extends Controller
         // dd(count($validatedData['cart_item']));
         try {
             DB::beginTransaction();
-            $validatedData['cart']['user_id'] = auth()->user()->id;
+            $validatedData['cart']['user_id'] = Auth::id();
             $cart = $this->cartInterface->store('Cart', $validatedData['cart']);
             foreach ($validatedData['cart_item'] as $cartItem) {
                 $cartItem['cart_id'] = $cart->id;
@@ -57,7 +58,7 @@ class CartController extends Controller
         // dd($cartItemIDs[0]);
         try {
             DB::beginTransaction();
-            $validatedData['cart']['user_id'] = auth()->user()->id;
+            $validatedData['cart']['user_id'] = Auth::id();
             $cart = $this->cartInterface->update('Cart', $validatedData['cart'], $cart->id);
             foreach ($validatedData['cart_item'] as $index => $cartItem) {
                 $cartItem['cart_id'] = $cart->id;

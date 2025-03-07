@@ -52,6 +52,9 @@ class Travel extends Model
     {
         return $this->hasMany(NearbyTaxi::class, 'travel_id');
     }
-
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
 
