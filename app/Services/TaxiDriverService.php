@@ -12,10 +12,14 @@ class TaxiDriverService
         $this->taxiDriverRepository = $taxiDriverRepository;
     }
 
-    public function getNearbyDrivers($latitude, $longitude, $radius)
+    public function getDriverNotifications($driverId)
     {
-        // dd($latitude, $longitude);
-        return $this->taxiDriverRepository->getNearbyDrivers($latitude, $longitude, $radius);
+        return $this->taxiDriverRepository->getPendingRidesForDriver($driverId)
+            ->load(['travel.user']); // Eager load travel and its user relationship
+    }
+    public function getById(int $id)
+    {
+        return $this->taxiDriverRepository->getById($id);
     }
 }
 

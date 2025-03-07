@@ -9,6 +9,7 @@ use App\Exceptions\CrudException;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\OrderRequest;
 use App\Contracts\LocationInterface;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\OrderResource;
 use Illuminate\Support\Facades\Config;
 
@@ -33,7 +34,7 @@ class OrderController extends Controller
     public function store(OrderRequest $request)
     {
         $validateData = $request->validated();
-        $validateData['order']['user_id'] = auth()->id();
+        $validateData['order']['user_id'] = Auth::id();
         $validateData['order']['status_id'] = 1;
         try {
             DB::beginTransaction();
@@ -54,7 +55,7 @@ class OrderController extends Controller
     public function update(OrderRequest $request, Order $order)
     {
         $validatedData = $request->validated();
-        $validatedData['order']['user_id'] = auth()->user()->id;
+        $validatedData['order']['user_id'] = Auth::id();
         $validatedData['order']['status_id'] = 1;
         try {
             DB::beginTransaction();

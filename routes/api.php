@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\AcceptDriverController;
 use App\Models\DiscountItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -35,17 +34,19 @@ use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\PopularRestaurants;
 use App\Http\Controllers\TownshipController;
 use App\Http\Controllers\CartItemsController;
+use App\Http\Controllers\NearbyTaxiController;
 use App\Http\Controllers\PercentageController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\TaxiDriverController;
 use App\Http\Controllers\OrderDetailController;
 use App\Http\Controllers\SocialLoginController;
 use App\Http\Controllers\SubCategoryController;
+use App\Http\Controllers\AcceptDriverController;
 use App\Http\Controllers\DeliverPriceController;
 use App\Http\Controllers\DiscountItemController;
 use App\Http\Controllers\DeliveryPriceController;
-use App\Http\Controllers\FoodRestaurantController;
 
+use App\Http\Controllers\FoodRestaurantController;
 use App\Http\Controllers\RestaurantFoodController;
 use App\Http\Controllers\PaymentProviderController;
 use App\Http\Controllers\RestaurantAddressController;
@@ -86,6 +87,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::apiResource('travels', TravelController::class);
     Route::apiResource('biddings', BiddingPriceByDriverController::class);
     Route::apiResource('accept_drivers', AcceptDriverController::class);
+    Route::get('/driver/{driverId}/notifications', [TaxiDriverController::class, 'getDriverNotifications']);
 
     /* pp */
     Route::resource('/taxi-drivers', TaxiDriverController::class);

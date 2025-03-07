@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use Throwable;
+use App\Models\NearbyTaxi;
 use App\Models\TaxiDriver;
 use Illuminate\Http\Request;
 use App\Events\RideRequested;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Config;
 use App\Http\Requests\TaxiDriverRequest;
 use App\Http\Resources\TaxiDriverResource;
 use App\Events\trackingDriverCurrentLocation;
+use App\Http\Resources\DriverNotificationResource;
 
 class TaxiDriverController extends Controller
 {
@@ -30,7 +32,24 @@ class TaxiDriverController extends Controller
     {
 
         $taxi_drivers = $this->taxi_driverInterface->all('TaxiDriver');
-        return TaxiDriverResource::collection($taxi_drivers);
+        return response()->json(TaxiDriverResource::collection($taxi_drivers)->toArray(request()), 200);
+    }
+
+    public function show($id)
+    {
+        try {
+            // Fetch the taxi driver using the repository
+            $taxi_driver = $this->taxiDriverService->getById($id);
+
+            if (!$taxi_driver) {
+                return response()->json(['message' => 'Driver not found'], 404);
+            }
+
+            return new TaxiDriverResource($taxi_driver);
+        } catch (Throwable $th)
+        {
+            throw CrudException::argumentCountError();
+        }
     }
 
     // Add taxi_Driver with car information
@@ -98,33 +117,9 @@ class TaxiDriverController extends Controller
 
     }
 
-       // Get nearby drivers within 1km radius
-    public function getNearbyDrivers(Request $request)
+    public function getDriverNotifications($driverId)
     {
-        // dd($request);
-        $validatedData = $request->validate([
-            'rider_id' => 'required|string',
-            'latitude' => 'required|numeric|between:-90,90',
-            'longitude' => 'required|numeric|between:-180,180'
-        ]);
-
-        $latitude = $validatedData['latitude'];
-        // dd($latitude);
-        $longitude = $validatedData['longitude'];
-        $radius = 1; // 1km radius
-
-        // Fetch nearby available drivers within the 1km radius
-        $drivers = $this->taxiDriverService->getNearbyDrivers($latitude, $longitude, $radius);
-
-        // Broadcast event to each nearby driver
-        foreach ($drivers as $driver) {
-            // Notify each driver individually with event or other logic
-            // event(new RideRequested($validatedData['current_location'], $validatedData['destination']))
-            //     ->toOthers()
-            //     ->onChannel('driver.' . $driver->id); // Dynamic channel for each driver
-        }
-
-        // Return nearby drivers in the response
-        return response()->json($drivers);
+        $notifications = $this->taxiDriverService->getDriverNotifications($driverId);
+        return response()->json( DriverNotificationResource::collection($notifications));
     }
 }
