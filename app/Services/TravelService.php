@@ -14,10 +14,6 @@ class TravelService
         $this->repository = $repository;
     }
 
-    public function getNearbyDrivers($latitude, $longitude, $radius = 1)
-    {
-        return $this->repository->getNearbyDrivers($latitude, $longitude, $radius);
-    }
 
     public function updateStatus(int $travelId, string $status)
     {
