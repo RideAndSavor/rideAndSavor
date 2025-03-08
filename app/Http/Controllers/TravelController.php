@@ -41,29 +41,21 @@ class TravelController extends Controller
         $validateData['user_id']= Auth::id();
 
         $travel = $this->travelService->store($validateData);
-        // dd($travel);
 
         $latitude = $travel->pickup_latitude;
-        // dd($latitude);
         $longitude = $travel->pickup_longitude;
         $radius = 1;
-        $nearbyDrivers = $this->travelService->getNearbyDrivers($latitude, $longitude, $radius);
-        // dd($nearbyDrivers);
 
-        foreach ($nearbyDrivers as $driver) {
-            $this->nearByTaxiService->store([
-                'travel_id' => $travel->id,
-                'taxi_driver_id' => $driver->id,
-                'driver_name' => $driver->user->name,
-                'plate_number' => $driver->license_plate,
-            ]);
-        }
+        $nearbyDrivers = $this->nearByTaxiService->getNearbyDrivers($latitude, $longitude, $radius);
+
+        // Store nearby drivers in the database using the repository
+        $this->nearByTaxiService->storeNearbyDrivers($travel->id, $nearbyDrivers);
 
         // Return the response with the stored travel data and nearby drivers
-    return response()->json([
-        'travel' => new TravelResource($travel), // Returning the travel data
-        'nearby_drivers' => $nearbyDrivers,     // Returning the nearby drivers data
-    ], 201);
+        return response()->json([
+            'travel' => new TravelResource($travel), // Returning the travel data
+            'nearby_drivers' => $nearbyDrivers,     // Returning the nearby drivers data
+        ], 201);
     }
 
 
