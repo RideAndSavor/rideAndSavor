@@ -65,6 +65,7 @@ class BaseRepository implements BaseInterface
 
   public function update(array $data, int $id, string $imageDir = null, string $diskName = null)
   {
+
     new ReadOnlyArray($data);
     /* Data Preparation */
     $crud = new Crud(model: $this->currentModel, data: $data, id: $id, editMode: true);
