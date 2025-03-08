@@ -33,4 +33,14 @@ class NearbyTaxiService
     {
         return $this->repository->deleteByTravelId($travelId);
     }
+
+    public function getNearbyDrivers($latitude, $longitude, $radius = 1)
+    {
+        return $this->repository->getNearbyDrivers($latitude, $longitude, $radius);
+    }
+
+    public function storeNearbyDrivers($travelId, $nearbyDrivers)
+    {
+        $this->repository->storeNearbyDrivers($travelId, $nearbyDrivers);
+    }
 }
