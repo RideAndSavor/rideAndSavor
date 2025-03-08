@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Models\TaxiDriver;
 use App\Repositories\TaxiDriverRepository;
 
 class TaxiDriverService
@@ -10,6 +11,29 @@ class TaxiDriverService
     public function __construct(TaxiDriverRepository $taxiDriverRepository)
     {
         $this->taxiDriverRepository = $taxiDriverRepository;
+    }
+
+    public function getAllTaxiDriver()
+    {
+        // dd("ok");
+        // dd($this->repository->all());
+        return $this->taxiDriverRepository->all();
+    }
+
+    public function store(array $data): TaxiDriver
+    {
+        return $this->taxiDriverRepository->store($data);
+    }
+
+    public function update(array $data, int $id)
+    {
+        // dd($data);
+        return $this->taxiDriverRepository->update($data, $id);
+    }
+
+    public function delete(int $id)
+    {
+        $this->taxiDriverRepository->delete($id);
     }
 
     public function getDriverNotifications($driverId)

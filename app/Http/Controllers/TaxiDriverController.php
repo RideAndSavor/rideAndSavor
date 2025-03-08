@@ -1,44 +1,41 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use Throwable;
-use App\Models\NearbyTaxi;
-use App\Models\TaxiDriver;
-use Illuminate\Http\Request;
-use App\Events\RideRequested;
-use App\Exceptions\CrudException;
-use App\Services\TaxiDriverService;
-use Illuminate\Support\Facades\Log;
-use App\Contracts\LocationInterface;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
-use App\Http\Requests\TaxiDriverRequest;
-use App\Http\Resources\TaxiDriverResource;
 use App\Events\trackingDriverCurrentLocation;
+use App\Http\Requests\TaxiDriverRequest;
 use App\Http\Resources\DriverNotificationResource;
+use App\Http\Resources\TaxiDriverResource;
+use App\Services\TaxiDriverService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-class TaxiDriverController extends Controller
+class TaxiDriverController extends BaseController
 {
-    private $taxi_driverInterface;
     protected $taxiDriverService;
 
-    public function __construct(LocationInterface $taxi_driverInterface,TaxiDriverService $taxiDriverService)
+    public function __construct(TaxiDriverService $taxiDriverService)
     {
-        $this->taxi_driverInterface = $taxi_driverInterface;
         $this->taxiDriverService = $taxiDriverService;
     }
 
+    /**
+     * Get all taxi drivers.
+     */
     public function index()
     {
-
-        $taxi_drivers = $this->taxi_driverInterface->all('TaxiDriver');
-        return response()->json(TaxiDriverResource::collection($taxi_drivers)->toArray(request()), 200);
+        return $this->handleRequest(function () {
+            $taxi_drivers = $this->taxiDriverService->getAllTaxiDriver();
+            return response()->json(TaxiDriverResource::collection($taxi_drivers)->toArray(request()), 200);
+        });
     }
 
+    /**
+     * Get a single taxi driver by ID.
+     */
     public function show($id)
     {
-        try {
-            // Fetch the taxi driver using the repository
+        return $this->handleRequest(function () use ($id) {
             $taxi_driver = $this->taxiDriverService->getById($id);
 
             if (!$taxi_driver) {
@@ -46,81 +43,81 @@ class TaxiDriverController extends Controller
             }
 
             return new TaxiDriverResource($taxi_driver);
-        } catch (Throwable $th)
-        {
-            throw CrudException::argumentCountError();
-        }
+        });
     }
 
-    // Add taxi_Driver with car information
+    /**
+     * Store a new taxi driver with car information.
+     */
     public function store(TaxiDriverRequest $taxiDriverRequest)
-    {
+{
+    return $this->handleRequest(function () use ($taxiDriverRequest) {
         $validatedData = $taxiDriverRequest->validated();
         $validatedData['user_id'] = Auth::id();
-        try
-        {
-            $taxi_driver = $this->taxi_driverInterface->store('TaxiDriver', $validatedData);
-            return new TaxiDriverResource($taxi_driver);
-        }catch (Throwable $th)
-        {
-            throw CrudException::argumentCountError();
-        }
-    }
 
-    /* Update taxi_Driver with car information */
-    public function update(TaxiDriverRequest $request, string $id)
+        $taxi_driver = $this->taxiDriverService->store($validatedData);
+
+        // Wrap the TaxiDriverResource in a JsonResponse
+        return response()->json(new TaxiDriverResource($taxi_driver), 201);
+    });
+}
+
+
+    /**
+     * Update a taxi driver with car information.
+     */
+    public function update(TaxiDriverRequest $request, $id)
     {
-        // dd($request);
-        $validatedData = $request->validated();
-        // dd($validatedData);
-        $taxi_driver = $this->taxi_driverInterface->findById('TaxiDriver', $id);
-        // dd($taxi_driver);
-        if (!$taxi_driver) {
-            return response()->json([
-                'message' => Config::get('variable.TAXI_DRIVER_NOT_FOUND')
-            ], Config::get('variable.SERVER_ERROR'));
-        }
-        $updatedTaxiDriver = $this->taxi_driverInterface->update('TaxiDriver', $validatedData, $id);
-        return new TaxiDriverResource($updatedTaxiDriver);
+        return $this->handleRequest(function () use ($request, $id) {
+            $validatedData = $request->validated();
+            $taxiDriver = $this->taxiDriverService->update($validatedData, $id);
+
+            if (!$taxiDriver) {
+                return response()->json(['message' => 'Taxi Driver not found'], 404);
+            }
+
+            return response()->json(new TaxiDriverResource($taxiDriver), 200);
+        });
     }
 
-    /* Delete taxi_Driver with car information */
-    public function destroy(string $id)
+    /**
+     * Delete a taxi driver.
+     */
+    public function destroy($id)
     {
-        $taxi_driver = $this->taxi_driverInterface->findById('TaxiDriver', $id);
-        if(!$taxi_driver)
-        {
-            return response()->json(['message' => Config::get('variable.TAXI_DRIVER_NOT_FOUND')],Config::get('variable.SEVER_ERROR'));
-        }
-        $this->taxi_driverInterface->delete('TaxiDriver', $id);
-        return response()->json([
-            'message'=>Config::get('variable.TAXI_DRIVER_DELETED_SUCCESSFULLY')
-        ],Config::get('variable.NO_CONTENT'));
+        return $this->handleRequest(function () use ($id) {
+            $this->taxiDriverService->delete($id);
+            return response()->json(['message' => 'Taxi Driver deleted successfully'], 200);
+        });
     }
 
-    // Update the driver's location
+    /**
+     * Update the driver's location.
+     */
     public function updateLocation(Request $request)
     {
-        // dd($request);
-        $validatedData = $request->validate([
-            'driver_id' => 'required',
-            'current_location.lat' => 'required|numeric|between:-90,90',
-            'current_location.long' => 'required|numeric|between:-180,180',
-            'is_available'=> 'required|boolean'
-        ]);
-        // dd($validatedData);
+        return $this->handleRequest(function () use ($request) {
+            $validatedData = $request->validate([
+                'driver_id' => 'required',
+                'current_location.lat' => 'required|numeric|between:-90,90',
+                'current_location.long' => 'required|numeric|between:-180,180',
+                'is_available' => 'required|boolean'
+            ]);
 
-        event(new trackingDriverCurrentLocation($validatedData));
+            event(new trackingDriverCurrentLocation($validatedData));
 
-        return response()->json([
-            'message' => "Driver's Current Location updated successfully",
-        ]);
-
+            return response()->json(['message' => "Driver's Current Location updated successfully"]);
+        });
     }
 
+    /**
+     * Get notifications for a driver.
+     */
     public function getDriverNotifications($driverId)
     {
-        $notifications = $this->taxiDriverService->getDriverNotifications($driverId);
-        return response()->json( DriverNotificationResource::collection($notifications));
+        return $this->handleRequest(function () use ($driverId) {
+            $notifications = $this->taxiDriverService->getDriverNotifications($driverId);
+            return response()->json(DriverNotificationResource::collection($notifications));
+        });
     }
 }
