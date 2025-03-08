@@ -74,6 +74,7 @@ class TaxiDriverController extends Controller
         $validatedData = $request->validated();
         // dd($validatedData);
         $taxi_driver = $this->taxi_driverInterface->findById('TaxiDriver', $id);
+        // dd($taxi_driver);
         if (!$taxi_driver) {
             return response()->json([
                 'message' => Config::get('variable.TAXI_DRIVER_NOT_FOUND')
