@@ -10380,7 +10380,6 @@
         },
         {
             "name": "phpunit/phpunit",
-<<<<<<< HEAD
             "version": "11.5.12",
             "source": {
                 "type": "git",
@@ -10389,10 +10388,10 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d42785840519401ed2113292263795eb4c0f95da",
-                "reference": "d42785840519401ed2113292263795eb4c0f95da",
-=======
-            "version": "11.5.10",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d5df2b32d729562ff8db634678d71085ee579006",
+                "reference": "d5df2b32d729562ff8db634678d71085ee579006",
+=========
+            "version": "11.5.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
@@ -10400,9 +10399,9 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d5df2b32d729562ff8db634678d71085ee579006",
-                "reference": "d5df2b32d729562ff8db634678d71085ee579006",
->>>>>>> 79156a49f97ba29d98480a93173bcd21869e508f
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d42785840519401ed2113292263795eb4c0f95da",
+                "reference": "d42785840519401ed2113292263795eb4c0f95da",
+>>>>>>>>> Temporary merge branch 2
                 "shasum": ""
             },
             "require": {
@@ -10474,11 +10473,11 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-<<<<<<< HEAD
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.12"
-=======
+<<<<<<<<< Temporary merge branch 1
                 "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.10"
->>>>>>> 79156a49f97ba29d98480a93173bcd21869e508f
+=========
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.12"
+>>>>>>>>> Temporary merge branch 2
             },
             "funding": [
                 {
@@ -10494,11 +10493,11 @@
                     "type": "tidelift"
                 }
             ],
-<<<<<<< HEAD
-            "time": "2025-03-07T07:31:03+00:00"
-=======
+<<<<<<<<< Temporary merge branch 1
             "time": "2025-02-25T06:11:48+00:00"
->>>>>>> 79156a49f97ba29d98480a93173bcd21869e508f
+=========
+            "time": "2025-03-07T07:31:03+00:00"
+>>>>>>>>> Temporary merge branch 2
         },
         {
             "name": "sebastian/cli-parser",
