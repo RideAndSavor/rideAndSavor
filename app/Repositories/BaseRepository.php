@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Db\Core\Crud;
+use App\DB\Core\Crud;
 use App\Helper\ReadOnlyArray;
 use App\Contracts\BaseInterface;
 use Illuminate\Database\Eloquent\Model;
