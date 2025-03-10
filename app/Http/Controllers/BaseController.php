@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\JsonResponse;
 use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class BaseController extends Controller
 {
@@ -13,7 +14,7 @@ class BaseController extends Controller
      * @param callable $callback
      * @return JsonResponse
      */
-    protected function handleRequest(callable $callback): JsonResponse
+    protected function handleRequest(callable $callback): JsonResponse|JsonResource
     {
         try {
             return $callback();
