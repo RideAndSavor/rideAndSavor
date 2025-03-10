@@ -9,6 +9,7 @@ use App\Http\Resources\TaxiDriverResource;
 use App\Services\TaxiDriverService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 
 class TaxiDriverController extends BaseController
 {
@@ -26,7 +27,7 @@ class TaxiDriverController extends BaseController
     {
         return $this->handleRequest(function () {
             $taxi_drivers = $this->taxiDriverService->getAllTaxiDriver();
-            return response()->json(TaxiDriverResource::collection($taxi_drivers)->toArray(request()), 200);
+            return response()->json(TaxiDriverResource::collection($taxi_drivers)->toArray(request()), Config::get('variable.OK'));
         });
     }
 
@@ -39,7 +40,7 @@ class TaxiDriverController extends BaseController
             $taxi_driver = $this->taxiDriverService->getById($id);
 
             if (!$taxi_driver) {
-                return response()->json(['message' => 'Driver not found'], 404);
+                return response()->json(['message' => Config::get('variable.TAXI_DRIVER_NOT_FOUND')],Config::get('variable.SEVER_NOT_FOUND'));
             }
 
             return new TaxiDriverResource($taxi_driver);
@@ -58,7 +59,7 @@ class TaxiDriverController extends BaseController
         $taxi_driver = $this->taxiDriverService->store($validatedData);
 
         // Wrap the TaxiDriverResource in a JsonResponse
-        return response()->json(new TaxiDriverResource($taxi_driver), 201);
+        return response()->json(new TaxiDriverResource($taxi_driver), Config::get('variable.CREATED'));
     });
 }
 
@@ -73,10 +74,10 @@ class TaxiDriverController extends BaseController
             $taxiDriver = $this->taxiDriverService->update($validatedData, $id);
 
             if (!$taxiDriver) {
-                return response()->json(['message' => 'Taxi Driver not found'], 404);
+                return response()->json(['message' => Config::get('variable.TAXI_DRIVER_NOT_FOUND')], status: Config::get('variable.SEVER_NOT_FOUND'));
             }
 
-            return response()->json(new TaxiDriverResource($taxiDriver), 200);
+            return response()->json(new TaxiDriverResource($taxiDriver), Config::get('variable.OK'));
         });
     }
 
@@ -87,7 +88,7 @@ class TaxiDriverController extends BaseController
     {
         return $this->handleRequest(function () use ($id) {
             $this->taxiDriverService->delete($id);
-            return response()->json(['message' => 'Taxi Driver deleted successfully'], 200);
+            return response()->json(['message' => Config::get('variable.TAXI_DRIVER_DELETED_SUCCESSFULLY')], 200);
         });
     }
 
@@ -106,7 +107,7 @@ class TaxiDriverController extends BaseController
 
             event(new trackingDriverCurrentLocation($validatedData));
 
-            return response()->json(['message' => "Driver's Current Location updated successfully"]);
+            return response()->json(['message' => Config::get('variable.TAXI_DRIVER_UPDATED_SUCCESSFULLY')]);
         });
     }
 

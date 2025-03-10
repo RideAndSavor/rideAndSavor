@@ -10390,10 +10390,17 @@
             },
             "dist": {
                 "type": "zip",
+<<<<<<< HEAD
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d5df2b32d729562ff8db634678d71085ee579006",
+                "reference": "d5df2b32d729562ff8db634678d71085ee579006",
+=========
+            "version": "11.5.12",
+=======
                 "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d42785840519401ed2113292263795eb4c0f95da",
                 "reference": "d42785840519401ed2113292263795eb4c0f95da",
             "version": "11.5.10",
 
+>>>>>>> 76a0f7e0ed6b8619e690053fc4f09a24395a72f6
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
@@ -10403,6 +10410,10 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d42785840519401ed2113292263795eb4c0f95da",
                 "reference": "d42785840519401ed2113292263795eb4c0f95da",
+<<<<<<< HEAD
+>>>>>>>>> Temporary merge branch 2
+=======
+>>>>>>> 76a0f7e0ed6b8619e690053fc4f09a24395a72f6
                 "shasum": ""
             },
             "require": {
@@ -10474,11 +10485,17 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
+<<<<<<< HEAD
+<<<<<<<<< Temporary merge branch 1
+=======
                 "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.12"
 
 
+>>>>>>> 76a0f7e0ed6b8619e690053fc4f09a24395a72f6
                 "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.10"
-
+=========
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.12"
+>>>>>>>>> Temporary merge branch 2
             },
             "funding": [
                 {
@@ -10494,14 +10511,20 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
+<<<<<<<<< Temporary merge branch 1
+=======
 
             "time": "2025-03-07T07:31:03+00:00"
 
 
             "time": "2025-03-07T07:31:03+00:00"
 
+>>>>>>> 76a0f7e0ed6b8619e690053fc4f09a24395a72f6
             "time": "2025-02-25T06:11:48+00:00"
-
+=========
+            "time": "2025-03-07T07:31:03+00:00"
+>>>>>>>>> Temporary merge branch 2
         },
         {
             "name": "sebastian/cli-parser",

@@ -36,6 +36,7 @@ class AcceptDriverController extends Controller
             // Validate and assign authenticated user's ID to the request data
             $validatedData = $request->validated();
             $validatedData['user_id'] = Auth::id(); // Add the authenticated user's ID
+        
 
 
             // Store the accepted driver
