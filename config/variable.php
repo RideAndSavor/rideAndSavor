@@ -19,6 +19,7 @@ return [
 
     'NO_CONTENT' => '204',
     'OK' => '200',
+    'CREATED' => '201',
     'CLIENT_ERROR' => '401',
     'SEVER_NOT_FOUND' => '404',
     'Unprocessable Entity' => '422',
@@ -35,6 +36,7 @@ return [
 
     "TAXI_DRIVER_NOT_FOUND" => "Taxi Driver not found",
     "TAXI_DRIVER_DELETED_SUCCESSFULLY" => "Taxi Driver Deleted Successfully",
+    "TAXI_DRIVER_UPDATED_SUCCESSFULLY" => "Taxi Driver Updated Successfully",
 
     'DINF' => 'Discount Item Not Found',
     'DIDSF' => 'Discount Item Deleted Successfully',

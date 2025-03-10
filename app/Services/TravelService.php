@@ -2,16 +2,19 @@
 
 namespace App\Services;
 
-use App\Contracts\TravelInterface;
 use App\Models\Travel;
+use App\Contracts\TravelInterface;
+use App\Services\NearbyTaxiService;
 
 class TravelService
 {
     protected $repository;
+    protected $nearbyTaxiService;
 
-    public function __construct(TravelInterface $repository)
+    public function __construct(TravelInterface $repository, NearbyTaxiService $nearByTaxiService)
     {
         $this->repository = $repository;
+        $this->nearbyTaxiService = $nearByTaxiService;
     }
 
 
@@ -27,8 +30,15 @@ class TravelService
 
     public function store(array $data): Travel
     {
-    //   dd($data);
       return $this->repository->store($data);
+    }
+
+    public function getNearbyDriversForTravel(Travel $travel, $radius = 1)
+    {
+        $latitude = $travel->pickup_latitude;
+        $longitude = $travel->pickup_longitude;
+
+        return $this->nearbyTaxiService->getNearbyDrivers($latitude, $longitude, $radius);
     }
 
     public function update(array $data, int $id)

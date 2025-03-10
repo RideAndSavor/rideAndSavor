@@ -29,6 +29,7 @@ class TaxiDriver extends Model
     // Method to define saveable fields (for CRUD operations)
     public function saveableFields($column): object
     {
+
         $arr = [
             'user_id' => IntegerField::new(),
             'latitude' => IntegerField::new(), // Latitude as Integer or Float

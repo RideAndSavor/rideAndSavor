@@ -15,7 +15,7 @@ class NearbyTaxiRepository extends BaseRepository implements NearbyTaxiInterface
     }
     public function deleteByTravelId(int $travelId)
     {
-        return $this->model->where('travel_id', $travelId)->delete();
+        return NearbyTaxi::where('travel_id', $travelId)->delete();
     }
 
     public function getNearbyDrivers($latitude, $longitude, $radius = 1)

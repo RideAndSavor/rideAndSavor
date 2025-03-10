@@ -8,10 +8,12 @@ use App\Models\BiddingPriceByDriver;
 class BiddingPriceByDriverService
 {
     protected $repository;
+    protected $travelService;
 
-    public function __construct(BiddingPriceByDriverInterface $repository)
+    public function __construct(BiddingPriceByDriverInterface $repository,TravelService $travelService)
     {
         $this->repository = $repository;
+        $this->travelService = $travelService;
     }
 
     public function getAllBiddingPrices()
@@ -23,6 +25,9 @@ class BiddingPriceByDriverService
 
     public function store(array $data): BiddingPriceByDriver
     {
+         // Assuming you are passing 'travel_id' in the request
+        $this->travelService->updateStatus($data['travel_id'], 'bidding');
+
         return $this->repository->store($data);
     }
 
