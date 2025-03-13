@@ -46,6 +46,11 @@ return [
     "TAXI_DRIVER_DELETED_SUCCESSFULLY" => "Taxi Driver Deleted Successfully",
     "TAXI_DRIVER_UPDATED_SUCCESSFULLY" => "Taxi Driver Updated Successfully",
 
+    "BRAND_NOT_FOUND" => "Brand not found",
+    "BRAND_DELETED_SUCCESSFULLY" => "Brand Deleted Successfully",
+    "BRAND_UPDATED_SUCCESSFULLY" => "Brand Updated Successfully",
+    "BRAND_CREATED_SUCCESSFULLY" => "Brand Created Successfully",
+
     'DINF' => 'Discount Item Not Found',
     'DIDSF' => 'Discount Item Deleted Successfully',
 
