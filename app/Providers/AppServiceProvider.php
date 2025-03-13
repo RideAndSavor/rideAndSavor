@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Contracts\AcceptDriverInterface;
 use App\Contracts\BaseInterface;
 use App\Contracts\BiddingPriceByDriverInterface;
+use App\Contracts\BrandInterface;
 use App\Contracts\CityInterface;
 use App\Contracts\WardInterface;
 use App\Contracts\StateInterface;
@@ -18,6 +19,7 @@ use App\Contracts\TravelInterface;
 use App\Repositories\AcceptDriverRepository;
 use App\Repositories\BaseRepository;
 use App\Repositories\BiddingPriceByDriverRepository;
+use App\Repositories\BrandRepository;
 use App\Repositories\CityRepository;
 use App\Repositories\WardRepository;
 use App\Repositories\StateRepository;
@@ -52,6 +54,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(BiddingPriceByDriverInterface::class, BiddingPriceByDriverRepository::class);
         $this->app->bind(AcceptDriverInterface::class, AcceptDriverRepository::class);
         $this->app->bind(NearbyTaxiInterface::class, NearbyTaxiRepository::class);
+        $this->app->bind(BrandInterface::class, BrandRepository::class);
 
 
     }
