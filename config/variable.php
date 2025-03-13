@@ -34,6 +34,14 @@ return [
 
     'ISE' => 'Internal Server Error',
 
+     // Inventory messages
+     'INVENTORY_NOT_FOUND' => 'Inventory item not found.',
+     'INVENTORY_DELETED_SUCCESSFULLY' => 'Inventory item deleted successfully.',
+     'INVENTORY_CREATED_SUCCESSFULLY' => 'Inventory item created successfully.',
+     'INVENTORY_UPDATED_SUCCESSFULLY' => 'Inventory item updated successfully.',
+     'INVENTORY_UPDATED_STOCK' => 'Inventory stock updated successfully.',
+     'INVENTORY_OUT_OF_STOCK' => 'The item is out of stock.',
+
     "TAXI_DRIVER_NOT_FOUND" => "Taxi Driver not found",
     "TAXI_DRIVER_DELETED_SUCCESSFULLY" => "Taxi Driver Deleted Successfully",
     "TAXI_DRIVER_UPDATED_SUCCESSFULLY" => "Taxi Driver Updated Successfully",
