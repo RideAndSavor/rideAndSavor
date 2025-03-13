@@ -34,6 +34,7 @@ use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\PopularRestaurants;
 use App\Http\Controllers\TownshipController;
 use App\Http\Controllers\CartItemsController;
+use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\NearbyTaxiController;
 use App\Http\Controllers\PercentageController;
 use App\Http\Controllers\RestaurantController;
@@ -44,8 +45,8 @@ use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\AcceptDriverController;
 use App\Http\Controllers\DeliverPriceController;
 use App\Http\Controllers\DiscountItemController;
-use App\Http\Controllers\DeliveryPriceController;
 
+use App\Http\Controllers\DeliveryPriceController;
 use App\Http\Controllers\FoodRestaurantController;
 use App\Http\Controllers\RestaurantFoodController;
 use App\Http\Controllers\PaymentProviderController;
@@ -145,6 +146,9 @@ Route::middleware(['auth:api'])->group(function () {
         Route::put('restaurants/{restaurant}/foods-with-toppings/{food}', 'updateFoodTopping');
         Route::delete('restaurants/{restaurant}/foods-with-toppings/{food}', 'destroyFoodTopping');
     });
+
+    Route::apiResource('inventory', InventoryController::class);
+    Route::put('inventory/{id}/update-stock', [InventoryController::class, 'updateStock']);
 
 
     Route::apiResource('carts', CartController::class)->except(['show', 'destroy']);

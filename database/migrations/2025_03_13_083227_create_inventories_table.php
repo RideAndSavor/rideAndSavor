@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('inventory', function (Blueprint $table) {
+        Schema::create('inventories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained('electronics')->onDelete('cascade');
+            $table->foreignId('electronic_id')->constrained('electronics')->onDelete('cascade');
             $table->integer('in_stock')->default(0);
             $table->integer('out_stock')->default(0);
             $table->integer('remaining_stock')->default(0);
-            $table->enum('stock_status', ['in-stock', 'low-stock', 'out-of-stock'])->default('in-stock');
+            $table->enum('stock_status', ['in_stock', 'out_of_stock', 'low_stock'])->default('in_stock');
             $table->text('remarks')->nullable();
             $table->timestamps();
         });
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('inventory');
+        Schema::dropIfExists('inventories');
     }
 };
