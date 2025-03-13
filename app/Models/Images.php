@@ -18,7 +18,6 @@ class Images extends Model
 
     public function saveableFields($column): object
     {
-        // dd($column);  "link_id" // app\Models\Images.php:19
         $arr = [
             'link_id' => IntegerField::new(),
             'gener' => StringField::new(),

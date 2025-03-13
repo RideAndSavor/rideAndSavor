@@ -2,11 +2,13 @@
 
 namespace App\Traits;
 
+use App\Models\FoodRestaurant;
 use App\Models\Images;
 use App\Services\ImageService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 trait ImageTrait
 {
@@ -79,23 +81,143 @@ trait ImageTrait
         }
         $existingImage = $model->images()->first();
         if ($existingImage) {
+            // dd($imageDatas[0]);
             return $model->images()->update($imageDatas[0]);
         }
+
 
         return $model->images()->createMany($imageDatas);
     }
 
 
 
+
     public function deleteImage($imageId)
     {
+        // dd($imageId);
         $image = Images::find($imageId);
+        // dd($image);
         if (!$image) {
             return 'unsuccess';
         }
         Storage::delete($image->upload_url);
         return $image->delete() ? 'success' : 'unsuccess';
     }
+
+
+
+        public function updateImageTest(Model $model, array $images, string $imageDir, string $genre = 'food')
+{
+    // Initialize image data array
+    $imageDatas = [];
+
+        foreach ($images as $image) {
+        if (is_array($image)) {
+            // Loop through nested images
+            foreach ($image as $img) {
+                if ($img instanceof \Illuminate\Http\UploadedFile) {
+                    $this->imageService->setImageDirectory($imageDir, 'public');
+                    $finalImagePath = $this->imageService->SavePhysicalImage($img);
+
+                        // Prepare image data
+                    $imageDatas[] = [
+                        'upload_url' => $finalImagePath,
+                        'gener' => $genre
+                    ];
+                }
+            }
+        } elseif ($image instanceof \Illuminate\Http\UploadedFile) {
+            $this->imageService->setImageDirectory($imageDir, 'public');
+            $finalImagePath = $this->imageService->SavePhysicalImage($image);
+
+                // Prepare image data
+            $imageDatas[] = [
+                'upload_url' => $finalImagePath,
+                'gener' => $genre
+            ];
+        }
+    }
+
+        // Fetch existing image
+    $existingImage = $model->images()->first();
+
+        if ($existingImage && !empty($imageDatas)) {
+        // Delete old image from storage
+        Storage::delete($existingImage->upload_url);
+
+            // Update existing image record
+        return $existingImage->update($imageDatas[0]);
+    } elseif (!empty($imageDatas)) {
+        // No existing image, create new entry
+        return $model->images()->createMany($imageDatas);
+    }
+
+        return false;
+}
+
+
+
+
+
+// public function updateImageTest(Model $model, array $images, string $imageDir, string $genre = 'food')
+// {
+//     // Initialize image data array
+//     $imageDatas = [];
+
+//     foreach ($images as $image) {
+//         if (is_array($image)) {
+//             // Loop through nested images
+//             foreach ($image as $img) {
+//                 if ($img instanceof \Illuminate\Http\UploadedFile) {
+//                     $this->imageService->setImageDirectory($imageDir, 'public');
+//                     $finalImagePath = $this->imageService->SavePhysicalImage($img);
+
+//                     // Prepare image data
+//                     $imageDatas[] = [
+//                         'upload_url' => $finalImagePath,
+//                         'gener' => $genre
+//                     ];
+//                 }
+//             }
+//         } elseif ($image instanceof \Illuminate\Http\UploadedFile) {
+//             $this->imageService->setImageDirectory($imageDir, 'public');
+//             $finalImagePath = $this->imageService->SavePhysicalImage($image);
+
+//             // Prepare image data
+//             $imageDatas[] = [
+//                 'upload_url' => $finalImagePath,
+//                 'gener' => $genre
+//             ];
+//         }
+//     }
+
+//     // Fetch existing image
+//     $existingImage = $model->images()->first();
+//         dd($existingImage);
+
+//     if ($existingImage && !empty($imageDatas)) {
+//         // Delete old image from storage
+//         $oldImagePath = $existingImage->upload_url;  // This should be something like 'food/image.jpg'
+//             // dd($oldImagePath);
+
+//         // Construct the full path for deletion
+//         $fullImagePath = 'public/' . $oldImagePath;  // This should be 'public/food/image.jpg'
+
+//         // Check if the file exists in storage and delete it
+//         if (Storage::disk('public')->exists($fullImagePath)) {
+//             Storage::disk('public')->delete($fullImagePath);
+//         }
+
+//         // Update existing image record
+//         return $existingImage->update($imageDatas[0]);
+//     } elseif (!empty($imageDatas)) {
+//         // No existing image, create new entry
+//         return $model->images()->createMany($imageDatas);
+//     }
+
+//     return false;
+// }
+
 }
 
 // namespace App\Traits;

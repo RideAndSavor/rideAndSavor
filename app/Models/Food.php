@@ -28,11 +28,13 @@ class Food extends Model
 
     public function saveableFields($column): object
     {
+        // dd("OK");
         $arr = [
             'name' => StringField::new(),
             // 'quantity' => StringField::new(),
             'sub_category_id' => IntegerField::new(),
         ];
+        // dd($arr);
         if (!array_key_exists($column, $arr)) {
             throw CrudException::missingAttributeException();
         }

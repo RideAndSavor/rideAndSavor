@@ -34,7 +34,8 @@ class RestaurantResource extends JsonResource
             'comments' => CommentResource::collection($this->whenLoaded('comments')),
             //to write with address resources
             //'address' => new AddressResource($this->whenLoaded('address')),
-            
+            'floor' =>$address->floor,
+            'block_no'=>$address->block_no,
             'Street_Name' => $address->street->name,
             'Ward_Name' => $address->street->ward->name,
             'TownShip_Name' => $address->street->ward->township->name,
