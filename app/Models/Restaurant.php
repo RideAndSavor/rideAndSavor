@@ -28,6 +28,7 @@ class Restaurant extends Model
             'close_time' => DateTimeField::new(),
             'phone_number' => StringField::new()
         ];
+        // dd($arr);
         if (!array_key_exists($column, $arr)) {
             throw CrudException::missingAttributeException();
         }
@@ -83,7 +84,7 @@ class Restaurant extends Model
     {
         return $this->morphOne(Images::class, 'imageable');
     }
-    
+
     public function address(): BelongsTo
     {
         return $this->belongsTo(Address::class);

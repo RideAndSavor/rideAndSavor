@@ -18,6 +18,7 @@ use App\Http\Resources\FoodResource;
 use Illuminate\Support\Facades\Config;
 use function PHPUnit\Framework\isEmpty;
 use App\Http\Requests\RestaurantFoodToppingRequest;
+use Illuminate\Support\Facades\Storage;
 
 class RestaurantFoodController extends Controller
 {
@@ -53,15 +54,18 @@ class RestaurantFoodController extends Controller
         return new FoodResource($relatedFood);
     }
 
-    public function storeFoodWithToppings(RestaurantFoodToppingRequest $restaurantFoodToppingRequest, Restaurant $restaurant)
+    public function storeFoodWithToppings1(RestaurantFoodToppingRequest $restaurantFoodToppingRequest, Restaurant $restaurant)
     {
+
         // Validate the incoming request data
         $validatedData = $restaurantFoodToppingRequest->validated();
+        // dd($validatedData);
         DB::beginTransaction(); // Begin the database transaction
 
         try {
             // Store the food details in the 'Food' table
             $food = $this->foodRestaurantInterface->store('Food', $validatedData['food']);
+            // dd($food);
 
             // If there is an uploaded file, store the image
             if ($restaurantFoodToppingRequest->hasFile('upload_url')) {
@@ -99,7 +103,6 @@ class RestaurantFoodController extends Controller
         }
     }
 
-
     public function updateFoodTopping(
         RestaurantFoodToppingRequest $restaurantFoodToppingRequest,
         Restaurant $restaurant,
@@ -109,64 +112,91 @@ class RestaurantFoodController extends Controller
         DB::beginTransaction();
 
         try {
-            // Update the food details
-            $this->foodRestaurantInterface->update('Food', $validatedData['food'], $food->id);
-
-            // Handle the image update if there's a file uploaded
-            $imageData = $this->foodRestaurantInterface->findWhere('Images', $food->id);
-            if (!$imageData) {
-                return response()->json([
-                    'message' => Config::get('variable.IMAGE_DATA_NOT_FOUND')
-                ], Config::get('variable.CLIENT_ERROR'));
+            // 1. Update Food Data
+            if (isset($validatedData['food'])) {
+                $foodData = [
+                    'name' => $validatedData['food']['food_name'],
+                    'sub_category_id' => $validatedData['food']['sub_category_id'] ?? null,
+                ];
+                $this->foodRestaurantInterface->update('Food', $foodData, $food->id);
             }
+
+            // 2. Update Image (Replace Old Image)
+            $existingImage = $food->images()->first();
 
             if ($restaurantFoodToppingRequest->hasFile('upload_url')) {
-                $this->updateImage($restaurantFoodToppingRequest, $imageData, $food->id, $this->genre, $this->foodRestaurantInterface, $this->folder_name, $this->tableName);
+                $image = $restaurantFoodToppingRequest->file('upload_url');
+
+                // Delete the old image file if it exists
+                if ($existingImage) {
+                    Storage::delete($existingImage->upload_url);
+                    $existingImage->delete();
+                }
+
+                // Upload new image & store it
+                $this->updateImageTest($food, [$image], 'food/');
             }
 
-            // Update existing toppings and add new ones
-            $existingToppings = $food->toppings;
-            $existingToppingIDs = $existingToppings->pluck('id')->toArray();
+            // 3. Update Food & Restaurant Relationship
+            $foodRestaurantData = [
+                'size_id' => $validatedData['food_restaurant']['size_id'],
+                'price' => $validatedData['food_restaurant']['price'],
+                'description' => $validatedData['food_restaurant']['description'],
+                'discount_item_id' => $validatedData['food_restaurant']['discount_item_id'] ?? null,
+                'taste_id' => $validatedData['food_restaurant']['taste_id'] ?? null,
+            ];
+
+            // Update pivot table
+            $food->restaurants()->updateExistingPivot($restaurant->id, $foodRestaurantData);
+
+            // 4. Update Toppings (Replace Old with New)
             $newToppingIDs = [];
-
-            foreach ($validatedData['toppings'] as $index => $toppingData) {
-                if (isset($existingToppings[$index])) {
-                    $this->foodRestaurantInterface->update('Topping', $toppingData, $existingToppings[$index]->id);
-                    $newToppingIDs[] = $existingToppings[$index]->id;
-                } else {
-                    $newTopping = $this->foodRestaurantInterface->store('Topping', $toppingData);
-                    $newToppingIDs[] = $newTopping->id;
+            if (!empty($validatedData['toppings'])) {
+                foreach ($validatedData['toppings'] as $toppingData) {
+                    if (!empty($toppingData['id'])) {
+                        // Update existing topping
+                        $this->foodRestaurantInterface->update('Topping', [
+                            'name' => $toppingData['topping_name'],
+                            'price' => $toppingData['topping_price']
+                        ], $toppingData['id']);
+                        $newToppingIDs[] = $toppingData['id'];
+                    } else {
+                        // Create new topping
+                        $newTopping = $this->foodRestaurantInterface->store('Topping', [
+                            'name' => $toppingData['topping_name'],
+                            'price' => $toppingData['topping_price']
+                        ]);
+                        $newToppingIDs[] = $newTopping->id;
+                    }
                 }
             }
+            $existingToppingIDs = $food->toppings()->pluck('toppings.id')->toArray();
 
-            // Delete any extra toppings that were removed
-            if (count($existingToppingIDs) > count($validatedData['toppings'])) {
-                $extraToppingIDs = array_slice($existingToppingIDs, count($validatedData['toppings']));
-                foreach ($extraToppingIDs as $extraToppingID) {
-                    $this->foodRestaurantInterface->delete('Topping', $extraToppingID);
-                }
-                $food->toppings()->detach($extraToppingIDs);
-            }
+            // 5. Remove Unused Toppings
+            $toppingsToDetach = array_diff($existingToppingIDs, $newToppingIDs);
+            $food->toppings()->detach($toppingsToDetach);
 
-            // Sync the new toppings IDs
+            // Sync New Toppings
             $food->toppings()->sync($newToppingIDs);
 
-            // Sync the food and restaurant relationships
-            $food->restaurants()->sync($this->mapFoodRestaurant($food->id, $restaurant->id, $validatedData['food_restaurant'], $validatedData['discount_item_id']));
-
             DB::commit();
-            return new FoodResource($food);
+            return new FoodResource($food->fresh());
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
-                'message' => Config::get('variable.FAIL_TO_UPDATE_FOODTOPPING'),
+                'message' => 'Failed to update food with toppings',
                 'error' => $e->getMessage()
-            ], Config::get('variable.SEVER_ERROR'));
+            ], 500);
         }
     }
 
+
+
+
+
     public function destroyFoodTopping(Restaurant $restaurant, Food $food)
     {
+        // dd("OK");
         DB::beginTransaction();
 
         try {
@@ -185,8 +215,17 @@ class RestaurantFoodController extends Controller
             $this->foodRestaurantInterface->delete('Food', $food->id);
 
             $imageData = $this->foodRestaurantInterface->findWhere('Images', $food->id);
-            if ($imageData) {
-                $this->deleteImage($this->foodRestaurantInterface, $imageData);
+            // dd($imageData);
+
+            // if ($imageData) {
+            //     $this->deleteImage($this->foodRestaurantInterface, $imageData);
+            // }
+
+            // Ensure $imageData is not empty before deleting images
+            if (!$imageData->isEmpty()) {
+                foreach ($imageData as $image) {
+                    $this->deleteImage($image->id); // Pass the image ID instead of the whole object
+                }
             }
 
             // Delete the food entry from the pivot table with the restaurant
@@ -221,7 +260,7 @@ class RestaurantFoodController extends Controller
         })->toArray();
     }
 
-    public function store(RestaurantFoodToppingRequest $request)
+    public function storeFoodWithToppings(RestaurantFoodToppingRequest $request)
     {
         $validatedData = $request->validated();
         // dd($validatedData);

@@ -73,24 +73,73 @@ class RestaurantController extends Controller
         return new RestaurantResource($restaurant);
     }
 
+    // public function update(RestaurantRequest $restaurantRequest, string $id)
+    // {
+    //     // dd("OK");
+    //     $validatedData = $restaurantRequest->validated();
+    //     $validatedData = $this->dateFormat($validatedData);
+    //     // dd($validatedData);
+    //     $restaurant = $this->restaurantInterface->findById('Restaurant', $id);
+    //     // dd($restaurant);
+    //     if (!$restaurant) {
+
+    //         return response()->json([
+    //             'message' => Config::get('variable.RESTAURANT_NOT_FOUND')
+    //         ], Config::get('variable.CLIENT_ERROR'));
+    //     }
+    //     $restaurant = $this->restaurantInterface->update('Restaurant', $validatedData, $id);
+    //     // dd($restaurant);
+    //     return new RestaurantResource($restaurant);
+    // }
+
+    // public function show(Restaurant $restaurant): RestaurantResource
+    // {
+    //     return new RestaurantResource($this->loadRelationships(Restaurant::where('id', $restaurant->id))->first());
+    // }
+
     public function update(RestaurantRequest $restaurantRequest, string $id)
-    {
-        $validatedData = $restaurantRequest->validated();
-        $validatedData = $this->dateFormat($validatedData);
-        $restaurant = $this->restaurantInterface->findById('Restaurant', $id);
-        if (!$restaurant) {
-            return response()->json([
-                'message' => Config::get('variable.RESTAURANT_NOT_FOUND')
-            ], Config::get('variable.CLIENT_ERROR'));
-        }
-        $restaurant = $this->restaurantInterface->update('Restaurant', $validatedData, $id);
-        return new RestaurantResource($restaurant);
+{
+    $validatedData = $restaurantRequest->validated();
+    $restaurant = $this->restaurantInterface->findById('Restaurant', $id);
+
+    if (!$restaurant) {
+        return response()->json([
+            'message' => Config::get('variable.RESTAURANT_NOT_FOUND')
+        ], Config::get('variable.CLIENT_ERROR'));
     }
 
-    public function show(Restaurant $restaurant): RestaurantResource
-    {
-        return new RestaurantResource($this->loadRelationships(Restaurant::where('id', $restaurant->id))->first());
+    // Extract address data from validated request
+    $addressData = Arr::pull($validatedData, 'addressData');
+
+    if ($addressData) {
+        // Find existing address or create a new one
+        $address = Address::updateOrCreate(
+            [
+                'id' => $restaurant->address_id // Ensure it updates the correct address
+            ],
+            [
+                'street_id' => $addressData['street_id'],
+                'block_no' => $addressData['block_no'],
+                'floor' => $addressData['floor'],
+                'latitude' => $addressData['latitude'],
+                'longitude' => $addressData['longitude'],
+            ]
+        );
+
+        // Update the address_id in restaurant data
+        $validatedData['address_id'] = $address->id;
     }
+
+    // Format date fields
+    $validatedData = $this->dateFormat($validatedData);
+
+    // Update Restaurant
+    $restaurant = $this->restaurantInterface->update('Restaurant', $validatedData, $id);
+
+    return new RestaurantResource($restaurant);
+}
+
+
 
 
     public function destroy(string $id)

@@ -35,11 +35,19 @@ class LocationRepository implements LocationInterface
         return $model::find($id);
     }
 
-    public function findWhere($modelName, $link_id)
-    {
-        $model = app("App\Models\\{$modelName}");
-        return $model->where('link_id', $link_id)->get();
-    }
+    // public function findWhere($modelName, $link_id)
+    // {
+    //     $model = app("App\Models\\{$modelName}");
+    //     // dd($model);
+    //     return $model->where('link_id', $link_id)->get();
+    // }
+
+    public function findWhere($modelName, $id, $column = 'id')
+{
+    $model = app("App\Models\\{$modelName}");
+    return $model->where($column, $id)->get();
+}
+
 
     public function store(string $modelName, array $data, $folder_name = null, $tablename = null)
     {
@@ -71,6 +79,7 @@ class LocationRepository implements LocationInterface
 
     public function update(string $modelName, array $data, int $id, $folder_name = null, $tablename = null)
     {
+        // dd($modelName);
         if (empty($data)) {
             throw CrudException::emptyData();
         }

@@ -32,7 +32,8 @@ class Crud
     }
     public function execute(): mixed
     {
-        // dd($this->storeMode);
+        // dd($this->deleteMode);
+        // dd($this->editMode);
         try {
             if ($this->editMode) {
                 return $this->handleEditMode();
@@ -99,8 +100,10 @@ class Crud
 
     protected function handleEditMode(): Model|bool
     {
+        // dd("OK");
         $this->record = $this->model->findOrFail($this->id);
         $record = $this->iterateData($this->data, $this->record);
+        // dd($record);
         return $record->save() ? $this->record : false;
     }
 
