@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BrandController;
 use App\Models\DiscountItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -34,7 +35,11 @@ use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\PopularRestaurants;
 use App\Http\Controllers\TownshipController;
 use App\Http\Controllers\CartItemsController;
+
 use App\Http\Controllers\ElectronicController;
+
+use App\Http\Controllers\InventoryController;
+
 use App\Http\Controllers\NearbyTaxiController;
 use App\Http\Controllers\PercentageController;
 use App\Http\Controllers\RestaurantController;
@@ -92,6 +97,7 @@ Route::middleware(['auth:api'])->group(function () {
 
     /* pp */
     Route::resource('/taxi-drivers', TaxiDriverController::class);
+    Route::resource('/brands', BrandController::class);
 
     Route::get('/state/{country_id}', [StateController::class, 'getStatesByCountry']);
     Route::get('/city/{state_id}', [CityController::class, 'getCitiesByState']);
@@ -147,6 +153,9 @@ Route::middleware(['auth:api'])->group(function () {
         Route::put('restaurants/{restaurant}/foods-with-toppings/{food}', 'updateFoodTopping');
         Route::delete('restaurants/{restaurant}/foods-with-toppings/{food}', 'destroyFoodTopping');
     });
+
+    Route::apiResource('inventory', InventoryController::class);
+    Route::put('inventory/{id}/update-stock', [InventoryController::class, 'updateStock']);
 
 
     Route::apiResource('carts', CartController::class)->except(['show', 'destroy']);
