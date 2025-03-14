@@ -46,7 +46,7 @@ trait ImageTrait
         return $result;
     }
 
-    public function createImageTest(Model $model, array $images, string $imageDir, string $genre = 'food')
+    public function createImageTest(Model $model, array $images, string $imageDir, string $genre  )
     {
         // dd($model);
         // dd($images);
@@ -60,11 +60,11 @@ trait ImageTrait
                     if ($img instanceof \Illuminate\Http\UploadedFile) {
                         // dd($img); // Check if the file is now detected
                         // Generate the image name and save the file
-                        // dd($imageDir);
+                        //dd($imageDir);
                         $this->imageService->setImageDirectory($imageDir, 'public');
                         $finalImagePath = $this->imageService->SavePhysicalImage($img);
 
-                        // dd($finalImagePath);
+                         //dd($finalImagePath);
                         // Prepare the data to be saved
                         // $imageDatas[] = ['url' => $finalImagePath];
                         // Prepare the data to be saved

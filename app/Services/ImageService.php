@@ -45,7 +45,7 @@ class ImageService
 
     public static function setImageDirectory($imgDir, $diskName)
     {
-        // dd($imgDir);
+        //dd($imgDir);
         // dd($diskName);
         self::$diskName = $diskName;
         self::$imageDirectory = $imgDir;

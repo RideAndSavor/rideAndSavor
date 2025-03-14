@@ -34,6 +34,7 @@ use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\PopularRestaurants;
 use App\Http\Controllers\TownshipController;
 use App\Http\Controllers\CartItemsController;
+use App\Http\Controllers\ElectronicController;
 use App\Http\Controllers\NearbyTaxiController;
 use App\Http\Controllers\PercentageController;
 use App\Http\Controllers\RestaurantController;
@@ -44,8 +45,8 @@ use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\AcceptDriverController;
 use App\Http\Controllers\DeliverPriceController;
 use App\Http\Controllers\DiscountItemController;
-use App\Http\Controllers\DeliveryPriceController;
 
+use App\Http\Controllers\DeliveryPriceController;
 use App\Http\Controllers\FoodRestaurantController;
 use App\Http\Controllers\RestaurantFoodController;
 use App\Http\Controllers\PaymentProviderController;
@@ -116,6 +117,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::resource('size', SizeController::class);
     Route::resource('price', PriceController::class);
     Route::resource('taste', TasteController::class);
+    Route::resource('electronic', ElectronicController::class);
 
     Route::get('restaurant_types', [RestaurantController::class, 'restaurantTypes']);
     Route::resource('foods', FoodController::class);

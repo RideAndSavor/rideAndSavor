@@ -40,4 +40,9 @@ class Images extends Model
     {
         return $this->belongsTo(Food::class, 'link_id');
     }
+
+    public function electronic(): BelongsTo
+    {
+        return $this->belongsTo(Electronic::class, 'link_id');
+    }
 }
