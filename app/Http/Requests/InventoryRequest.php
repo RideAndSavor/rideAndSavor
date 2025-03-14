@@ -26,7 +26,7 @@ class InventoryRequest extends FormRequest
             'in_stock' => 'required|integer|min:0',
             'out_stock' => 'required|integer|min:0',
             'remaining_stock' => 'required|integer|min:0',
-            'stock_status' => 'required|in:in-stock,low-stock,out-of-stock',
+            'stock_status' => 'nullable|in:in-stock,low-stock,out-of-stock',
             'remarks' => 'nullable|string',
         ];
     }
