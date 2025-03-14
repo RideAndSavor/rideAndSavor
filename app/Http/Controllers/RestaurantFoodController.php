@@ -282,7 +282,7 @@ class RestaurantFoodController extends Controller
             if (!empty($image)) {
                 // dd($image);
                 // dd($food);
-                $this->createImageTest($food, $image, 'food/');
+                $this->createImageTest($food, $image, 'food/','food');
             }
 
             $foodRestaurantData = [

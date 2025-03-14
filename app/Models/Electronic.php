@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\DB\Core\ImageField;
+use App\DB\Core\StringField;
+use App\DB\Core\IntegerField;
+use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,6 +13,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Electronic extends Model
 {
     use HasFactory;
+
+    protected $table = 'electronics';
 
     protected $fillable = [
         'name',
@@ -22,6 +28,29 @@ class Electronic extends Model
         'warranty',
         'status',
     ];
+
+    public function saveableFields($column): object
+{
+    $arr = [
+        'name' => StringField::new(),
+        'slug' => StringField::new(),
+        'category_id' => IntegerField::new(),
+        'brand_id' => IntegerField::new(),
+        'description' => StringField::new(),
+        'price' => IntegerField::new(),
+        'discount' => IntegerField::new(),
+        'stock_quantity' => IntegerField::new(),
+        'warranty' => StringField::new(),
+        'status' => StringField::new(),
+        'upload_url' => ImageField::new(),
+    ];
+
+    if (!array_key_exists($column, $arr)) {
+        throw CrudException::missingAttributeException();
+    }
+
+    return $arr[$column];
+}
 
     /**
      * Get the category that owns the electronic item.
@@ -42,8 +71,9 @@ class Electronic extends Model
     /**
      * Polymorphic Relationship with Images.
      */
-    public function images(): MorphMany
+    public function images()
     {
         return $this->morphMany(Images::class, 'imageable');
     }
+
 }
