@@ -34,6 +34,7 @@ class Crud
     {
         // dd($this->deleteMode);
         // dd($this->editMode);
+        // dd($this->storeMode);
         try {
             if ($this->editMode) {
                 return $this->handleEditMode();
