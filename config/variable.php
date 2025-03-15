@@ -51,6 +51,11 @@ return [
     "BRAND_UPDATED_SUCCESSFULLY" => "Brand Updated Successfully",
     "BRAND_CREATED_SUCCESSFULLY" => "Brand Created Successfully",
 
+    "SHOP_NOT_FOUND" => "Shop not found",
+    "SHOP_DELETED_SUCCESSFULLY" => "Shop Deleted Successfully",
+    "SHOP_UPDATED_SUCCESSFULLY" => "Shop Updated Successfully",
+    "SHOP_CREATED_SUCCESSFULLY" => "Shop Created Successfully",
+
     'DINF' => 'Discount Item Not Found',
     'DIDSF' => 'Discount Item Deleted Successfully',
 
