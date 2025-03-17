@@ -37,7 +37,7 @@ class AuthController extends Controller
                 break;
             case Config::get('variable.OWNER'):
                 $validatedUserData['role'] = Config::get('variable.THREE');
-                dd($validatedUserData['role']);
+                // dd($validatedUserData['role']);
                 break;
             case Config::get('variable.RIDER'):
                 $validatedUserData['role'] = Config::get('variable.FOUR');

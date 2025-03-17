@@ -6,6 +6,7 @@ use App\Events\trackingDriverCurrentLocation;
 use App\Http\Requests\TaxiDriverRequest;
 use App\Http\Resources\DriverNotificationResource;
 use App\Http\Resources\TaxiDriverResource;
+use App\Models\User;
 use App\Services\TaxiDriverService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -47,6 +48,20 @@ class TaxiDriverController extends BaseController
         });
     }
 
+    public function getByUserId($user_id)
+{
+    return $this->handleRequest(function () use ($user_id) {
+        $taxi_driver = $this->taxiDriverService->getByUserId($user_id);
+
+        if (!$taxi_driver) {
+            return response()->json(['message' => Config::get('variable.TAXI_DRIVER_NOT_FOUND')], Config::get('variable.SERVER_NOT_FOUND'));
+        }
+
+        return new TaxiDriverResource($taxi_driver);
+    });
+}
+
+
     /**
      * Store a new taxi driver with car information.
      */
@@ -57,6 +72,9 @@ class TaxiDriverController extends BaseController
         $validatedData['user_id'] = Auth::id();
 
         $taxi_driver = $this->taxiDriverService->store($validatedData);
+
+       // Retrieve the user model and update the role
+       User::where('id', Auth::id())->update(['role' => 5]);
 
         // Wrap the TaxiDriverResource in a JsonResponse
         return response()->json(new TaxiDriverResource($taxi_driver), Config::get('variable.CREATED'));

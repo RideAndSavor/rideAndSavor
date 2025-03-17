@@ -98,6 +98,8 @@ Route::middleware(['auth:api'])->group(function () {
 
     /* pp */
     Route::resource('/taxi-drivers', TaxiDriverController::class);
+    Route::get('/taxi-driver/user/{user_id}', [TaxiDriverController::class, 'getByUserId']);
+
     Route::resource('/brands', BrandController::class);
     Route::resource('/shops', ShopController::class);
 
