@@ -27,7 +27,7 @@ class ShopResource extends JsonResource
             'open_time' => $this->open_time,
             'close_time' => $this->close_time,
             'status' => $this->status,
-            'images' => ImageResource::collection($this->whenLoaded('images')),
+            // 'images' => ImageResource::collection($this->whenLoaded('images')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
