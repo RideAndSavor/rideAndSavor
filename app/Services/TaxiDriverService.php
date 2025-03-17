@@ -45,5 +45,12 @@ class TaxiDriverService
     {
         return $this->taxiDriverRepository->getById($id);
     }
+
+    public function getByUserId($user_id)
+    {
+            // dd("OK");
+        return TaxiDriver::where('user_id', $user_id)->with('user')->first();
+    }
+
 }
 
