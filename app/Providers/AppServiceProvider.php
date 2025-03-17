@@ -15,6 +15,7 @@ use App\Contracts\ElectronicInterface;
 use App\Contracts\ImageInterface;
 use App\Contracts\InventoryInterface;
 use App\Contracts\NearbyTaxiInterface;
+use App\Contracts\ProductInterface;
 use App\Contracts\ShopInterface;
 use App\Contracts\TaxiDriverInterface as ContractsTaxiDriverInterface;
 use App\Contracts\TownshipInterface;
@@ -34,6 +35,7 @@ use App\Repositories\ImageRepository;
 use App\Repositories\Interfaces\TaxiDriverInterface;
 use App\Repositories\InventoryRepository;
 use App\Repositories\NearbyTaxiRepository;
+use App\Repositories\ProductRepository;
 use App\Repositories\TaxiDriverRepository;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\TownshipRepository;
@@ -68,6 +70,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(BrandInterface::class, BrandRepository::class);
         $this->app->bind(ShopInterface::class, ShopRepository::class);
+        $this->app->bind(ProductInterface::class, ProductRepository::class);
 
 
 

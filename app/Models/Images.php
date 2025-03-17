@@ -45,4 +45,14 @@ class Images extends Model
     {
         return $this->belongsTo(Electronic::class, 'link_id');
     }
+
+    public function shop(): BelongsTo
+    {
+        return $this->belongsTo(Shop::class, 'link_id');
+    }
+
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class, 'link_id');
+    }
 }

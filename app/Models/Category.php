@@ -40,4 +40,10 @@ class Category extends Model
     {
         return $this->hasMany(Electronic::class);
     }
+
+    public function shops()
+    {
+        return $this->belongsToMany(Shop::class, 'shop_category');
+    }
+
 }
