@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\BrandController;
-use App\Http\Controllers\ShopController;
 use App\Models\DiscountItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -11,11 +9,13 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\ShopController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WardController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\FavoriteCuisine;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PriceController;
@@ -29,18 +29,19 @@ use App\Http\Controllers\TravelController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\FoodsInRestaurant;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StatusControlller;
 use App\Http\Controllers\ToppingController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\PopularRestaurants;
 use App\Http\Controllers\TownshipController;
-use App\Http\Controllers\CartItemsController;
 
-use App\Http\Controllers\ElectronicController;
+use App\Http\Controllers\CartItemsController;
 
 use App\Http\Controllers\InventoryController;
 
+use App\Http\Controllers\ElectronicController;
 use App\Http\Controllers\NearbyTaxiController;
 use App\Http\Controllers\PercentageController;
 use App\Http\Controllers\RestaurantController;
@@ -50,8 +51,8 @@ use App\Http\Controllers\SocialLoginController;
 use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\AcceptDriverController;
 use App\Http\Controllers\DeliverPriceController;
-use App\Http\Controllers\DiscountItemController;
 
+use App\Http\Controllers\DiscountItemController;
 use App\Http\Controllers\DeliveryPriceController;
 use App\Http\Controllers\FoodRestaurantController;
 use App\Http\Controllers\RestaurantFoodController;
@@ -128,6 +129,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::resource('price', PriceController::class);
     Route::resource('taste', TasteController::class);
     Route::resource('electronic', ElectronicController::class);
+    Route::resource('products', ProductController::class);
 
     Route::get('restaurant_types', [RestaurantController::class, 'restaurantTypes']);
     Route::resource('foods', FoodController::class);

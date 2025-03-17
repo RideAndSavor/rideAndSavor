@@ -32,6 +32,8 @@ class ShopRequest extends FormRequest
             'open_time' => 'nullable|string|max:10',
             'close_time' => 'nullable|string|max:10',
             'status' => 'nullable|in:active,inactive,suspended',
+            'upload_url' => 'nullable|array',
+            'upload_url.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
         ];
     }
 

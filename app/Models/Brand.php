@@ -41,5 +41,10 @@ class Brand extends Model
     {
         return $this->hasMany(Electronic::class);
     }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }
 

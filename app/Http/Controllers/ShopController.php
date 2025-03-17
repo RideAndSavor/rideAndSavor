@@ -2,23 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\BrandRequest;
-use App\Http\Requests\ShopRequest;
-use App\Http\Resources\BrandResource;
-use App\Http\Resources\ShopResource;
-use App\Services\BrandService;
-use App\Services\ShopService;
+use App\Traits\ImageTrait;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
+use App\Services\ShopService;
+use App\Services\BrandService;
+use App\Services\ImageService;
+use App\Http\Requests\ShopRequest;
+use App\Http\Requests\BrandRequest;
+use App\Http\Resources\ShopResource;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\BrandResource;
+use Illuminate\Support\Facades\Config;
 
 class ShopController extends BaseController
 {
+    use ImageTrait;
     protected $shopService;
+    protected $imageService;
 
-    public function __construct(ShopService $shopService)
+    public function __construct(ShopService $shopService,ImageService $imageService)
     {
         $this->shopService = $shopService;
+        $this->imageService = $imageService;
     }
 
     public function index()
@@ -33,17 +38,27 @@ class ShopController extends BaseController
      * Store a newly created resource in storage.
      */
     public function store(ShopRequest $shopRequest)
-{
-        // dd("OK");
-    return $this->handleRequest(function () use ($shopRequest) {
-        $validatedData = $shopRequest->validated();
-        // dd($validatedData);
-        $shop = $this->shopService->store($validatedData);
+    {
 
-        // Wrap the TaxiDriverResource in a JsonResponse
-        return response()->json(new ShopResource($shop),Config::get('variable.CREATED'));
-    });
-}
+        $folder_name = 'shop/'; // Fixed typo
+
+        return $this->handleRequest(function () use ($shopRequest, $folder_name) {
+            $validateData = $shopRequest->validated();
+            $image[] = $validateData['upload_url'] ?? [];
+            unset($validateData['upload_url']);
+
+            $shop = $this->shopService->store($validateData);
+
+            // ✅ Then, handle image upload
+            if ($shopRequest->hasFile('upload_url')) {
+                // dd($request->hasFile('upload_url'));
+                 $this->createImageTest($shop, $image, $folder_name, 'shop');
+             }
+
+            // Wrap the TaxiDriverResource in a JsonResponse
+            return response()->json(new ShopResource($shop),Config::get('variable.CREATED'));
+        });
+    }
 
     /**
      * Display the specified resource.

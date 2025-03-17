@@ -69,4 +69,22 @@ class Shop extends Model
     {
         return $this->belongsTo(Address::class);
     }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'shop_category');
+    }
+
+    /**
+     * Polymorphic Relationship with Images.
+     */
+    public function images()
+    {
+        return $this->morphMany(Images::class, 'imageable');
+    }
 }

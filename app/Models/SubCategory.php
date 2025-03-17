@@ -44,4 +44,9 @@ class SubCategory extends Model
     {
         return $this->hasMany(Food::class);
     }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }
