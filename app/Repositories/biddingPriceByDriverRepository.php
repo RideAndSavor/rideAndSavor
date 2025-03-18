@@ -20,4 +20,12 @@ class BiddingPriceByDriverRepository extends BaseRepository implements BiddingPr
         return BiddingPriceByDriver::where('travel_id', $travelId)->delete();
     }
 
+    public function getBiddingPricesByUserId($userId)
+{
+    return BiddingPriceByDriver::whereHas('travel', function ($query) use ($userId) {
+        $query->where('user_id', $userId);
+    })
+    ->with('driver') // Assuming there's a `driver` relationship in BiddingPrice model
+    ->get();
+}
 }

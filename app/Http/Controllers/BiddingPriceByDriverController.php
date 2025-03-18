@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\BiddingPriceByDriverService;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\BiddingPriceRequest;
+use App\Http\Resources\TaxiDriverResource;
 use App\Http\Resources\BiddingPriceResource;
+use App\Services\BiddingPriceByDriverService;
 
 class BiddingPriceByDriverController extends BaseController
 {
@@ -65,4 +67,30 @@ class BiddingPriceByDriverController extends BaseController
             return response()->json(['message' => 'Bidding price deleted successfully'], 200);
         });
     }
+
+    /**
+     * Get all bidding prices by user ID.
+     */
+    public function getUserBiddingPrices()
+    {
+        try {
+            $userId = Auth::id();
+            $biddingPrices = $this->biddingPriceByDriverService->getBiddingPricesByUserId($userId);
+
+            if ($biddingPrices->isEmpty()) {
+                return response()->json(['message' => 'No bids found for your trips'], 404);
+            }
+            $data = $biddingPrices->map(function ($biddingPrice) {
+                return [
+                    'bidding_price' => new BiddingPriceResource($biddingPrice),
+                    'driver' => new TaxiDriverResource($biddingPrice->driver) // Access the associated driver
+                ];
+            });
+
+            return response()->json($data, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Something went wrong while retrieving bids!'], 500);
+        }
+    }
 }
+

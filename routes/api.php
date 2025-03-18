@@ -97,6 +97,9 @@ Route::middleware(['auth:api'])->group(function () {
     Route::apiResource('accept_drivers', AcceptDriverController::class);
     Route::get('/driver/{driverId}/notifications', [TaxiDriverController::class, 'getDriverNotifications']);
 
+    //user get bidding prices
+    Route::get('user/bidding-prices', [BiddingPriceByDriverController::class, 'getUserBiddingPrices']);
+
     /* pp */
     Route::resource('/taxi-drivers', TaxiDriverController::class);
     Route::get('/taxi-driver/user/{user_id}', [TaxiDriverController::class, 'getByUserId']);

@@ -66,20 +66,20 @@ class TaxiDriverController extends BaseController
      * Store a new taxi driver with car information.
      */
     public function store(TaxiDriverRequest $taxiDriverRequest)
-{
-    return $this->handleRequest(function () use ($taxiDriverRequest) {
-        $validatedData = $taxiDriverRequest->validated();
-        $validatedData['user_id'] = Auth::id();
+    {
+        return $this->handleRequest(function () use ($taxiDriverRequest) {
+            $validatedData = $taxiDriverRequest->validated();
+            $validatedData['user_id'] = Auth::id();
 
-        $taxi_driver = $this->taxiDriverService->store($validatedData);
+            $taxi_driver = $this->taxiDriverService->store($validatedData);
 
-       // Retrieve the user model and update the role
-       User::where('id', Auth::id())->update(['role' => 5]);
+        // Retrieve the user model and update the role
+        User::where('id', Auth::id())->update(['role' => 5]);
 
-        // Wrap the TaxiDriverResource in a JsonResponse
-        return response()->json(new TaxiDriverResource($taxi_driver), Config::get('variable.CREATED'));
-    });
-}
+            // Wrap the TaxiDriverResource in a JsonResponse
+            return response()->json(new TaxiDriverResource($taxi_driver), Config::get('variable.CREATED'));
+        });
+    }
 
 
     /**
