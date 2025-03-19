@@ -54,7 +54,7 @@ class TaxiDriverController extends BaseController
         $taxi_driver = $this->taxiDriverService->getByUserId($user_id);
 
         if (!$taxi_driver) {
-            return response()->json(['message' => Config::get('variable.TAXI_DRIVER_NOT_FOUND')], Config::get('variable.SERVER_NOT_FOUND'));
+            return response()->json(['message' => Config::get('variable.TAXI_DRIVER_NOT_FOUND')], 404);
         }
 
         return new TaxiDriverResource($taxi_driver);
