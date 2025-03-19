@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CartSessionController;
 use App\Models\DiscountItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -106,6 +107,9 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::resource('/brands', BrandController::class);
     Route::resource('/shops', ShopController::class);
+    Route::post('/cart/add', [CartSessionController::class, 'addToCart']);
+    Route::delete('/cart/remove/{id}', [CartSessionController::class, 'removeCartItem']);
+    Route::get('/cart', [CartSessionController::class, 'getCartItems']);
 
     Route::get('/state/{country_id}', [StateController::class, 'getStatesByCountry']);
     Route::get('/city/{state_id}', [CityController::class, 'getCitiesByState']);
