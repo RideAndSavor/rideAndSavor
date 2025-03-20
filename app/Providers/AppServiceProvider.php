@@ -22,7 +22,7 @@ use App\Contracts\TownshipInterface;
 use App\Contracts\TravelInterface;
 use App\Repositories\AcceptDriverRepository;
 use App\Repositories\BaseRepository;
-use App\Repositories\BiddingPriceByDriverRepository;
+use App\Repositories\biddingPriceByDriverRepository;
 use App\Repositories\BrandRepository;
 use App\Repositories\CityRepository;
 use App\Repositories\ShopRepository;
