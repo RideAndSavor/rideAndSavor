@@ -60,7 +60,7 @@ class Product extends Model
         parent::boot();
 
         static::creating(function ($product) {
-            $product->slug = Str::slug($product->name);
+            $product->slug = Str::slug($product->name . '-' . $product->shop_id);
         });
     }
 
