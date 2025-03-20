@@ -37,12 +37,12 @@ class ProductOrderController extends Controller
             // Create new order
             $order = ProductOrder::create([
                 'user_id' => Auth::id(),
+                'shop_id' => $cartItems->first()->attributes['shop_id'] ?? null, // Assuming all items belong to one shop
                 'status_id' => $request->status_id, // Assuming status_id 1 is 'Pending'
                 'delivery_id' => $request->delivery_id ?? null, // Handle delivery assignment
                 'total_price' => $totalPrice,
                 'discount_price' => $totalDiscount,
                 'final_price' => $finalPrice,
-                'shop_id' => $cartItems->first()->attributes['shop_id'] ?? null, // Assuming all items belong to one shop
                 'comment' => $request->comment ?? null
             ]);
 
@@ -51,7 +51,6 @@ class ProductOrderController extends Controller
                 ProductOrderDetail::create([
                     'product_order_id' => $order->id,
                     'product_id' => $item->id,
-                    'shop_id' => $item->attributes['shop_id'],
                     'quantity' => $item->quantity,
                     'unique_price' => $item->price,
                     'discount_price' => $item->attributes['discount_amount'],
