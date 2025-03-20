@@ -18,7 +18,7 @@ class ProductOrderDetail extends Model
         'product_order_id',
         'product_id',
         'quantity',
-        'original_price',
+        'unique_price',
         'discount_price',
         'final_price',
         'shop_id'
@@ -27,11 +27,11 @@ class ProductOrderDetail extends Model
     public function saveableFields($column): object
     {
         $arr = [
-            'order_id' => IntegerField::new(),
+            'product_order_id' => IntegerField::new(),
             'product_id' => IntegerField::new(),
             'shop_id' => IntegerField::new(),
+            'unique_price'=> DecimalField::new(),
             'quantity' => IntegerField::new(),
-            'original_price' => DecimalField::new(),
             'discount_price' => DecimalField::new(),
             'final_price' => DecimalField::new()
         ];

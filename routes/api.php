@@ -62,6 +62,7 @@ use App\Http\Controllers\RestaurantAddressController;
 use App\Http\Controllers\FeatureRestaurantsController;
 use App\Http\Controllers\BiddingPriceByDriverController;
 use App\Http\Controllers\CalculateDeliveryFeesController;
+use App\Http\Controllers\ProductOrderController;
 use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 
 Route::get('/user', function (Request $request) {
@@ -109,7 +110,8 @@ Route::middleware(['auth:api'])->group(function () {
     Route::resource('/shops', ShopController::class);
     Route::post('/cart/add', [CartSessionController::class, 'addToCart']);
     Route::delete('/cart/remove/{id}', [CartSessionController::class, 'removeCartItem']);
-    Route::get('/cart', [CartSessionController::class, 'getCartItems']);
+    Route::get('/cartview', [CartSessionController::class, 'getCartItems']);
+    Route::post('/checkout', [ProductOrderController::class, 'checkout']);
 
     Route::get('/state/{country_id}', [StateController::class, 'getStatesByCountry']);
     Route::get('/city/{state_id}', [CityController::class, 'getCitiesByState']);

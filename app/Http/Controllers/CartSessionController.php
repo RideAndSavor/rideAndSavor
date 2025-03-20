@@ -59,25 +59,36 @@ public function addToCart(Request $request)
     $quantity = $request->quantity ?? 1;
     $shop_id = $product->shop_id; // Assuming Product has a `shop_id` column
 
-    // Get the first image of the product (assuming you store the image path in `url`)
+    // Get the first image of the product (assuming you store the image path in `upload_url`)
     $image = $product->images->first() ? $product->images->first()->upload_url : null;
+
+    // Calculate discount (example: percentage discount)
+    $discountPercentage = $product->discount_price ?? 0; // Percentage discount from request
+    $discountAmount = ($unit_price * $quantity) * ($discountPercentage / 100); // Calculate discount amount
+    $afterDiscountPrice = ($unit_price * $quantity) - $discountAmount; // Final price after discount
 
     // Check if item already exists in cart
     $existingItem = Cart::get($product->id);
 
     if ($existingItem) {
-        // If item exists, update quantity and total price
-        $newQuantity = $existingItem->quantity + $quantity;
-        $newTotalPrice = $unit_price * $newQuantity;
+        // If item exists, update quantity, total price, and apply discount
+        $newQuantity = $existingItem->quantity + $quantity;  // Add new quantity to existing quantity
+        $newTotalPrice = $unit_price * $newQuantity;  // Recalculate total price with updated quantity
+        $newDiscountAmount = ($unit_price * $newQuantity) * ($discountPercentage / 100);  // Recalculate discount
+        $newAfterDiscountPrice = ($unit_price * $newQuantity) - $newDiscountAmount;  // Recalculate price after discount
 
+        // Update the cart item
         Cart::update($product->id, [
-            'quantity' => $quantity,
+            'quantity' => $quantity,  // Update quantity with new total
+            'price' => $unit_price,  // Price remains the same
             'attributes' => [
                 'user_id' => Auth::id(),
                 'unit_price' => $unit_price,
-                'total_price' => $newTotalPrice, // Update total price
+                'total_price' => $newTotalPrice,  // Update total price with new total
+                'discount_amount' => $newDiscountAmount,  // Update discount amount
+                'after_discount_price' => $newAfterDiscountPrice,  // Update price after discount
                 'shop_id' => $shop_id,
-                'image' => $image, // Store image URL in cart
+                'image' => $image,  // Store image URL in cart
             ]
         ]);
     } else {
@@ -86,19 +97,24 @@ public function addToCart(Request $request)
             'id' => $product->id,
             'name' => $product->name,
             'price' => $unit_price,
-            'quantity' => $quantity,
+            'quantity' => $quantity,  // Add new quantity
             'attributes' => [
                 'user_id' => Auth::id(),
                 'unit_price' => $unit_price,
-                'total_price' => $unit_price * $quantity, // Initial total price
+                'total_price' => $unit_price * $quantity,  // Initial total price
+                'discount_amount' => $discountAmount,  // Store discount amount
+                'after_discount_price' => $afterDiscountPrice,  // Store price after discount
                 'shop_id' => $shop_id,
-                'image' => $image, // Store image URL in cart
+                'image' => $image,  // Store image URL in cart
             ]
         ]);
     }
 
     return response()->json(['message' => 'Product added to cart successfully!']);
 }
+
+
+
 
 
 
