@@ -118,6 +118,7 @@ public function updateCartItem(Request $request)
     $productId = $request->product_id;
     $operation = $request->operation; // "increase" or "decrease"
 
+
     // Get existing cart item
     $cartItem = Cart::get($productId);
 
@@ -146,7 +147,7 @@ public function updateCartItem(Request $request)
 
     // Update cart item
     Cart::update($productId, [
-        'quantity' => $cartItem->quantity,
+        'quantity' => ['value' => $newQuantity, 'relative' => false], // ✅ Set exact quantity,
         'attributes' => [
             'user_id' => Auth::id(),
             'unit_price' => $unit_price,
