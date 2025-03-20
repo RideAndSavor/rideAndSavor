@@ -113,6 +113,53 @@ public function addToCart(Request $request)
     return response()->json(['message' => 'Product added to cart successfully!']);
 }
 
+public function updateCartItem(Request $request)
+{
+    $productId = $request->product_id;
+    $operation = $request->operation; // "increase" or "decrease"
+
+    // Get existing cart item
+    $cartItem = Cart::get($productId);
+
+    if (!$cartItem) {
+        return response()->json(['message' => 'Item not found in cart'], 404);
+    }
+
+    $product = Product::findOrFail($productId);
+    $unit_price = $product->original_price;
+    $discountPercentage = $product->discount_price ?? 0; // Get discount percentage
+
+    // Calculate new quantity
+    $newQuantity = ($operation === 'increase') ? $cartItem->quantity + 1 : $cartItem->quantity - 1;
+    // dd($newQuantity);
+
+    if ($newQuantity <= 0) {
+        // Remove item if quantity becomes 0
+        Cart::remove($productId);
+        return response()->json(['message' => 'Item removed from cart']);
+    }
+
+    // Recalculate prices
+    $newTotalPrice = $unit_price * $newQuantity;
+    $newDiscountAmount = ($newTotalPrice) * ($discountPercentage / 100);
+    $newAfterDiscountPrice = $newTotalPrice - $newDiscountAmount;
+
+    // Update cart item
+    Cart::update($productId, [
+        'quantity' => $cartItem->quantity,
+        'attributes' => [
+            'user_id' => Auth::id(),
+            'unit_price' => $unit_price,
+            'total_price' => $newTotalPrice,
+            'discount_amount' => $newDiscountAmount,
+            'after_discount_price' => $newAfterDiscountPrice,
+            'shop_id' => $product->shop_id,
+            'image' => $cartItem->attributes['image'] ?? null, // Keep existing image
+        ]
+    ]);
+
+    return response()->json(['message' => 'Cart item updated successfully', 'new_quantity' => $newQuantity]);
+}
 
 
 

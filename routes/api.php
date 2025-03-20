@@ -110,6 +110,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::resource('/shops', ShopController::class);
     Route::post('/cart/add', [CartSessionController::class, 'addToCart']);
     Route::delete('/cart/remove/{id}', [CartSessionController::class, 'removeCartItem']);
+    Route::post('/cart/update', [CartSessionController::class, 'updateCartItem']);
     Route::get('/cartview', [CartSessionController::class, 'getCartItems']);
     Route::post('/checkout', [ProductOrderController::class, 'checkout']);
 
