@@ -15,6 +15,7 @@ class ProductOrder extends Model
 
     protected $fillable = [
         'user_id',
+        'shop_id',
         'status_id',
         'delivery_id',
         'total_price',
@@ -27,6 +28,7 @@ class ProductOrder extends Model
     {
         $arr = [
             'user_id' => IntegerField::new(),
+            'shop_id' => IntegerField::new(),
             'status_id' => IntegerField::new(),
             'delivery_id' => IntegerField::new(),
             'total_price' => DecimalField::new(),
