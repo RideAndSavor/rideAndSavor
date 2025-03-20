@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\DB\Core\DoubleField;
 use App\DB\Core\StringField;
 use App\DB\Core\IntegerField;
 use App\Exceptions\CrudException;
@@ -24,10 +25,10 @@ class Travel extends Model
         // dd($column);
         $arr = [
             'user_id' => IntegerField::new(),
-            'pickup_latitude' => IntegerField::new(),
-            'pickup_longitude' => IntegerField::new(),
-            'destination_latitude' => IntegerField::new(),
-            'destination_longitude' => IntegerField::new(),
+            'pickup_latitude' => DoubleField::new(),
+            'pickup_longitude' => DoubleField::new(),
+            'destination_latitude' => DoubleField::new(),
+            'destination_longitude' => DoubleField::new(),
             'status' => StringField::new(),
         ];
         // dd($arr);

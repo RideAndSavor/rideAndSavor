@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\DB\Core\IntegerField;
 use App\DB\Core\StringField;
+use App\DB\Core\DoubleField;
 use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,8 +33,8 @@ class TaxiDriver extends Model
 
         $arr = [
             'user_id' => IntegerField::new(),
-            'latitude' => IntegerField::new(), // Latitude as Integer or Float
-            'longitude' => IntegerField::new(), // Longitude as Integer or Float
+            'latitude' => DoubleField::new(), // Latitude as Integer or Float
+            'longitude' => DoubleField::new(), // Longitude as Integer or Float
             'is_available' => IntegerField::new(),
             'car_year' => IntegerField::new(),
             'car_make' => StringField::new(),
