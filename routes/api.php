@@ -113,6 +113,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/cart/update', [CartSessionController::class, 'updateCartItem']);
     Route::get('/cartview', [CartSessionController::class, 'getCartItems']);
     Route::post('/checkout', [ProductOrderController::class, 'checkout']);
+    Route::post('/process-payment', [ProductOrderController::class, 'processPayment']);
 
     Route::get('/state/{country_id}', [StateController::class, 'getStatesByCountry']);
     Route::get('/city/{state_id}', [CityController::class, 'getCitiesByState']);

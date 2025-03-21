@@ -59,9 +59,14 @@ class ProductOrder extends Model
         return $this->belongsTo(DeliveryPrice::class, 'delivery_id');
     }
 
-    // public function details()
-    // {
-    //     return $this->hasMany(ProductOrderDetail::class);
-    // }
+    public function payment()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function shop()
+    {
+        return $this->belongsTo(Shop::class, 'shop_id'); 
+    }
 }
 
