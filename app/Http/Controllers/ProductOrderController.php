@@ -104,12 +104,27 @@ class ProductOrderController extends Controller
         try {
             // Set Stripe Secret Key
             Stripe::setApiKey(config('services.stripe.secret'));
-            $amountInSatang = $order->final_price * 100;
+            // $amountInSatang = $order->final_price * 100;
 
-            // Create Stripe Charge
+            // // Create Stripe Charge
+            // $charge = Charge::create([
+            //     'amount' => $amountInSatang, // Convert to cents
+            //     'currency' => 'MMK',
+            //     'source' => $request->stripeToken,
+            //     'description' => "Payment for Order #" . $order->id,
+            // ]);
+
+            $usdToMmkRate = 0.00024;
+
+            // Calculate minimum required MMK amount
+            $minAmountMMK = ceil(50 / $usdToMmkRate);
+
+            // Ensure the charge amount is at least the minimum required
+            $chargeAmount = max($order->final_price * 100, $minAmountMMK);
+
             $charge = Charge::create([
-                'amount' => $amountInSatang, // Convert to cents
-                'currency' => 'MMK',
+                'amount' => $chargeAmount, // Ensure minimum amount
+                'currency' => 'mmk',
                 'source' => $request->stripeToken,
                 'description' => "Payment for Order #" . $order->id,
             ]);
