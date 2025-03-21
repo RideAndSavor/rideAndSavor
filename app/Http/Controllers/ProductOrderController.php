@@ -2,25 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Darryldecode\Cart\Facades\CartFacade as Cart;
+use Exception;
+use Stripe\Charge;
+use Stripe\Stripe;
+use App\Models\Order;
+use App\Models\Transaction;
 use App\Models\ProductOrder;
+use Illuminate\Http\Request;
+use App\Mail\PaymentSuccessMail;
 use App\Models\ProductOrderDetail;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Http\Requests\TransactionRequest;
+use Darryldecode\Cart\Facades\CartFacade as Cart;
 
 class ProductOrderController extends Controller
 {
     public function checkout(Request $request)
     {
         $cartItems = Cart::getContent();
-        // dd($cartItems);
 
         if ($cartItems->isEmpty()) {
             return response()->json(['message' => 'Cart is empty'], 400);
         }
 
-        // Calculate totals
         $totalPrice = 0;
         $totalDiscount = 0;
         $finalPrice = 0;
@@ -66,6 +72,60 @@ class ProductOrderController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['message' => 'Order failed', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function processPayment(TransactionRequest $request)
+    {
+
+        $validatedData = $request->validated();
+        // Retrieve the order using the order_id
+        $order = ProductOrder::findOrFail($validatedData['order_id']);
+        // dd($order);
+        // Ensure the order has a shop relationship
+        $shop = $order->shop; // Assuming an Order belongs to a Shop
+        // dd($shop);
+        if (!$shop || !$shop->email) {
+            return response()->json(['error' => 'Shop email not found'], 400);
+        }
+
+        try {
+            // Set Stripe Secret Key
+            Stripe::setApiKey(config('services.stripe.secret'));
+
+            // Create Stripe Charge
+            $charge = Charge::create([
+                'amount' => $order->final_price * 100, // Convert to cents
+                'currency' => 'usd',
+                'source' => $request->stripeToken,
+                'description' => "Payment for Order #" . $order->id,
+            ]);
+
+            // Store Transaction
+            $transaction=Transaction::create([
+                'order_id' => $order->id,
+                'transaction_id' => $charge->id,
+                'amount' => $order->final_price,
+                'currency' => 'usd',
+                'payment_method' => 'stripe',
+                'status' => $charge->status,
+            ]);
+            // dd($transaction);
+
+            // Optionally, update the order status to 'Paid' or similar
+            $order->update(['status_id' => 2]);  // Assuming '2' means 'Paid'
+
+
+            // Send email to shop owner
+            Mail::to($shop->email)->send(new PaymentSuccessMail($order, $transaction));
+
+            return response()->json([
+                'message' => 'Payment successful, email sent to shop!',
+                'transaction' => $transaction,
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Payment failed: ' . $e->getMessage()], 500);
         }
     }
 }
