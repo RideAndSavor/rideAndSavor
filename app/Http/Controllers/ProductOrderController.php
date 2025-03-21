@@ -89,14 +89,27 @@ class ProductOrderController extends Controller
             return response()->json(['error' => 'Shop email not found'], 400);
         }
 
+        // Check if the payment has already been processed for this order
+        $existingTransaction = Transaction::where('order_id', $order->id)->first();
+        // dd($existingTransaction);
+        if ($existingTransaction) {
+            // If a transaction exists, return a response indicating the payment has already been processed
+            return response()->json([
+                'message' => 'Payment already processed for this order.',
+                'transaction' => $existingTransaction
+            ], 200);
+        }
+
+
         try {
             // Set Stripe Secret Key
             Stripe::setApiKey(config('services.stripe.secret'));
+            $amountInSatang = $order->final_price * 100;
 
             // Create Stripe Charge
             $charge = Charge::create([
-                'amount' => $order->final_price * 100, // Convert to cents
-                'currency' => 'usd',
+                'amount' => $amountInSatang, // Convert to cents
+                'currency' => 'MMK',
                 'source' => $request->stripeToken,
                 'description' => "Payment for Order #" . $order->id,
             ]);
@@ -106,7 +119,7 @@ class ProductOrderController extends Controller
                 'order_id' => $order->id,
                 'transaction_id' => $charge->id,
                 'amount' => $order->final_price,
-                'currency' => 'usd',
+                'currency' => 'MMK',
                 'payment_method' => 'stripe',
                 'status' => $charge->status,
             ]);

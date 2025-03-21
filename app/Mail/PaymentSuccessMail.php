@@ -22,6 +22,13 @@ class PaymentSuccessMail extends Mailable
 
     public function build()
     {
+        // Access the total amount correctly
+        $totalAmount = number_format($this->order->total_price, 2); // Assuming total_price is the correct amount field
+        $discountAmount = number_format($this->order->discount_price, 2); // Assuming discount_price is the correct amount field
+        $finalAmount = number_format($this->order->final_price, 2); // Assuming final_price is the correct amount field
+        $transactionId = $this->transaction->transaction_id;
+        $status = $this->transaction->status;
+
         $message = "
             <h2>Payment Successful for Order #{$this->order->id}</h2>
             <p>Dear Shop Owner,</p>
@@ -29,10 +36,12 @@ class PaymentSuccessMail extends Mailable
             <h3>Order Details:</h3>
             <ul>
                 <li><strong>Order ID:</strong> {$this->order->id}</li>
-                <li><strong>Total Amount:</strong> \${{ number_format($this->order->total_amount, 2) }}</li>
+                <li><strong>Total Amount:</strong> \${$totalAmount}</li> <!-- Accessing total_price correctly -->
+                <li><strong>Discount Amount:</strong> \${$discountAmount}</li> <!-- Accessing discount_price correctly -->
+                <li><strong>Final Amount:</strong> \${$finalAmount}</li> <!-- Accessing final_price correctly -->
                 <li><strong>Payment Method:</strong> Credit Card (Stripe)</li>
-                <li><strong>Transaction ID:</strong> {$this->transaction->transaction_id}</li>
-                <li><strong>Status:</strong> {$this->transaction->status}</li>
+                <li><strong>Transaction ID:</strong> {$transactionId}</li>
+                <li><strong>Status:</strong> {$status}</li>
             </ul>
             <p>Thank you for using our service.</p>
         ";
@@ -40,4 +49,5 @@ class PaymentSuccessMail extends Mailable
         return $this->subject('Payment Successful for Order #' . $this->order->id)
                     ->html($message);
     }
+
 }
