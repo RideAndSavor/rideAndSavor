@@ -27,6 +27,13 @@ class TaxiDriverResource extends JsonResource
             'car_colour' => $this->car_colour,
             'license_plate' => $this->license_plate,
             'other_info' => $this->other_info,
+            'user' => [
+                'id' => $this->user->id,
+                'name' => $this->user->name,
+                'email' => $this->user->email,
+                'phone' => $this->user->phone,
+                'age'=> $this->user->age,
+            ],
         ];
     }
 
