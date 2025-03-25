@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\CartSessionController;
 use App\Models\DiscountItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +25,7 @@ use Illuminate\Support\Facades\Broadcast;
 use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\StreetController;
+use App\Http\Controllers\StripeController;
 use App\Http\Controllers\TravelController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CountryController;
@@ -47,13 +47,15 @@ use App\Http\Controllers\NearbyTaxiController;
 use App\Http\Controllers\PercentageController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\TaxiDriverController;
+use App\Http\Controllers\CartSessionController;
 use App\Http\Controllers\OrderDetailController;
 use App\Http\Controllers\SocialLoginController;
 use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\AcceptDriverController;
-use App\Http\Controllers\DeliverPriceController;
 
+use App\Http\Controllers\DeliverPriceController;
 use App\Http\Controllers\DiscountItemController;
+use App\Http\Controllers\ProductOrderController;
 use App\Http\Controllers\DeliveryPriceController;
 use App\Http\Controllers\FoodRestaurantController;
 use App\Http\Controllers\RestaurantFoodController;
@@ -62,7 +64,6 @@ use App\Http\Controllers\RestaurantAddressController;
 use App\Http\Controllers\FeatureRestaurantsController;
 use App\Http\Controllers\BiddingPriceByDriverController;
 use App\Http\Controllers\CalculateDeliveryFeesController;
-use App\Http\Controllers\ProductOrderController;
 use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 
 Route::get('/user', function (Request $request) {
@@ -161,6 +162,11 @@ Route::middleware(['auth:api'])->group(function () {
     // Restaurant Info
     Route::resource('restaurant', RestaurantController::class);
     Route::resource('restaurant_food_topping', RestaurantFoodController::class);
+
+
+    Route::post('/stripe/connect', [StripeController::class, 'createAccount']);
+    Route::get('/stripe/account', [StripeController::class, 'getAccountInfo']);
+
 
     //Restaurant_Food
     Route::controller(RestaurantFoodController::class)->group(function () {
