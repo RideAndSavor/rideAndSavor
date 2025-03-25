@@ -163,9 +163,14 @@ Route::middleware(['auth:api'])->group(function () {
     Route::resource('restaurant', RestaurantController::class);
     Route::resource('restaurant_food_topping', RestaurantFoodController::class);
 
+    //stripe connect
 
-    Route::post('/stripe/connect', [StripeController::class, 'createAccount']);
-    Route::get('/stripe/account', [StripeController::class, 'getAccountInfo']);
+    Route::get('stripe/connect/{shop_id}', [StripeController::class, 'connectShopToStripe']);
+    Route::get('stripe/callback', [StripeController::class, 'handleStripeCallback'])->name('stripe.callback');
+    Route::get('shop/{shop_id}/stripe', [StripeController::class, 'getShopStripeAccount']);
+
+
+
 
 
     //Restaurant_Food

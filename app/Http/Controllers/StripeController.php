@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Stripe\OAuth;
 use Stripe\Stripe;
 use Stripe\Account;
 use App\Models\Shop;
+use Illuminate\Http\Request;
 use App\Models\StripePaymentAccount;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,60 +15,67 @@ class StripeController extends Controller
     /**
      * Redirect shop owner to Stripe for account creation
      */
-    public function createAccount(Request $request)
+    public function connectShopToStripe(Request $request)
     {
-        $shop = Shop::where('id', $request->shop_id)->first();
+        $connectUrl = "https://connect.stripe.com/oauth/authorize?response_type=code"
+            . "&client_id=" . config('services.stripe.client_id')
+            . "&scope=read_write"
+            . "&redirect_uri=" . route('stripe.callback');
 
-        if (!$shop) {
-            return response()->json(['error' => 'Shop not found'], 404);
-        }
-
-        Stripe::setApiKey(config('services.stripe.secret'));
-
-        // Create Stripe Account for the shop
-        $account = Account::create([
-            'type' => 'express',
-            'country' => 'US', // Change this based on your country
-            'email' => $shop->email,
-            'capabilities' => [
-                'card_payments' => ['requested' => true],
-                'transfers' => ['requested' => true],
-            ],
-        ]);
-
-        // Store Stripe account ID in 'stripe_payment_accounts' table
-        StripePaymentAccount::updateOrCreate(
-            ['shop_id' => $shop->id],
-            ['stripe_account_id' => $account->id]
-        );
-
-        // Generate Stripe Account Link for onboarding
-        $accountLink = \Stripe\AccountLink::create([
-            'account' => $account->id,
-            'refresh_url' => url('/stripe/reauth'),
-            'return_url' => url('/stripe/success'),
-            'type' => 'account_onboarding',
-        ]);
-
-        return response()->json(['url' => $accountLink->url]);
+        return response()->json(['url' => $connectUrl]);
     }
+
 
     /**
      * Retrieve Shop Stripe Account Info
      */
-    public function getAccountInfo(Request $request)
+    public function handleStripeCallback(Request $request)
     {
-        $shop = Shop::where('id', $request->shop_id)->with('stripePaymentAccount')->first();
+        try {
+            // Get the code from the Stripe callback
+            $code = $request->code;
 
-        if (!$shop || !$shop->stripePaymentAccount || !$shop->stripePaymentAccount->stripe_account_id) {
-            return response()->json(['error' => 'Shop Stripe account not found'], 404);
+            // Exchange the code for an access token and Stripe account ID
+            $response = OAuth::token([
+                'grant_type' => 'authorization_code',
+                'code' => $code,
+            ]);
+
+            // Retrieve the shop owner's Stripe account ID
+            $stripeAccountId = $response->stripe_user_id;
+
+            // Save the Stripe account ID to the database for the shop
+            $shop = auth()->user()->shop; // Get the authenticated user's shop
+            StripePaymentAccount::updateOrCreate(
+                ['shop_id' => $shop->id],
+                ['stripe_account_id' => $stripeAccountId]
+            );
+
+            // Return the Stripe account ID as a response
+            return response()->json([
+                'message' => 'Shop successfully connected to Stripe!',
+                'stripe_account_id' => $stripeAccountId
+            ]);
+        } catch (\Exception $e) {
+            // Handle any errors that occur during the process
+            return response()->json(['error' => 'Stripe connection failed: ' . $e->getMessage()], 500);
         }
-
-        Stripe::setApiKey(config('services.stripe.secret'));
-
-        $account = Account::retrieve($shop->stripePaymentAccount->stripe_account_id);
-
-        return response()->json(['stripe_account' => $account]);
     }
+
+    public function getShopStripeAccount($shop_id)
+{
+    // Find the shop by ID
+    $shop = Shop::find($shop_id);
+
+    // Check if the shop has a connected Stripe account
+    if ($shop && $shop->paymentAccount) {
+        return response()->json([
+            'stripe_account_id' => $shop->paymentAccount->stripe_account_id
+        ]);
+    } else {
+        return response()->json(['error' => 'Shop is not connected to Stripe'], 404);
+    }
+}
+
 }
 

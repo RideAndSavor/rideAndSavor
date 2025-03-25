@@ -118,6 +118,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Travel::class, 'user_id'); // 'user_id' is the foreign key in the travels table
     }
 
+    public function shop()
+    {
+        return $this->hasOne(Shop::class);
+    }
+
 
     // public function foods()
     // {
