@@ -48,6 +48,7 @@ return [
     'secret' => env('STRIPE_SECRET'),
     'public' => env('STRIPE_PUBLIC'),
     ],
+
     'paypal' => [
     'mode' => env('PAYPAL_MODE', 'sandbox'),
     'sandbox' => [
