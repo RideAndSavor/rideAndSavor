@@ -87,4 +87,9 @@ class Shop extends Model
     {
         return $this->morphMany(Images::class, 'imageable');
     }
+
+    public function stripePaymentAccount()
+    {
+        return $this->hasOne(StripePaymentAccount::class, 'shop_id', 'id');
+    }
 }
