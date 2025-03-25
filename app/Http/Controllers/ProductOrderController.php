@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\TransactionRequest;
 use Darryldecode\Cart\Facades\CartFacade as Cart;
+use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
 class ProductOrderController extends Controller
 {
@@ -75,85 +76,173 @@ class ProductOrderController extends Controller
         }
     }
 
-    public function processPayment(TransactionRequest $request)
-    {
+    public function processPayment(Request $request)
+{
+    $request->validate([
+        'order_id' => 'required|exists:product_orders,id',
+        'payment_method' => 'required|in:paypal,stripe',
+        'stripeToken' => 'required_if:payment_method,stripe', // Required for Stripe
+    ]);
 
-        $validatedData = $request->validated();
-        // Retrieve the order using the order_id
-        $order = ProductOrder::findOrFail($validatedData['order_id']);
-        // dd($order);
-        // Ensure the order has a shop relationship
-        $shop = $order->shop; // Assuming an Order belongs to a Shop
-        // dd($shop);
-        if (!$shop || !$shop->email) {
-            return response()->json(['error' => 'Shop email not found'], 400);
+    // Retrieve the order
+    $order = ProductOrder::findOrFail($request->order_id);
+    $shop = $order->shop;
+
+    if (!$shop || !$shop->email) {
+        return response()->json(['error' => 'Shop email not found'], 400);
+    }
+
+    // Check if payment is already processed
+    $existingTransaction = Transaction::where('order_id', $order->id)->first();
+    if ($existingTransaction) {
+        return response()->json([
+            'message' => 'Payment already processed for this order.',
+            'transaction' => $existingTransaction
+        ], 200);
+    }
+
+    try {
+        if ($request->payment_method === 'stripe') {
+            // Process Stripe Payment
+            return $this->processStripePayment($order, $shop, $request->stripeToken);
+        } elseif ($request->payment_method === 'paypal') {
+            // Process PayPal Payment
+            return $this->processPaypalPayment($order, $shop);
+        }
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Payment failed: ' . $e->getMessage()], 500);
+    }
+}
+private function processStripePayment($order, $shop, $stripeToken)
+{
+    Stripe::setApiKey(config('services.stripe.secret'));
+
+    // Calculate minimum required MMK amount (if applicable)
+    $usdToMmkRate = 0.00024;
+    $minAmountMMK = ceil(50 / $usdToMmkRate);
+    $chargeAmount = max($order->final_price * 100, $minAmountMMK);
+
+    // Create Stripe Charge
+    $charge = Charge::create([
+        'amount' => $chargeAmount,
+        'currency' => 'mmk',
+        'source' => $stripeToken,
+        'description' => "Payment for Order #" . $order->id,
+    ]);
+
+    // Store Transaction
+    $transaction = Transaction::create([
+        'order_id' => $order->id,
+        'transaction_id' => $charge->id,
+        'amount' => $order->final_price,
+        'currency' => 'MMK',
+        'payment_method' => 'stripe',
+        'status' => $charge->status,
+    ]);
+
+    // Update order status to "Paid"
+    $order->update(['status_id' => 2]);
+
+    // Send email to shop owner
+    Mail::to($shop->email)->send(new PaymentSuccessMail($order, $transaction));
+
+    return response()->json([
+        'message' => 'Payment successful via Stripe, email sent to shop!',
+        'transaction' => $transaction,
+    ]);
+}
+private function processPaypalPayment($order, $shop)
+{
+    try {
+        // Initialize PayPal client
+        $provider = new PayPalClient;
+        $provider->setApiCredentials(config('services.paypal'));
+        $paypalToken = $provider->getAccessToken(); // Get PayPal token
+        // dd($paypalToken);
+
+        // Prepare PayPal order creation request
+        $response = $provider->createOrder([
+        "intent" => "CAPTURE",
+        "purchase_units" => [
+        [
+            "amount" => [
+            "currency_code" => "USD",
+            "value" => number_format($order->final_price, 2, '.', ''),
+                ]
+            ]
+        ],
+            "application_context" => [
+            "return_url" => "https://yourdomain.com/paypal/success", // PayPal success URL
+            "cancel_url" => "https://yourdomain.com/paypal/cancel", // PayPal cancel URL
+            "notify_url" => config('services.paypal.notify_url') // PayPal notification URL
+            ]
+        ]);
+
+        // Check if the PayPal order was created successfully
+        if (isset($response['id']) && $response['status'] == "CREATED") {
+            foreach ($response['links'] as $link) {
+                if ($link['rel'] === 'approve') {
+                // Send the PayPal approval URL to the client for redirection
+                return response()->json([
+                'message' => 'Redirect to PayPal',
+                'approval_url' => $link['href']
+                ]);
+                }
+            }
         }
 
-        // Check if the payment has already been processed for this order
-        $existingTransaction = Transaction::where('order_id', $order->id)->first();
-        // dd($existingTransaction);
-        if ($existingTransaction) {
-            // If a transaction exists, return a response indicating the payment has already been processed
-            return response()->json([
-                'message' => 'Payment already processed for this order.',
-                'transaction' => $existingTransaction
-            ], 200);
+        return response()->json(['error' => 'Payment failed. Unable to create PayPal order.'], 500);
+        } catch (Exception $e) {
+        return response()->json(['error' => 'Payment failed: ' . $e->getMessage()], 500);
         }
+}
 
+public function successPayment(Request $request)
+{
+    $request->validate([
+        'order_id' => 'required|exists:product_orders,id',
+        'paypal_order_id' => 'required',
+    ]);
 
-        try {
-            // Set Stripe Secret Key
-            Stripe::setApiKey(config('services.stripe.secret'));
-            // $amountInSatang = $order->final_price * 100;
+    $order = ProductOrder::findOrFail($request->order_id);
 
-            // // Create Stripe Charge
-            // $charge = Charge::create([
-            //     'amount' => $amountInSatang, // Convert to cents
-            //     'currency' => 'MMK',
-            //     'source' => $request->stripeToken,
-            //     'description' => "Payment for Order #" . $order->id,
-            // ]);
+    try {
+        // Initialize PayPal client
+        $provider = new PayPalClient;
+        $provider->setApiCredentials(config('services.paypal'));
+        $paypalToken = $provider->getAccessToken();
 
-            $usdToMmkRate = 0.00024;
+        // Capture the payment
+        $response = $provider->capturePaymentOrder($request->paypal_order_id);
 
-            // Calculate minimum required MMK amount
-            $minAmountMMK = ceil(50 / $usdToMmkRate);
-
-            // Ensure the charge amount is at least the minimum required
-            $chargeAmount = max($order->final_price * 100, $minAmountMMK);
-
-            $charge = Charge::create([
-                'amount' => $chargeAmount, // Ensure minimum amount
-                'currency' => 'mmk',
-                'source' => $request->stripeToken,
-                'description' => "Payment for Order #" . $order->id,
-            ]);
-
-            // Store Transaction
-            $transaction=Transaction::create([
+        if (isset($response['status']) && $response['status'] == "COMPLETED") {
+            // Save transaction details
+            $transaction = Transaction::create([
                 'order_id' => $order->id,
-                'transaction_id' => $charge->id,
+                'transaction_id' => $response['id'],
                 'amount' => $order->final_price,
-                'currency' => 'MMK',
-                'payment_method' => 'stripe',
-                'status' => $charge->status,
+                'currency' => 'USD',
+                'payment_method' => 'paypal',
+                'status' => 'Completed',
             ]);
-            // dd($transaction);
 
-            // Optionally, update the order status to 'Paid' or similar
-            $order->update(['status_id' => 2]);  // Assuming '2' means 'Paid'
+            // Update order status
+            $order->update(['status_id' => 2]); // Mark as paid
 
-
-            // Send email to shop owner
-            Mail::to($shop->email)->send(new PaymentSuccessMail($order, $transaction));
+            // Send confirmation email
+            Mail::to($order->shop->email)->send(new PaymentSuccessMail($order, $transaction));
 
             return response()->json([
                 'message' => 'Payment successful, email sent to shop!',
                 'transaction' => $transaction,
             ]);
-
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Payment failed: ' . $e->getMessage()], 500);
         }
+
+        return response()->json(['error' => 'Payment not completed.'], 500);
+    } catch (Exception $e) {
+        return response()->json(['error' => 'Payment capture failed: ' . $e->getMessage()], 500);
     }
+}
+
+
 }

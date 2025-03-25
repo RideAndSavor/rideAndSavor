@@ -78,7 +78,7 @@ class BiddingPriceByDriverController extends BaseController
             $biddingPrices = $this->biddingPriceByDriverService->getBiddingPricesByUserId($userId);
 
             if ($biddingPrices->isEmpty()) {
-                return response()->json(['message' => 'No bids found for your trips'], 404);
+                return response()->json([['message' => 'No bids found for your trips'],'data' => []]);
             }
             $data = $biddingPrices->map(function ($biddingPrice) {
                 return [
