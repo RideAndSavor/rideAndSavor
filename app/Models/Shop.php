@@ -25,6 +25,7 @@ class Shop extends Model
         'open_time',
         'close_time',
         'status',
+        'user_id',
     ];
 
     protected $casts = [
@@ -46,6 +47,7 @@ class Shop extends Model
             'social_media_links' => StringField::new(), // This might need a JSON field handling
             'open_time' => StringField::new(),
             'close_time' => StringField::new(),
+            'user_id' => IntegerField::new(),
         ];
 
         if (!array_key_exists($column, $arr)) {
@@ -86,6 +88,11 @@ class Shop extends Model
     public function images()
     {
         return $this->morphMany(Images::class, 'imageable');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);  // Assumes the 'shop' table has a 'user_id' foreign key
     }
 
     public function stripePaymentAccount()
