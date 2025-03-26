@@ -47,9 +47,10 @@ class BiddingPriceByDriverService
         return $this->repository->deleteByTravelId($travelId);
     }
 
-    public function getBiddingPricesByUserId($userId)
+    public function getBiddingPricesByTravelId($travelId)
     {
-        return $this->repository->getBiddingPricesByUserId($userId);
+        return $this->repository->getBiddingPricesByTravelId($travelId);
     }
+
 
 }
