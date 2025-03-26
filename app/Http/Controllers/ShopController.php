@@ -47,6 +47,7 @@ class ShopController extends BaseController
             $image[] = $validateData['upload_url'] ?? [];
             unset($validateData['upload_url']);
 
+            $validateData['user_id'] = Auth::id();
             $shop = $this->shopService->store($validateData);
 
             // ✅ Then, handle image upload
