@@ -90,9 +90,9 @@ class Shop extends Model
         return $this->morphMany(Images::class, 'imageable');
     }
 
-    public function user()
+    public function shop()
     {
-        return $this->belongsTo(User::class);  // Assumes the 'shop' table has a 'user_id' foreign key
+        return $this->hasOne(Shop::class);
     }
 
     public function stripePaymentAccount()
