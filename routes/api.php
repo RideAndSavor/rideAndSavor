@@ -163,15 +163,6 @@ Route::middleware(['auth:api'])->group(function () {
     Route::resource('restaurant', RestaurantController::class);
     Route::resource('restaurant_food_topping', RestaurantFoodController::class);
 
-    //stripe connect
-
-    Route::get('stripe/connect/{shop_id}', [StripeController::class, 'connectShopToStripe']);
-    Route::get('stripe/callback', [StripeController::class, 'handleStripeCallback'])->name('stripe.callback');
-    Route::get('shop/{shop_id}/stripe', [StripeController::class, 'getShopStripeAccount']);
-
-
-
-
 
     //Restaurant_Food
     Route::controller(RestaurantFoodController::class)->group(function () {
@@ -212,6 +203,15 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('users/{userId}/recent-orders', [OrderController::class, 'getRecentOrder']);
 });
 
+
+//stripe
+Route::middleware(['auth:api'])->group(function (){
+
+    Route::get('/stripe/connect', [StripeController::class, 'redirectToStripe']);
+    Route::get('/stripe/callback', [StripeController::class, 'handleStripeCallback'])->withoutMiddleware('auth:api');
+    Route::get('shop/{shop_id}/stripe', [StripeController::class, 'getShopStripeAccount']);
+
+});
 
 
 //tzm

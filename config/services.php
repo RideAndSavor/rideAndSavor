@@ -47,6 +47,8 @@ return [
     'stripe' => [
     'secret' => env('STRIPE_SECRET'),
     'public' => env('STRIPE_PUBLIC'),
+    'client_id' => env('STRIPE_CLIENT_ID'),
+    'redirect_uri' => env('STRIPE_REDIRECT_URI'),
     ],
 
     'paypal' => [
