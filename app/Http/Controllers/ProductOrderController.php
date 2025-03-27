@@ -15,11 +15,19 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\TransactionRequest;
+use App\Http\Controllers\StripeController;
 use Darryldecode\Cart\Facades\CartFacade as Cart;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
 class ProductOrderController extends Controller
 {
+    protected $stripeController;
+
+    public function __construct(StripeController $stripeController)
+    {
+        $this->stripeController = $stripeController;
+    }
+
     public function checkout(Request $request)
     {
         $cartItems = Cart::getContent();
@@ -104,7 +112,7 @@ class ProductOrderController extends Controller
     try {
         if ($request->payment_method === 'stripe') {
             // Process Stripe Payment
-            return $this->processStripePayment($order, $shop, $request->stripeToken);
+            return $this->stripeController->processStripePayment($order, $shop, $request->stripeToken);
         } elseif ($request->payment_method === 'paypal') {
             // Process PayPal Payment
             return $this->processPaypalPayment($order, $shop);

@@ -3,13 +3,17 @@
 namespace App\Http\Controllers;
 
 use Stripe\OAuth;
+use Stripe\Charge;
 use Stripe\Stripe;
 use Stripe\Account;
 use App\Models\Shop;
 use App\Models\User;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
+use App\Mail\PaymentSuccessMail;
 use App\Models\StripePaymentAccount;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class StripeController extends Controller
@@ -151,6 +155,60 @@ public function handleStripeCallback(Request $request)
     // If it's not a GET request, return a method not allowed response
     return response()->json(['error' => 'Invalid request method. Only GET is allowed'], 405);
 }
+
+public function processStripePayment($order, $shop, $stripeToken)
+{
+    // Retrieve the shop's Stripe account ID
+    $shopStripeAccount = StripePaymentAccount::where('shop_id', $shop->id)->first();
+
+    if (!$shopStripeAccount || !$shopStripeAccount->stripe_account_id) {
+        return response()->json(['error' => 'Shop does not have a connected Stripe account'], 400);
+    }
+
+    Stripe::setApiKey(config('services.stripe.secret'));
+
+    // Calculate minimum required MMK amount (if applicable)
+    $usdToMmkRate = 0.00024;
+    $minAmountMMK = ceil(50 / $usdToMmkRate);
+    $chargeAmount = max($order->final_price * 100, $minAmountMMK);
+
+    try {
+        // Create a charge that goes directly to the shop's Stripe account
+        $charge = Charge::create([
+            'amount' => $chargeAmount,
+            'currency' => 'mmk',
+            'source' => $stripeToken,
+            'description' => "Payment for Order #" . $order->id,
+            'transfer_data' => [
+                'destination' => $shopStripeAccount->stripe_account_id, // Direct payment to shop's Stripe account
+            ],
+        ]);
+
+        // Store Transaction
+        $transaction = Transaction::create([
+            'order_id' => $order->id,
+            'transaction_id' => $charge->id,
+            'amount' => $order->final_price,
+            'currency' => 'MMK',
+            'payment_method' => 'stripe',
+            'status' => $charge->status,
+        ]);
+
+        // Update order status to "Paid"
+        $order->update(['status_id' => 2]);
+
+        // Send email to shop owner
+        Mail::to($shop->email)->send(new PaymentSuccessMail($order, $transaction));
+
+        return response()->json([
+            'message' => 'Payment successful via Stripe, email sent to shop!',
+            'transaction' => $transaction,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Payment failed: ' . $e->getMessage()], 500);
+    }
+}
+
 
 
 
