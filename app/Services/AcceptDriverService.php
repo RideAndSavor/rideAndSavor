@@ -71,4 +71,13 @@ class AcceptDriverService
         $this->repository->delete($id);
     }
 
+
+    public function getDriverNotifications($driverId)
+    {
+        $notifications = AcceptDriver::where('taxi_driver_id', $driverId)
+            ->select('user_id', 'travel_id', 'id')
+            ->get();
+
+        return $notifications;
+    }
 }

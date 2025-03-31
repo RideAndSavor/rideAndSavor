@@ -28,9 +28,8 @@ class UpdateDriverLocation implements ShouldQueue
         // $currentLocation = $location['current_location'];
 
         // dd($currentLocation);
-
         // Find the taxi driver by ID
-        $taxiDriver = TaxiDriver::where('user_id', $location['driver_id'])->first();
+        $taxiDriver = TaxiDriver::where('id', $location['driver_id'])->first();
         // dd($taxiDriver);
 
         if ($taxiDriver) {
