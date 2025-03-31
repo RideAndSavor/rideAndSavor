@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\AcceptDriverService;
 use App\Http\Requests\AcceptDriverRequest;
 use App\Http\Resources\AcceptDriverResource;
+use App\Http\Resources\DriverNotificationResource;
 
 
 class AcceptDriverController extends Controller
@@ -36,17 +37,8 @@ class AcceptDriverController extends Controller
             // Validate and assign authenticated user's ID to the request data
             $validatedData = $request->validated();
             $validatedData['user_id'] = Auth::id(); // Add the authenticated user's ID
-        
-
-
             // Store the accepted driver
             $acceptedDriver = $this->acceptDriverService->store($validatedData);
-
-            return response()->json([
-                'message' => 'Driver accepted and bidding entry deleted successfully!',
-                'data' => $acceptedDriver
-            ], 200);
-           // $acceptedDriver = $this->acceptDriverService->store($validatedData);
 
             return response()->json([
                 'message' => 'Driver accepted and bidding entry deleted successfully!',
@@ -86,6 +78,18 @@ class AcceptDriverController extends Controller
             return response()->json(['message' => 'Accepted driver deleted successfully'], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Something went wrong while deleting!'], 500);
+        }
+    }
+
+    // Get a specific accepted driver
+    public function getDriverNotifications($driverId)
+    {
+        try {
+            $notifications = $this->acceptDriverService->getDriverNotifications($driverId);
+
+            return response()->json(DriverNotificationResource::collection($notifications));
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch notifications'], 500);
         }
     }
 }
