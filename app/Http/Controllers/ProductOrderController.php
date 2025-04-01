@@ -121,44 +121,7 @@ class ProductOrderController extends Controller
         return response()->json(['error' => 'Payment failed: ' . $e->getMessage()], 500);
     }
 }
-private function processStripePayment($order, $shop, $stripeToken)
-{
-    Stripe::setApiKey(config('services.stripe.secret'));
 
-    // Calculate minimum required MMK amount (if applicable)
-    $usdToMmkRate = 0.00024;
-    $minAmountMMK = ceil(50 / $usdToMmkRate);
-    $chargeAmount = max($order->final_price * 100, $minAmountMMK);
-
-    // Create Stripe Charge
-    $charge = Charge::create([
-        'amount' => $chargeAmount,
-        'currency' => 'mmk',
-        'source' => $stripeToken,
-        'description' => "Payment for Order #" . $order->id,
-    ]);
-
-    // Store Transaction
-    $transaction = Transaction::create([
-        'order_id' => $order->id,
-        'transaction_id' => $charge->id,
-        'amount' => $order->final_price,
-        'currency' => 'MMK',
-        'payment_method' => 'stripe',
-        'status' => $charge->status,
-    ]);
-
-    // Update order status to "Paid"
-    $order->update(['status_id' => 2]);
-
-    // Send email to shop owner
-    Mail::to($shop->email)->send(new PaymentSuccessMail($order, $transaction));
-
-    return response()->json([
-        'message' => 'Payment successful via Stripe, email sent to shop!',
-        'transaction' => $transaction,
-    ]);
-}
 private function processPaypalPayment($order, $shop)
 {
     try {
