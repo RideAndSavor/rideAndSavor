@@ -72,7 +72,7 @@ class AcceptDriverService
     }
 
 
-    public function getDriverNotifications($driverId)
+    public function getDriverHistory($driverId)
     {
         $notifications = AcceptDriver::where('taxi_driver_id', $driverId)
             ->select('user_id', 'travel_id', 'id')
@@ -80,4 +80,22 @@ class AcceptDriverService
 
         return $notifications;
     }
-}
+
+    public function getDriverNotifications($driverId, $travelId)
+    {
+
+            // Fetch notifications where both driver_id and travel_id match the given parameters
+            $notifications = AcceptDriver::where('taxi_driver_id', $driverId)
+                ->where('travel_id', $travelId)
+                ->select('user_id', 'travel_id', 'id')
+                ->get();
+
+            // if ($notifications->isEmpty()) {
+            //     return response()->json(['message' => 'No matching notifications found.'], 404);
+            // }
+
+            return $notifications;
+        }
+    }
+
+

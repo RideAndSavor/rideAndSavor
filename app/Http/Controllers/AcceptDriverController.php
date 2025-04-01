@@ -81,11 +81,22 @@ class AcceptDriverController extends Controller
         }
     }
 
-    // Get a specific accepted driver
-    public function getDriverNotifications($driverId)
+    public function getDriverHistory($driverId)
     {
         try {
-            $notifications = $this->acceptDriverService->getDriverNotifications($driverId);
+            $notifications = $this->acceptDriverService->getDriverHistory($driverId);
+
+            return response()->json(DriverNotificationResource::collection($notifications));
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch notifications'], 500);
+        }
+    }
+
+
+    public function getNotiForDriver($driverId, $travelId)
+    {
+        try {
+            $notifications = $this->acceptDriverService->getDriverNotifications($driverId, $travelId);
 
             return response()->json(DriverNotificationResource::collection($notifications));
         } catch (\Exception $e) {
