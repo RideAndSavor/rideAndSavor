@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TaxiDriver;
+use App\Models\AcceptDriver;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Exceptions\CustomException;
 use Illuminate\Support\Facades\Auth;
 use App\Services\AcceptDriverService;
 use App\Http\Requests\AcceptDriverRequest;
@@ -34,10 +37,16 @@ class AcceptDriverController extends Controller
     public function store(AcceptDriverRequest $request)
     {
         try {
-            // Validate and assign authenticated user's ID to the request data
             $validatedData = $request->validated();
-            $validatedData['user_id'] = Auth::id(); // Add the authenticated user's ID
-            // Store the accepted driver
+            $validatedData['user_id'] = Auth::id();
+
+            $driver = TaxiDriver::findOrFail($validatedData['taxi_driver_id']);
+            if ($driver->is_available === 0) {
+                return response()->json([
+                    'message' => 'This driver is not available, choose another driver!'
+                ], 200);
+            }
+
             $acceptedDriver = $this->acceptDriverService->store($validatedData);
 
             return response()->json([
@@ -45,7 +54,8 @@ class AcceptDriverController extends Controller
                 'data' => $acceptedDriver
             ], 200);
 
-            return response()->json(['error' => 'Travel not found or something went wrong!'], 404);
+        } catch (CustomException $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Something went wrong while accepting the driver!'], 500);
         }
@@ -92,15 +102,63 @@ class AcceptDriverController extends Controller
         }
     }
 
-
-    public function getNotiForDriver($driverId, $travelId)
+    public function getNotiForDriver($driverId)
     {
         try {
-            $notifications = $this->acceptDriverService->getDriverNotifications($driverId, $travelId);
+            $notifications = $this->acceptDriverService->getDriverNotifications($driverId);
 
             return response()->json(DriverNotificationResource::collection($notifications));
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to fetch notifications'], 500);
+        }
+    }
+
+    public function updateDriverStatus(Request $request)
+    {
+        $request->validate([
+            'travel_id' => 'required|integer',
+            'status' => 'required|in:accepted,rejected',
+        ]);
+
+        try {
+
+            $driverId = Auth::id(); // Assuming you're using Laravel's auth system
+            $taxiDriver = TaxiDriver::where('user_id', $driverId)->first('id');
+            $taxiDriverId = $taxiDriver->id;
+
+            $notification = AcceptDriver::where('taxi_driver_id', $taxiDriverId)
+                ->where('travel_id', $request->travel_id)
+                ->where('status', 'pending')
+                ->firstOrFail();
+
+            // Update the status based on the driver's decision
+            $notification->update(['status' => $request->status]);
+
+            return response()->json([
+                'message' => "Status updated successfully to {$request->status}",
+                'data' => $notification,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to update status or notification not found'], 500);
+        }
+    }
+
+    public function completeTravel($travelId)
+    {
+        try {
+            $completed = $this->acceptDriverService->completeTravel($travelId);
+
+            if ($completed) {
+                return response()->json([
+                    'message' => 'Trip completed successfully. Driver is now available for the next trip.'
+                ], 200);
+            }
+
+            return response()->json([
+                'message' => 'Failed to complete trip.'
+            ], 500);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }

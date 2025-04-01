@@ -81,6 +81,7 @@ Route::post('/social/login/callback-url', [SocialLoginController::class, 'handle
 
 Route::post('signup', [AuthController::class, 'register'])->name('register');
 Route::post('login', [AuthController::class, 'login'])->name('login');
+Route::get('/users/{id}', [AuthController::class, 'show']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
 Route::resource('paymentmodes', PaymentProviderController::class);
 
@@ -101,7 +102,10 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/driver/{driverId}/notifications', [TaxiDriverController::class, 'getDriverNotifications']);
 
     Route::get('/driver/history/{driverId}', [AcceptDriverController::class, 'getDriverHistory']);
-    Route::get('/driver/notifications/{driverId}/{travelId}', [AcceptDriverController::class, 'getNotiForDriver']);
+    Route::get('/driver/acceptedUserNoti/{driverId}', [AcceptDriverController::class, 'getNotiForDriver']);
+    Route::post('/driver_accept_to_user', [AcceptDriverController::class, 'updateDriverStatus']);
+    Route::post('/travel/{travelId}/complete', [AcceptDriverController::class, 'completeTravel']);
+
 
     //user get bidding prices
     Route::get('user/bidding-prices/{travel_id}', [BiddingPriceByDriverController::class, 'getBiddingPricesByTravelId']);
