@@ -213,7 +213,6 @@ Route::middleware(['auth:api'])->group(function () {
 
 //stripe
 Route::middleware(['auth:api'])->group(function (){
-
     Route::get('/stripe/connect', [StripeController::class, 'redirectToStripe']);
     Route::get('/stripe/callback', [StripeController::class, 'handleStripeCallback'])->withoutMiddleware('auth:api');
     Route::get('shop/{shop_id}/stripe', [StripeController::class, 'getShopStripeAccount']);
