@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
+use App\Models\TaxiDriver;
 use App\Models\AcceptDriver;
 use App\Services\TravelService;
+use Illuminate\Support\Facades\DB;
+use App\Exceptions\CustomException;
 use App\Services\NearbyTaxiService;
 use App\Contracts\AcceptDriverInterface;
 use App\Services\BiddingPriceByDriverService;
-use Illuminate\Support\Facades\DB;
-use App\Exceptions\CustomException;
 
 class AcceptDriverService
 {
@@ -35,11 +36,16 @@ class AcceptDriverService
         return $this->repository->all();
     }
 
-
-
     public function store(array $data): AcceptDriver
     {
         return DB::transaction(function () use ($data) {
+            // Check driver availability first (This is now redundant, but keep it for safety if needed)
+            $driver = TaxiDriver::findOrFail($data['taxi_driver_id']);
+
+            if ($driver->is_available === 0) {
+                throw new CustomException("This driver is not available, choose another driver!");
+            }
+
             // Update the travel status to 'accepted'
             if (!$this->travelService->updateStatus($data['travel_id'], 'accepted')) {
                 throw new CustomException("Failed to update travel status");
@@ -55,11 +61,13 @@ class AcceptDriverService
                 throw new CustomException("Failed to delete nearby taxi entries");
             }
 
+            // Update driver availability
+            $driver->update(['is_available' => 0]);
+
             // Store the accepted driver entry
             return $this->repository->store($data);
         });
     }
-
 
     public function update(array $data, int $id)
     {
@@ -81,21 +89,40 @@ class AcceptDriverService
         return $notifications;
     }
 
-    public function getDriverNotifications($driverId, $travelId)
+    public function getDriverNotifications($driverId)
     {
+        // Fetch notifications where driver_id matches and status is 'pending'
+        $notifications = AcceptDriver::where('taxi_driver_id', $driverId)
+            ->where('status', 'pending')
+            ->select('user_id', 'travel_id', 'id')
+            ->get();
 
-            // Fetch notifications where both driver_id and travel_id match the given parameters
-            $notifications = AcceptDriver::where('taxi_driver_id', $driverId)
-                ->where('travel_id', $travelId)
-                ->select('user_id', 'travel_id', 'id')
-                ->get();
-
-            // if ($notifications->isEmpty()) {
-            //     return response()->json(['message' => 'No matching notifications found.'], 404);
-            // }
-
-            return $notifications;
-        }
+        return $notifications;
     }
+
+    public function completeTravel(int $travelId): bool
+    {
+        return DB::transaction(function () use ($travelId) {
+            // Find the accepted driver entry based on travel_id
+            $acceptedDriver = AcceptDriver::where('travel_id', $travelId)->first();
+
+            if (!$acceptedDriver) {
+                throw new CustomException("Travel not found.");
+            }
+
+            // Update trip status to completed
+            $acceptedDriver->update(['status' => 'completed']);
+
+            // Mark the driver as available again
+            $driver = TaxiDriver::find($acceptedDriver->taxi_driver_id);
+            if ($driver) {
+                $driver->update(['is_available' => 1]);
+            }
+
+            return true;
+        });
+    }
+
+}
 
 

@@ -68,8 +68,6 @@ class AuthController extends Controller
         }
     }
 
-
-
     public function login(Request $request)
     {
         $userData = $request->validate([
@@ -92,6 +90,27 @@ class AuthController extends Controller
             'message' => Config::get('variable.INVALID_USERNAME_ADN_PASSWORD')
         ], Config::get('variable.CLIENT_ERROR'));
     }
+
+    public function show($id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone_no' => $user->phone_no,
+            'gender' => $user->gender,
+            'age' => $user->age
+        ], 200);
+    }
+
 
     // public function logout()
     // {

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\DB\Core\StringField;
 use App\DB\Core\IntegerField;
 use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ class AcceptDriver extends Model
 {
     use HasFactory;
     protected $table = 'accepted_drivers';
-    protected $fillable = ['user_id', 'taxi_driver_id', 'travel_id', 'price'];
+    protected $fillable = ['user_id', 'taxi_driver_id', 'travel_id', 'price', 'status'];
 
     public function saveableFields($column): object
     {
@@ -20,6 +21,7 @@ class AcceptDriver extends Model
             'taxi_driver_id' => IntegerField::new(),
             'travel_id' => IntegerField::new(),
             'price' => IntegerField::new(), // Change to DecimalField if needed
+            'status' => StringField::new()
         ];
 
         if (!array_key_exists($column, $arr)) {
