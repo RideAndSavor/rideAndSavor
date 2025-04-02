@@ -120,6 +120,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::delete('/cart/remove/{id}', [CartSessionController::class, 'removeCartItem']);
     Route::post('/cart/update', [CartSessionController::class, 'updateCartItem']);
     Route::get('/cartview', [CartSessionController::class, 'getCartItems']);
+    Route::get('user-orders', [ProductOrderController::class, 'getUserPendingOrders']);
     Route::post('/checkout', [ProductOrderController::class, 'checkout']);
     Route::post('/process-payment', [ProductOrderController::class, 'processPayment']);
     Route::post('/success-payment', [ProductOrderController::class, 'successPayment']);
