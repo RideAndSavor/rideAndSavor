@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Mail\PaymentSuccessMail;
+use Illuminate\Support\Facades\Log;
 use App\Models\StripePaymentAccount;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -18,7 +19,7 @@ use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class StripeController extends Controller
 {
-    
+
  public function redirectToStripe()
     {
         $user = Auth::guard('api')->user();
@@ -98,58 +99,87 @@ public function handleStripeCallback(Request $request)
         return response()->json(['error' => 'Invalid request method. Only GET is allowed'], 405);
     }
 
-public function processStripePayment($order, $shop, $stripeToken)
-{
-    // Retrieve the shop's Stripe account ID
-    $shopStripeAccount = StripePaymentAccount::where('shop_id', $shop->id)->first();
+    public function processStripePayment($order, $shop, $stripeToken)
+    {
+        // Retrieve the shop's Stripe account ID
+        $shopStripeAccount = StripePaymentAccount::where('shop_id', $shop->id)->first();
 
-    if (!$shopStripeAccount || !$shopStripeAccount->stripe_account_id) {
-        return response()->json(['error' => 'Shop does not have a connected Stripe account'], 400);
+        if (!$shopStripeAccount || !$shopStripeAccount->stripe_account_id) {
+            return response()->json(['error' => 'Shop does not have a connected Stripe account'], 400);
+        }
+
+        Stripe::setApiKey(config('services.stripe.secret'));
+
+        // Calculate minimum required MMK amount (if applicable)
+        $usdToMmkRate = 0.00024;
+        $minAmountMMK = ceil(50 / $usdToMmkRate);
+        $chargeAmount = max($order->final_price * 100, $minAmountMMK);
+
+        try {
+            // Attempt to charge the customer
+            $charge = Charge::create([
+                'amount' => $chargeAmount,
+                'currency' => 'mmk',
+                'source' => $stripeToken,
+                'description' => "Payment for Order #" . $order->id,
+                'transfer_data' => [
+                    'destination' => $shopStripeAccount->stripe_account_id,
+                ],
+            ]);
+
+            if ($charge->status !== 'succeeded') {
+                // Log failed payment for review
+                Log::error("Payment failed for Order #{$order->id}: Charge status - {$charge->status}");
+
+                return response()->json([
+                    'error' => 'Payment was not successful. Please try again or use a different card.',
+                ], 402);
+            }
+
+            // Store transaction
+            $transaction = Transaction::create([
+                'order_id' => $order->id,
+                'transaction_id' => $charge->id,
+                'amount' => $order->final_price,
+                'currency' => 'MMK',
+                'payment_method' => 'stripe',
+                'status' => 'succeeded',
+            ]);
+
+            // Update order status to "Paid"
+            $order->update(['status_id' => 2]);
+
+            // Send email to shop owner
+            Mail::to($shop->email)->send(new PaymentSuccessMail($order, $transaction));
+
+            return response()->json([
+                'message' => 'Payment successful via Stripe, email sent to shop!',
+                'transaction' => $transaction,
+            ]);
+
+        } catch (\Stripe\Exception\CardException $e) {
+            // Handle card errors (declined, insufficient funds, etc.)
+            Log::error("Stripe Card Error: " . $e->getMessage());
+
+            return response()->json(['error' => 'Your card was declined: ' . $e->getMessage()], 402);
+        } catch (\Stripe\Exception\InvalidRequestException $e) {
+            // Handle invalid parameters
+            Log::error("Stripe Invalid Request: " . $e->getMessage());
+
+            return response()->json(['error' => 'Invalid payment request. Please contact support.'], 400);
+        } catch (\Stripe\Exception\ApiErrorException $e) {
+            // Handle API connection issues
+            Log::error("Stripe API Error: " . $e->getMessage());
+
+            return response()->json(['error' => 'Payment failed due to a Stripe error. Please try again later.'], 500);
+        } catch (\Exception $e) {
+            // Handle general errors
+            Log::error("Payment Processing Error: " . $e->getMessage());
+
+            return response()->json(['error' => 'An unexpected error occurred. Please try again.'], 500);
+        }
     }
 
-    Stripe::setApiKey(config('services.stripe.secret'));
-
-    // Calculate minimum required MMK amount (if applicable)
-    $usdToMmkRate = 0.00024;
-    $minAmountMMK = ceil(50 / $usdToMmkRate);
-    $chargeAmount = max($order->final_price * 100, $minAmountMMK);
-
-    try {
-        // Create a charge that goes directly to the shop's Stripe account
-        $charge = Charge::create([
-            'amount' => $chargeAmount,
-            'currency' => 'mmk',
-            'source' => $stripeToken,
-            'description' => "Payment for Order #" . $order->id,
-            'transfer_data' => [
-                'destination' => $shopStripeAccount->stripe_account_id, // Direct payment to shop's Stripe account
-            ],
-        ]);
-
-        // Store Transaction
-        $transaction = Transaction::create([
-            'order_id' => $order->id,
-            'transaction_id' => $charge->id,
-            'amount' => $order->final_price,
-            'currency' => 'MMK',
-            'payment_method' => 'stripe',
-            'status' => $charge->status,
-        ]);
-
-        // Update order status to "Paid"
-        $order->update(['status_id' => 2]);
-
-        // Send email to shop owner
-        Mail::to($shop->email)->send(new PaymentSuccessMail($order, $transaction));
-
-        return response()->json([
-            'message' => 'Payment successful via Stripe, email sent to shop!',
-            'transaction' => $transaction,
-        ]);
-    } catch (\Exception $e) {
-        return response()->json(['error' => 'Payment failed: ' . $e->getMessage()], 500);
-    }
-}
 
 
 
