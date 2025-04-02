@@ -43,7 +43,8 @@ class AcceptDriverController extends Controller
             $driver = TaxiDriver::findOrFail($validatedData['taxi_driver_id']);
             if ($driver->is_available === 0) {
                 return response()->json([
-                    'message' => 'This driver is not available, choose another driver!'
+                    'message' => 'This driver is not available, choose another driver!',
+                    'data' => []
                 ], 200);
             }
 
@@ -148,7 +149,7 @@ class AcceptDriverController extends Controller
 
             if ($completed) {
                 return response()->json([
-                    'message' => 'Trip completed successfully. Driver is now available for the next trip.'
+                    'message' => 'Travel completed successfully. Driver is now available for the next trip.'
                 ], 200);
             }
 
