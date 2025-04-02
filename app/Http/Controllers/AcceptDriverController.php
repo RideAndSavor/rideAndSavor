@@ -117,12 +117,10 @@ class AcceptDriverController extends Controller
     {
         $request->validate([
             'travel_id' => 'required|integer',
-            'status' => 'required|in:accepted,rejected',
         ]);
 
         try {
-
-            $driverId = Auth::id(); // Assuming you're using Laravel's auth system
+            $driverId = Auth::id();
             $taxiDriver = TaxiDriver::where('user_id', $driverId)->first('id');
             $taxiDriverId = $taxiDriver->id;
 
@@ -131,17 +129,17 @@ class AcceptDriverController extends Controller
                 ->where('status', 'pending')
                 ->firstOrFail();
 
-            // Update the status based on the driver's decision
-            $notification->update(['status' => $request->status]);
+            $notification->update(['status' => 'accepted']);
 
             return response()->json([
-                'message' => "Status updated successfully to {$request->status}",
+                'message' => "Status updated successfully to accepted",
                 'data' => $notification,
             ], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to update status or notification not found'], 500);
         }
     }
+
 
     public function completeTravel($travelId)
     {
