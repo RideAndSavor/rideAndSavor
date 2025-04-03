@@ -8,7 +8,9 @@ use Stripe\Stripe;
 use Stripe\Account;
 use App\Models\Shop;
 use App\Models\User;
+use App\Models\Product;
 use App\Models\Transaction;
+use App\Models\ProductOrder;
 use Illuminate\Http\Request;
 use App\Mail\PaymentSuccessMail;
 use Illuminate\Support\Facades\Log;
@@ -110,7 +112,7 @@ public function handleStripeCallback(Request $request)
 
         Stripe::setApiKey(config('services.stripe.secret'));
 
-        // Calculate minimum required MMK amount (if applicable)
+        // Calculate minimum required MMK amount
         $usdToMmkRate = 0.00024;
         $minAmountMMK = ceil(50 / $usdToMmkRate);
         $chargeAmount = max($order->final_price * 100, $minAmountMMK);
@@ -128,7 +130,6 @@ public function handleStripeCallback(Request $request)
             ]);
 
             if ($charge->status !== 'succeeded') {
-                // Log failed payment for review
                 Log::error("Payment failed for Order #{$order->id}: Charge status - {$charge->status}");
 
                 return response()->json([
@@ -149,6 +150,46 @@ public function handleStripeCallback(Request $request)
             // Update order status to "Paid"
             $order->update(['status_id' => 2]);
 
+            // 🔹 Reduce stock quantity for each product in the order
+            try {
+                $order = ProductOrder::with('orderDetails')->findOrFail($order->id);
+                Log::info("✅ Order Found: Order ID {$order->id}");
+
+                if ($order->orderDetails->isEmpty()) {
+                    Log::error("❌ Order ID {$order->id} has NO order details!");
+                    return response()->json(['error' => 'No order details found.'], 400);
+                }
+
+                foreach ($order->orderDetails as $orderItem) {
+                    Log::info("🔍 Processing Order Item - Product ID: {$orderItem->product_id}, Quantity: {$orderItem->quantity}");
+
+                    $product = Product::find($orderItem->product_id);
+
+                    if (!$product) {
+                        Log::error("❌ Product not found for ID: {$orderItem->product_id}");
+                        continue; // Skip this product if not found
+                    }
+
+                    Log::info("🔍 Current Stock for Product ID {$product->id}: {$product->stock_quantity}");
+
+                    // Calculate new stock
+                    $newStock = max(0, $product->stock_quantity - $orderItem->quantity);
+                    Log::info("📉 New Stock for Product ID {$product->id}: {$newStock}");
+
+                    // Update product stock
+                    $updated = Product::where('id', $product->id)->update(['stock_quantity' => $newStock]);
+
+                    if ($updated) {
+                        Log::info("✅ Stock successfully updated for Product ID {$product->id}");
+                    } else {
+                        Log::error("❌ Failed to update stock for Product ID {$product->id}");
+                    }
+                }
+            } catch (\Exception $e) {
+                Log::error("❌ Error fetching order details: " . $e->getMessage());
+                return response()->json(['error' => 'Failed to fetch order details. Please check logs.'], 500);
+            }
+
             // Send email to shop owner
             Mail::to($shop->email)->send(new PaymentSuccessMail($order, $transaction));
 
@@ -158,27 +199,20 @@ public function handleStripeCallback(Request $request)
             ]);
 
         } catch (\Stripe\Exception\CardException $e) {
-            // Handle card errors (declined, insufficient funds, etc.)
             Log::error("Stripe Card Error: " . $e->getMessage());
-
             return response()->json(['error' => 'Your card was declined: ' . $e->getMessage()], 402);
         } catch (\Stripe\Exception\InvalidRequestException $e) {
-            // Handle invalid parameters
             Log::error("Stripe Invalid Request: " . $e->getMessage());
-
             return response()->json(['error' => 'Invalid payment request. Please contact support.'], 400);
         } catch (\Stripe\Exception\ApiErrorException $e) {
-            // Handle API connection issues
             Log::error("Stripe API Error: " . $e->getMessage());
-
             return response()->json(['error' => 'Payment failed due to a Stripe error. Please try again later.'], 500);
         } catch (\Exception $e) {
-            // Handle general errors
             Log::error("Payment Processing Error: " . $e->getMessage());
-
             return response()->json(['error' => 'An unexpected error occurred. Please try again.'], 500);
         }
     }
+
 
 
 

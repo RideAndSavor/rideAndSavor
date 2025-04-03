@@ -11,66 +11,72 @@ class CartSessionController extends Controller
 {
 
 
-public function addToCart(Request $request)
-{
-    $product = Product::with('images')->findOrFail($request->product_id);
-    $unit_price = $product->original_price;
-    $quantity = $request->quantity ?? 1;
-    $shop_id = $product->shop_id; // Assuming Product has a `shop_id` column
+    public function addToCart(Request $request)
+    {
+        $product = Product::with('images')->findOrFail($request->product_id);
+        $quantity = $request->quantity ?? 1;
 
-    // Get the first image of the product (assuming you store the image path in `upload_url`)
-    $image = $product->images->first() ? $product->images->first()->upload_url : null;
+        // 🔹 Check if the product has enough stock
+        if ($product->stock_quantity < $quantity) {
+            return response()->json(['error' => 'Not enough stock available.'], 400);
+        }
 
-    // Calculate discount (example: percentage discount)
-    $discountPercentage = $product->discount_price ?? 0; // Percentage discount from request
-    $discountAmount = ($unit_price * $quantity) * ($discountPercentage / 100); // Calculate discount amount
-    $afterDiscountPrice = ($unit_price * $quantity) - $discountAmount; // Final price after discount
+        $unit_price = $product->original_price;
+        $shop_id = $product->shop_id;
+        $image = $product->images->first() ? $product->images->first()->upload_url : null;
 
-    // Check if item already exists in cart
-    $existingItem = Cart::get($product->id);
+        $discountPercentage = $product->discount_price ?? 0;
+        $discountAmount = ($unit_price * $quantity) * ($discountPercentage / 100);
+        $afterDiscountPrice = ($unit_price * $quantity) - $discountAmount;
 
-    if ($existingItem) {
-        // If item exists, update quantity, total price, and apply discount
-        $newQuantity = $existingItem->quantity + $quantity;  // Add new quantity to existing quantity
-        $newTotalPrice = $unit_price * $newQuantity;  // Recalculate total price with updated quantity
-        $newDiscountAmount = ($unit_price * $newQuantity) * ($discountPercentage / 100);  // Recalculate discount
-        $newAfterDiscountPrice = ($unit_price * $newQuantity) - $newDiscountAmount;  // Recalculate price after discount
+        $existingItem = Cart::get($product->id);
 
-        // Update the cart item
-        Cart::update($product->id, [
-            'quantity' => $quantity,  // Update quantity with new total
-            'price' => $unit_price,  // Price remains the same
-            'attributes' => [
-                'user_id' => Auth::id(),
-                'unit_price' => $unit_price,
-                'total_price' => $newTotalPrice,  // Update total price with new total
-                'discount_amount' => $newDiscountAmount,  // Update discount amount
-                'after_discount_price' => $newAfterDiscountPrice,  // Update price after discount
-                'shop_id' => $shop_id,
-                'image' => $image,  // Store image URL in cart
-            ]
-        ]);
-    } else {
-        // If item does not exist, add as a new cart item
-        Cart::add([
-            'id' => $product->id,
-            'name' => $product->name,
-            'price' => $unit_price,
-            'quantity' => $quantity,  // Add new quantity
-            'attributes' => [
-                'user_id' => Auth::id(),
-                'unit_price' => $unit_price,
-                'total_price' => $unit_price * $quantity,  // Initial total price
-                'discount_amount' => $discountAmount,  // Store discount amount
-                'after_discount_price' => $afterDiscountPrice,  // Store price after discount
-                'shop_id' => $shop_id,
-                'image' => $image,  // Store image URL in cart
-            ]
-        ]);
+        if ($existingItem) {
+            $newQuantity = $existingItem->quantity + $quantity;
+
+            // 🔹 Check if adding the new quantity exceeds available stock
+            if ($product->stock_quantity < $newQuantity) {
+                return response()->json(['error' => 'Not enough stock available for this quantity.'], 400);
+            }
+
+            $newTotalPrice = $unit_price * $newQuantity;
+            $newDiscountAmount = ($unit_price * $newQuantity) * ($discountPercentage / 100);
+            $newAfterDiscountPrice = ($unit_price * $newQuantity) - $newDiscountAmount;
+
+            Cart::update($product->id, [
+                'quantity' => $newQuantity,
+                'price' => $unit_price,
+                'attributes' => [
+                    'user_id' => Auth::id(),
+                    'unit_price' => $unit_price,
+                    'total_price' => $newTotalPrice,
+                    'discount_amount' => $newDiscountAmount,
+                    'after_discount_price' => $newAfterDiscountPrice,
+                    'shop_id' => $shop_id,
+                    'image' => $image,
+                ]
+            ]);
+        } else {
+            Cart::add([
+                'id' => $product->id,
+                'name' => $product->name,
+                'price' => $unit_price,
+                'quantity' => $quantity,
+                'attributes' => [
+                    'user_id' => Auth::id(),
+                    'unit_price' => $unit_price,
+                    'total_price' => $unit_price * $quantity,
+                    'discount_amount' => $discountAmount,
+                    'after_discount_price' => $afterDiscountPrice,
+                    'shop_id' => $shop_id,
+                    'image' => $image,
+                ]
+            ]);
+        }
+
+        return response()->json(['message' => 'Product added to cart successfully!']);
     }
 
-    return response()->json(['message' => 'Product added to cart successfully!']);
-}
 
 public function updateCartItem(Request $request)
 {
