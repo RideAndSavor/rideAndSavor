@@ -64,9 +64,14 @@ class ProductOrder extends Model
         return $this->hasMany(Transaction::class);
     }
 
+    public function orderDetails()
+    {
+        return $this->hasMany(ProductOrderDetail::class, 'product_order_id'); // Correct foreign key
+    }
+
     public function shop()
     {
-        return $this->belongsTo(Shop::class, 'shop_id'); 
+        return $this->belongsTo(Shop::class, 'shop_id');
     }
 }
 
