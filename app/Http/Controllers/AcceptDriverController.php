@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Travel;
 use App\Models\TaxiDriver;
 use App\Models\AcceptDriver;
 use Illuminate\Http\Request;
@@ -115,31 +116,35 @@ class AcceptDriverController extends Controller
     }
 
     public function updateDriverStatus(Request $request)
-    {
-        $request->validate([
-            'travel_id' => 'required|integer',
-        ]);
+{
+    $request->validate([
+        'travel_id' => 'required|integer',
+    ]);
 
-        try {
-            $driverId = Auth::id();
-            $taxiDriver = TaxiDriver::where('user_id', $driverId)->first('id');
-            $taxiDriverId = $taxiDriver->id;
+    try {
+        $driverId = Auth::id();
+        $taxiDriver = TaxiDriver::where('user_id', $driverId)->firstOrFail(['id']);
+        $taxiDriverId = $taxiDriver->id;
 
-            $notification = AcceptDriver::where('taxi_driver_id', $taxiDriverId)
-                ->where('travel_id', $request->travel_id)
-                ->where('status', 'pending')
-                ->firstOrFail();
+        $notification = AcceptDriver::where('taxi_driver_id', $taxiDriverId)
+            ->where('travel_id', $request->travel_id)
+            ->where('status', 'pending')
+            ->firstOrFail();
 
-            $notification->update(['status' => 'accepted']);
+        $notification->update(['status' => 'accepted']);
 
-            return response()->json([
-                'message' => "Status updated successfully to accepted",
-                'data' => $notification,
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to update status or notification not found'], 500);
-        }
+        $travelData = Travel::findOrFail($request->travel_id);
+
+        return response()->json([
+            'message' => "Status updated successfully to accepted",
+            'data' => $notification,
+            'travel_data' => $travelData, // Include travel data in the response
+        ], 200);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Failed to update status or notification not found'], 500);
     }
+}
+
 
 
     public function completeTravel($travelId)

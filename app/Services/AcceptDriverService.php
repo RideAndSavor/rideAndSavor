@@ -42,10 +42,6 @@ class AcceptDriverService
             // Check driver availability first (This is now redundant, but keep it for safety if needed)
             $driver = TaxiDriver::findOrFail($data['taxi_driver_id']);
 
-            if ($driver->is_available === 0) {
-                throw new CustomException("This driver is not available, choose another driver!");
-            }
-
             // Update the travel status to 'accepted'
             if (!$this->travelService->updateStatus($data['travel_id'], 'accepted')) {
                 throw new CustomException("Failed to update travel status");
@@ -61,10 +57,8 @@ class AcceptDriverService
                 throw new CustomException("Failed to delete nearby taxi entries");
             }
 
-            // Update driver availability
             $driver->update(['is_available' => 0]);
 
-            // Store the accepted driver entry
             return $this->repository->store($data);
         });
     }
