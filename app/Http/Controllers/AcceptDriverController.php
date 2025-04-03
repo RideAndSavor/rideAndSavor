@@ -6,22 +6,25 @@ use App\Models\Travel;
 use App\Models\TaxiDriver;
 use App\Models\AcceptDriver;
 use Illuminate\Http\Request;
+use App\Services\TravelService;
 use Illuminate\Support\Facades\DB;
 use App\Exceptions\CustomException;
 use Illuminate\Support\Facades\Auth;
 use App\Services\AcceptDriverService;
+use App\Http\Resources\TravelResource;
 use App\Http\Requests\AcceptDriverRequest;
 use App\Http\Resources\AcceptDriverResource;
 use App\Http\Resources\DriverNotificationResource;
 
-
 class AcceptDriverController extends Controller
 {
     protected $acceptDriverService;
+    protected $travelService;
 
-    public function __construct(AcceptDriverService $acceptDriverService)
+    public function __construct(AcceptDriverService $acceptDriverService,TravelService $travelService)
     {
         $this->acceptDriverService = $acceptDriverService;
+        $this->travelService = $travelService;
     }
 
     // Get all accepted drivers
@@ -116,34 +119,39 @@ class AcceptDriverController extends Controller
     }
 
     public function updateDriverStatus(Request $request)
-{
-    $request->validate([
-        'travel_id' => 'required|integer',
-    ]);
+    {
+        $request->validate([
+            'travel_id' => 'required|integer',
+        ]);
 
-    try {
-        $driverId = Auth::id();
-        $taxiDriver = TaxiDriver::where('user_id', $driverId)->firstOrFail(['id']);
-        $taxiDriverId = $taxiDriver->id;
+        try {
+            $driverId = Auth::id();
+            $taxiDriver = TaxiDriver::where('user_id', $driverId)->firstOrFail(['id']);
+            $taxiDriverId = $taxiDriver->id;
 
-        $notification = AcceptDriver::where('taxi_driver_id', $taxiDriverId)
-            ->where('travel_id', $request->travel_id)
-            ->where('status', 'pending')
-            ->firstOrFail();
+            $notification = AcceptDriver::where('taxi_driver_id', $taxiDriverId)
+                ->where('travel_id', $request->travel_id)
+                ->where('status', 'pending')
+                ->firstOrFail();
 
-        $notification->update(['status' => 'accepted']);
+            $notification->update(['status' => 'accepted']);
 
-        $travelData = Travel::findOrFail($request->travel_id);
+            $travel = $this->travelService->getById($request->travel_id);
 
-        return response()->json([
-            'message' => "Status updated successfully to accepted",
-            'data' => $notification,
-            'travel_data' => $travelData, // Include travel data in the response
-        ], 200);
-    } catch (\Exception $e) {
-        return response()->json(['error' => 'Failed to update status or notification not found'], 500);
+            if (!$travel) {
+                return response()->json(['message' => 'Travel not found'], 404);
+            }
+
+            return response()->json([
+                'message' => "Status updated successfully to accepted",
+                'data' => new AcceptDriverResource($notification),
+                'travel_data' => new TravelResource($travel), 
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to update status or notification not found'], 500);
+        }
     }
-}
+
 
 
 

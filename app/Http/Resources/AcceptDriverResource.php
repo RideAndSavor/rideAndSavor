@@ -20,6 +20,7 @@ class AcceptDriverResource extends JsonResource
             'travel_id' => $this->travel_id,
             'taxi_driver_id' => $this->taxi_driver_id,
             'price' => $this->price,
+            'status' => $this->status,
         ];
     }
 
