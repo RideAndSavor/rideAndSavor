@@ -28,6 +28,11 @@ class TravelService
       return $this->repository->all();
     }
 
+    public function getById(int $id)
+    {
+        return $this->repository->getById($id);
+    }
+
     public function store(array $data): Travel
     {
       return $this->repository->store($data);
