@@ -22,10 +22,15 @@ use Srmklive\PayPal\Services\PayPal as PayPalClient;
 class ProductOrderController extends Controller
 {
     protected $stripeController;
+    protected $KpayPaymentController;
+    protected $wavePayPaymentController;
 
-    public function __construct(StripeController $stripeController)
+
+    public function __construct(StripeController $stripeController, KpayPaymentController $kpayPaymentController, WavePayPaymentController $wavePayPaymentController)
     {
         $this->stripeController = $stripeController;
+        $this->KpayPaymentController = $kpayPaymentController;
+        $this->wavePayPaymentController = $wavePayPaymentController;
     }
 
     public function checkout(Request $request)
@@ -88,7 +93,7 @@ class ProductOrderController extends Controller
     {
         $request->validate([
             'order_id' => 'required|exists:product_orders,id',
-            'payment_method' => 'required|in:paypal,stripe',
+            'payment_method' => 'required|in:paypal,stripe,kpay,wavepay',
             'stripeToken' => 'required_if:payment_method,stripe', // Required for Stripe
         ]);
 
@@ -116,6 +121,15 @@ class ProductOrderController extends Controller
             } elseif ($request->payment_method === 'paypal') {
                 // Process PayPal Payment
                 return $this->processPaypalPayment($order, $shop);
+            }
+            elseif ($request->payment_method === 'kpay') {
+                return $this->KpayPaymentController->processKpayPayment($order, $shop);
+            }
+
+            elseif ($request->payment_method === 'wavepay') {
+                return $this->wavePayPaymentController->processWavepayPayment($order, $shop);
+            } else {
+                return response()->json(['error' => 'Invalid payment method'], 400);
             }
         } catch (\Exception $e) {
             return response()->json(['error' => 'Payment failed: ' . $e->getMessage()], 500);
