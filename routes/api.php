@@ -104,6 +104,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/driver/history/{driverId}', [AcceptDriverController::class, 'getDriverHistory']);
     Route::get('/driver/acceptedUserNoti/{driverId}', [AcceptDriverController::class, 'getNotiForDriver']);
     Route::post('/driver_accept_to_user', [AcceptDriverController::class, 'updateDriverStatus']);
+    Route::get('/user/{travel_id}', [AcceptDriverController::class, 'showDriverComplete']);
     Route::post('/travel/{travelId}/complete', [AcceptDriverController::class, 'completeTravel']);
 
 
