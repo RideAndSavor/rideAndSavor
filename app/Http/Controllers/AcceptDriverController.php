@@ -145,12 +145,34 @@ class AcceptDriverController extends Controller
             return response()->json([
                 'message' => "Status updated successfully to accepted",
                 'data' => new AcceptDriverResource($notification),
-                'travel_data' => new TravelResource($travel), 
+                'travel_data' => new TravelResource($travel),
             ], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to update status or notification not found'], 500);
         }
     }
+
+
+    public function showDriverComplete($travel_id)
+{
+    try {
+        $userId = Auth::id(); // Get the logged-in user's ID
+
+        // Retrieve the AcceptDriver record with status 'accepted' and matching travel_id
+        $acceptDriver = AcceptDriver::where('travel_id', $travel_id)
+            ->where('status', 'accepted')
+            ->firstOrFail(); // Throw an exception if no record found
+
+        return response()->json([
+            'message' => 'Data retrieved successfully',
+            'data' => new AcceptDriverResource($acceptDriver),
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'No accepted driver status found for the provided travel ID'], 404);
+    }
+}
+
 
 
 
