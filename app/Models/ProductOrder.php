@@ -61,8 +61,9 @@ class ProductOrder extends Model
 
     public function payment()
     {
-        return $this->hasMany(Transaction::class);
+        return $this->hasMany(Transaction::class, 'order_id');
     }
+
 
     public function orderDetails()
     {

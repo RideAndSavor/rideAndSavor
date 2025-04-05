@@ -55,4 +55,8 @@ class Images extends Model
     {
         return $this->belongsTo(Product::class, 'link_id');
     }
+    public function transaction(): BelongsTo
+    {
+        return $this->belongsTo(Transaction::class, 'link_id');
+    }
 }

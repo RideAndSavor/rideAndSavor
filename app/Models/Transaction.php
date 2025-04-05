@@ -7,6 +7,7 @@ use App\DB\Core\DecimalField;
 use App\DB\Core\IntegerField;
 use App\Exceptions\CrudException;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Transaction extends Model
@@ -44,7 +45,14 @@ class Transaction extends Model
 }
 
     // Relationship with Order
-    public function order() {
-        return $this->belongsTo(ProductOrder::class);
+    public function order()
+    {
+        return $this->belongsTo(ProductOrder::class, 'order_id');
+    }
+
+
+    public function images()
+    {
+        return $this->morphMany(Images::class, 'imageable');
     }
 }
