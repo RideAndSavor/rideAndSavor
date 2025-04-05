@@ -160,7 +160,7 @@ class AcceptDriverController extends Controller
 
         // Retrieve the AcceptDriver record with status 'accepted' and matching travel_id
         $acceptDriver = AcceptDriver::where('travel_id', $travel_id)
-            ->where('status', 'accepted')
+            ->where('status', 'completed')
             ->firstOrFail(); // Throw an exception if no record found
 
         return response()->json([
