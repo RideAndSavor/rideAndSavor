@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Mail\PaymentSuccessMail;
 use App\Models\ProductOrderDetail;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\TransactionRequest;
@@ -123,11 +124,11 @@ class ProductOrderController extends Controller
                 return $this->processPaypalPayment($order, $shop);
             }
             elseif ($request->payment_method === 'kpay') {
-                return $this->KpayPaymentController->processKpayPayment($order, $shop);
+                return $this->KpayPaymentController->processKpayPayment($request, $order, $shop);
             }
 
             elseif ($request->payment_method === 'wavepay') {
-                return $this->wavePayPaymentController->processWavepayPayment($order, $shop);
+                return $this->wavePayPaymentController->processWavepayPayment($request, $order, $shop);
             } else {
                 return response()->json(['error' => 'Invalid payment method'], 400);
             }
@@ -228,6 +229,75 @@ class ProductOrderController extends Controller
             return response()->json(['error' => 'Payment capture failed: ' . $e->getMessage()], 500);
         }
     }
+
+    public function getOrderNotifications()
+    {
+        // Assuming the logged-in user is a shop owner
+        $shopId = Auth::user()->shop->id; // Or however you access the logged-in shop's ID
+
+        // Fetch orders with status_id = 1 and related transactions and their images
+        $orders = ProductOrder::with(['payment.images', 'orderDetails', 'user'])
+            ->where('shop_id', $shopId)
+            ->where('status_id', 2)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'message' => 'Pending orders retrieved successfully.',
+            'orders' => $orders
+        ]);
+    }
+
+    public function confirmOrder($id)
+    {
+        $order = ProductOrder::where('id', $id)
+            ->where('shop_id', Auth::user()->shop->id)
+            ->with('orderDetails.product') // eager load related products
+            ->first();
+
+        if (!$order) {
+            return response()->json(['error' => 'Order not found or not authorized.'], 404);
+        }
+
+        // ✅ Update order status
+        $order->status_id = 3; // Confirmed status ID
+        $order->save();
+
+        // ✅ Loop through order items and update product stock
+        foreach ($order->orderDetails as $orderItem) {
+            $product = $orderItem->product;
+
+            if ($product) {
+                $newStock = max(0, $product->stock_quantity - $orderItem->quantity);
+
+                // Update stock
+                $product->stock_quantity = $newStock;
+                $product->save();
+
+                Log::info("📉 Updated stock for Product ID {$product->id}: {$newStock}");
+            }
+        }
+
+        return response()->json(['message' => 'Order confirmed and product stock updated successfully.']);
+    }
+
+
+    public function rejectOrder($id)
+    {
+        $order = ProductOrder::where('id', $id)
+            ->where('shop_id',Auth::user()->shop->id)
+            ->first();
+
+        if (!$order) {
+            return response()->json(['error' => 'Order not found or not authorized.'], 404);
+        }
+
+        $order->status_id = 4; // ✅ Update to your "rejected" status ID
+        $order->save();
+
+        return response()->json(['message' => 'Order rejected successfully.']);
+    }
+
 
     public function getUserPendingOrders()
     {

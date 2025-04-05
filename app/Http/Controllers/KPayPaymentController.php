@@ -2,17 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\KpayPaymentAccount;
+use Exception;
+use App\Traits\ImageTrait;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Exception;
-use Illuminate\Support\Facades\Mail;
+use App\Services\ImageService;
 use App\Mail\PaymentSuccessMail;
+use App\Models\KpayPaymentAccount;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class KPayPaymentController extends Controller
 {
-    public function processKpayPayment($order, $shop)
+    use ImageTrait;
+    protected $imageService;
+
+    public function __construct(ImageService $imageService)
+    {
+        $this->imageService = $imageService;
+    }
+    public function processKpayPayment(Request $request,$order, $shop)
     {
         // Retrieve the shop's KBZPay account ID
         $shopKpayAccount = KpayPaymentAccount::where('shop_id', $shop->id)->first();
@@ -39,6 +48,16 @@ class KPayPaymentController extends Controller
                     'payment_method' => 'kpay',
                     'status' => 'succeeded',
                 ]);
+
+                // ✅ Validate image upload
+                $request->validate([
+                    'upload_url' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                ]);
+
+                // ✅ Handle KPay screenshot upload
+                if ($request->hasFile('upload_url')) {
+                    $this->createImageTest($transaction, [[$request->file('upload_url')]], 'transaction_screenshots/', 'transaction');
+                }
 
                 // Update order status to "Paid"
                 $order->update(['status_id' => 2]);

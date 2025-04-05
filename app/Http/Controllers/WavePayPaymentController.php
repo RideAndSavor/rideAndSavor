@@ -2,17 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\WavepayPaymentAccount;
+use Exception;
+use App\Traits\ImageTrait;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Exception;
-use Illuminate\Support\Facades\Mail;
+use App\Services\ImageService;
 use App\Mail\PaymentSuccessMail;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Models\WavepayPaymentAccount;
 
 class WavePayPaymentController extends Controller
 {
-    public function processWavepayPayment($order, $shop)
+    use ImageTrait;
+    protected $imageService;
+
+    public function __construct(ImageService $imageService)
+    {
+        $this->imageService = $imageService;
+    }
+
+    public function processWavepayPayment(Request $request,$order, $shop)
     {
         // Retrieve the shop's WavePay account ID
         $shopWavepayAccount = WavepayPaymentAccount::where('shop_id', $shop->id)->first();
@@ -39,6 +49,11 @@ class WavePayPaymentController extends Controller
                     'payment_method' => 'wavepay',
                     'status' => 'succeeded',
                 ]);
+
+                // ✅ Handle KPay screenshot upload
+                if ($request->hasFile('upload_url')) {
+                    $this->createImageTest($transaction, [[$request->file('upload_url')]], 'transaction_screenshots/', 'transaction');
+                }
 
                 // Update order status to "Paid"
                 $order->update(['status_id' => 2]);

@@ -125,6 +125,9 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/checkout', [ProductOrderController::class, 'checkout']);
     Route::post('/process-payment', [ProductOrderController::class, 'processPayment']);
     Route::post('/success-payment', [ProductOrderController::class, 'successPayment']);
+    Route::get('/order-notifications', [ProductOrderController::class, 'getOrderNotifications']);
+    Route::post('/order/{id}/confirm', [ProductOrderController::class, 'confirmOrder']);
+    Route::post('/order/{id}/reject', [ProductOrderController::class, 'rejectOrder']);
     Route::get('/state/{country_id}', [StateController::class, 'getStatesByCountry']);
     Route::get('/city/{state_id}', [CityController::class, 'getCitiesByState']);
     Route::get('/township/{city_id}', [TownshipController::class, 'getTownshipsByCity']);
