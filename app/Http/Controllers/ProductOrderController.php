@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\TransactionRequest;
 use App\Http\Controllers\StripeController;
+use App\Mail\OrderStatusMail;
 use Darryldecode\Cart\Facades\CartFacade as Cart;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
@@ -234,7 +235,7 @@ class ProductOrderController extends Controller
     {
         // Assuming the logged-in user is a shop owner
         $shopId = Auth::user()->shop->id; // Or however you access the logged-in shop's ID
-
+        // dd($shopId);
         // Fetch orders with status_id = 1 and related transactions and their images
         $orders = ProductOrder::with(['payment.images', 'orderDetails', 'user'])
             ->where('shop_id', $shopId)
@@ -248,11 +249,15 @@ class ProductOrderController extends Controller
         ]);
     }
 
-    public function confirmOrder($id)
+    public function confirmOrder(Request $request, $id)
     {
+        $request->validate([
+            'remark' => 'nullable|string|max:255',
+        ]);
+
         $order = ProductOrder::where('id', $id)
             ->where('shop_id', Auth::user()->shop->id)
-            ->with('orderDetails.product') // eager load related products
+            ->with('orderDetails.product')
             ->first();
 
         if (!$order) {
@@ -261,6 +266,7 @@ class ProductOrderController extends Controller
 
         // ✅ Update order status
         $order->status_id = 3; // Confirmed status ID
+        $order->remark = $request->remark; // Store the confirmation remark
         $order->save();
 
         // ✅ Loop through order items and update product stock
@@ -277,26 +283,40 @@ class ProductOrderController extends Controller
                 Log::info("📉 Updated stock for Product ID {$product->id}: {$newStock}");
             }
         }
+        // ✅ Send email based on status
+   // ✅ Send confirmation email to user
+   Mail::to($order->user->email)->send(new OrderStatusMail($order, 'confirmed'));
 
-        return response()->json(['message' => 'Order confirmed and product stock updated successfully.']);
+
+        return response()->json([
+            'message' => 'Order confirmed, product stock updated successfully.',
+            'remark' => $order->remark
+        ]);
     }
 
 
-    public function rejectOrder($id)
+    public function rejectOrder(Request $request, $id)
     {
+        $request->validate([
+            'remark' => 'required|string|max:255',
+        ]);
+
         $order = ProductOrder::where('id', $id)
-            ->where('shop_id',Auth::user()->shop->id)
+            ->where('shop_id', Auth::user()->shop->id)
             ->first();
 
         if (!$order) {
             return response()->json(['error' => 'Order not found or not authorized.'], 404);
         }
 
-        $order->status_id = 4; // ✅ Update to your "rejected" status ID
+        $order->status_id = 4; // Rejected status ID
+        $order->remark = $request->remark; // Store the rejection reason
         $order->save();
+        Mail::to($order->user->email)->send(new OrderStatusMail($order, 'rejected', $request->remark));
 
-        return response()->json(['message' => 'Order rejected successfully.']);
+    return response()->json(['message' => 'Order rejected successfully.']);
     }
+
 
 
     public function getUserPendingOrders()
