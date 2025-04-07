@@ -65,6 +65,7 @@ use App\Http\Controllers\FeatureRestaurantsController;
 use App\Http\Controllers\BiddingPriceByDriverController;
 use App\Http\Controllers\CalculateDeliveryFeesController;
 use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
+use App\Http\Controllers\InvoiceController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -246,5 +247,12 @@ Route::middleware(['auth:api', 'driver'])->group(function () {
 
     Route::post('/driver/setting-price', [TripController::class, 'storeDriverSettingPrice']);
 });
+
+
+
+
+
+Route::get('/invoice/{orderId}', [InvoiceController::class, 'generateInvoice']);
+
 
 //end tzm
