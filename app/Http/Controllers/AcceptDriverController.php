@@ -156,12 +156,16 @@ class AcceptDriverController extends Controller
     public function showDriverComplete($travel_id)
 {
     try {
-        $userId = Auth::id(); // Get the logged-in user's ID
-
-        // Retrieve the AcceptDriver record with status 'accepted' and matching travel_id
         $acceptDriver = AcceptDriver::where('travel_id', $travel_id)
             ->where('status', 'completed')
-            ->firstOrFail(); // Throw an exception if no record found
+            ->first();
+
+        if (!$acceptDriver) {
+            return response()->json([
+                'message' => 'No accepted driver status found for the provided travel ID',
+                'data' => []
+            ]);
+        }
 
         return response()->json([
             'message' => 'Data retrieved successfully',
@@ -169,9 +173,10 @@ class AcceptDriverController extends Controller
         ], 200);
 
     } catch (\Exception $e) {
-        return response()->json(['error' => 'No accepted driver status found for the provided travel ID'], 404);
+        return response()->json(['error' => 'An error occurred while retrieving data'], 500);
     }
 }
+
 
 
 
