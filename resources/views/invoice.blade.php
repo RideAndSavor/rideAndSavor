@@ -22,23 +22,23 @@
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             border-top: 10px solid #d4af37;
         }
-        .left-item {
+        /* .left-item {
             text-align: left;
         }
 
         .right-item {
             text-align: right;
-        }
+        } */
 
 
-        .header {
+        /* .header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
             border-bottom: 2px solid #d4af37;
             padding-bottom: 15px;
             margin-bottom: 20px;
-        }
+        } */
 
 
 
@@ -115,37 +115,31 @@
 </head>
 <body>
     <div class="invoice-box">
-        <div class="header">
-            <div class="left-item">
-                <div>
+        <table style="width: 100%; border-bottom: 2px solid #d4af37; padding-bottom: 15px; margin-bottom: 20px;">
+            <tr>
+                <!-- Left side: Invoice info -->
+                <td style="vertical-align: top; width: 50%;">
                     <h2>INVOICE</h2>
                     <p><strong>Invoice #:</strong> {{ $order->id }}</p>
                     <p><strong>Date:</strong> {{ $order->created_at->format('d M Y') }}</p>
-                </div>
-            </div>
+                </td>
 
-            <div class="right-item">
-                <div class="shop-logo">
+                <!-- Right side: Shop Logo + Details -->
+                <td style="text-align: right; vertical-align: top; width: 50%;">
                     @if($order->shop->images->isNotEmpty())
-                    {{-- @dd($order->shop->images->first()->upload_url) --}}
-                        {{-- <img src="{{ asset('storage/' . $order->shop->images->first()->upload_url) }}" alt="Shop Logo"> --}}
-                        {{-- @dd(Storage::url('app/public/')) --}}
-                        <img src="http://localhost:8000/storage/shop/1743502434291.png" alt="Shop Logo">
-
+                        <img src="{{ public_path('storage/' . $order->shop->images->first()->upload_url) }}" alt="Shop Logo" style="width: 100px;"><br>
                     @else
                         <p style="color: #777;">No Logo Available</p>
                     @endif
-                    {{-- <img src="https://images.unsplash.com/photo-1646579360571-de5ecf3af648?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y29zbWV0aWMlMjBzaG9wfGVufDB8fDB8fHww" alt=""> --}}
-                </div>
 
-                <div class="company-details">
                     <strong>{{ $order->shop->name }}</strong><br>
                     {{ $order->shop->email }}<br>
                     {{ $order->shop->address->block_no . ', ' . $order->shop->address->floor . ', ' . $order->shop->address->street->name . ', Ward: ' . $order->shop->address->street->ward->name ?? 'No address available' }}<br>
                     {{ $order->shop->address->street->ward->township->name . ', ' . $order->shop->address->street->ward->township->city->name . ', ' ?? 'No address available' }}
-                </div>
-            </div>
-        </div>
+                </td>
+            </tr>
+        </table>
+
 
         <div>
             <strong>Bill To:</strong><br>
