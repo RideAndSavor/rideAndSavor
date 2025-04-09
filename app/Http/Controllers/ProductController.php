@@ -34,6 +34,14 @@ class ProductController extends BaseController
         });
     }
 
+    public function show($id): JsonResponse
+    {
+        return $this->handleRequest(function () use ($id) {
+            $product = $this->productService->getById($id);
+            return response()->json(new ProductResource($product));
+        });
+    }
+
 
     public function store(ProductRequest $request): JsonResponse
     {
@@ -70,24 +78,38 @@ class ProductController extends BaseController
 
 
     /**
-     * Update a travel record.
+     * Update product.
      */
     public function update(ProductRequest $request, $id): JsonResponse
     {
+
         return $this->handleRequest(function () use ($request, $id) {
-            $travel = $this->productService->update($request->validated(), $id);
-            return response()->json(new ProductResource($travel));
+            $validatedData = $request->validated();
+
+            // ✅ Update the product
+            $product = $this->productService->update($validatedData, $id);
+
+            // ✅ Update pivot table (shop_category)
+            $shop_id = $validatedData['shop_id'];
+            $category_id = $product->subcategory->category_id;
+            DB::table('shop_category')->updateOrInsert([
+                'shop_id' => $shop_id,
+                'category_id' => $category_id,
+            ]);
+
+            return response()->json(new ProductResource($product));
         });
     }
 
+
     /**
-     * Delete a travel record.
+     * Delete product.
      */
     public function destroy($id): JsonResponse
     {
         return $this->handleRequest(function () use ($id) {
             $this->productService->delete($id);
-            return response()->json(['message' => 'Travel record deleted successfully'], 200);
+            return response()->json(['message' => 'Product deleted successfully'], 200);
         });
     }
 }

@@ -127,7 +127,10 @@
                 <!-- Right side: Shop Logo + Details -->
                 <td style="text-align: right; vertical-align: top; width: 50%;">
                     @if($order->shop->images->isNotEmpty())
-                        <img src="{{ public_path('storage/' . $order->shop->images->first()->upload_url) }}" alt="Shop Logo" style="width: 100px;"><br>
+                    <img
+                    src="{{ public_path('storage/' . $order->shop->images->first()->upload_url) }}"
+                    alt="Shop Logo"
+                    style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;"><br>
                     @else
                         <p style="color: #777;">No Logo Available</p>
                     @endif

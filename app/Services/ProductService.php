@@ -14,7 +14,7 @@ class ProductService
 
     public function getAllProducts()
     {
-        return $this->repository->all();
+        return $this->repository->all(['images', 'shop', 'subcategory', 'brand']);
     }
 
 
@@ -35,7 +35,8 @@ class ProductService
 
     public function getById(int $id)
     {
-        return $this->repository->getById($id);
+        return $this->repository->getById($id, ['images', 'shop', 'subcategory', 'brand']);
     }
+
 
 }

@@ -25,18 +25,23 @@ class BaseRepository implements BaseInterface
     $this->imageTable = Config::get('variables.IMAGE_MODEL');
   }
 
-  public function all()
+  public function all(array $relations = [])
   {
-    // dd("ok");
-    // dd($this->currentModel);
-    // dd($this->currentModel->all());
-    return $this->currentModel->all();
+      if(empty($relations)){
+        return $this->currentModel->all();
+      }else{
+        return $this->currentModel->with($relations)->get();
+      }
   }
 
-  public function getById($id)
-  {
-    return $this->currentModel->find($id);
-  }
+  public function getById(int $id, array $relations = [])
+    {
+        if(empty($relations)) {
+            return $this->currentModel->findOrFail($id);
+        } else {
+            return $this->currentModel->with($relations)->findOrFail($id);
+        }
+    }
 
   public function getByName($name)
   {
