@@ -18,7 +18,7 @@ class CartSessionController extends Controller
 
         // 🔹 Check if the product has enough stock
         if ($product->stock_quantity < $quantity) {
-            return response()->json(['error' => 'Not enough stock available.'], 400);
+            return response()->json(['error' => 'Not enough stock available.'], 200);
         }
 
         $unit_price = $product->original_price;

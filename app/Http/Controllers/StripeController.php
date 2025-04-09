@@ -160,31 +160,6 @@ public function handleStripeCallback(Request $request)
                     return response()->json(['error' => 'No order details found.'], 400);
                 }
 
-                foreach ($order->orderDetails as $orderItem) {
-                    Log::info("🔍 Processing Order Item - Product ID: {$orderItem->product_id}, Quantity: {$orderItem->quantity}");
-
-                    $product = Product::find($orderItem->product_id);
-
-                    if (!$product) {
-                        Log::error("❌ Product not found for ID: {$orderItem->product_id}");
-                        continue; // Skip this product if not found
-                    }
-
-                    Log::info("🔍 Current Stock for Product ID {$product->id}: {$product->stock_quantity}");
-
-                    // Calculate new stock
-                    $newStock = max(0, $product->stock_quantity - $orderItem->quantity);
-                    Log::info("📉 New Stock for Product ID {$product->id}: {$newStock}");
-
-                    // Update product stock
-                    $updated = Product::where('id', $product->id)->update(['stock_quantity' => $newStock]);
-
-                    if ($updated) {
-                        Log::info("✅ Stock successfully updated for Product ID {$product->id}");
-                    } else {
-                        Log::error("❌ Failed to update stock for Product ID {$product->id}");
-                    }
-                }
             } catch (\Exception $e) {
                 Log::error("❌ Error fetching order details: " . $e->getMessage());
                 return response()->json(['error' => 'Failed to fetch order details. Please check logs.'], 500);

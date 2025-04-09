@@ -43,11 +43,7 @@ class PaymentSuccessMail extends Mailable
 
         // Generate the image tag using base64 encoding
         $imageTag = "<p><strong>Payment Screenshot:</strong><br><img src='data:image/jpeg;base64,{$base64Image}' style='max-width: 300px;'></p>";
-    } else {
-        // Use a fallback image if no image is found
-        $imageTag = "<p><strong>Payment Screenshot:</strong><br><img src='https://www.pixelstalk.net/wp-content/uploads/2016/07/Download-Free-Pictures-3840x2160.jpg' style='max-width: 300px;'></p>";
     }
-
         // Construct the email message
         $message = "
             <h2>Payment Successful for Order #{$this->order->id}</h2>
