@@ -4,7 +4,6 @@ namespace App\Services;
 
 use illuminate\Database\Eloquent\Model;
 use App\Contracts\ImageInterface;
-use App\Contracts\ProductInterface;
 use App\Exceptions\CustomException;
 use Illuminate\Support\Facades\Storage;
 
@@ -24,14 +23,12 @@ class ImageService
 
     public function store(array $data, string $imageDir = null, string $diskName = null)
     {
-        // dd($imageDir);
         self::setImageDirectory($imageDir, $diskName);
         return $this->imageRepository->store($data, $imageDir, $diskName);
     }
 
     public function update(array $data, int $id, string $imageDir = null, string $diskName = null)
     {
-        /* Check whether intended record is in the image table */
         self::setImageDirectory($imageDir, $diskName);
         $this->checkRecordExists($id);
         return $this->imageRepository->update($data, $id, $imageDir, $diskName);
