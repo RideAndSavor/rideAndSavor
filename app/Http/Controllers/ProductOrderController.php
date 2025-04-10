@@ -250,49 +250,42 @@ class ProductOrderController extends Controller
     }
 
     public function confirmOrder(Request $request, $id)
-    {
-        $request->validate([
-            'remark' => 'nullable|string|max:255',
-        ]);
+{
+    $order = ProductOrder::where('id', $id)
+        ->where('shop_id', Auth::user()->shop->id)
+        ->with('orderDetails.product')
+        ->first();
 
-        $order = ProductOrder::where('id', $id)
-            ->where('shop_id', Auth::user()->shop->id)
-            ->with('orderDetails.product')
-            ->first();
-
-        if (!$order) {
-            return response()->json(['error' => 'Order not found or not authorized.'], 404);
-        }
-
-        // ✅ Update order status
-        $order->status_id = 3; // Confirmed status ID
-        $order->remark = $request->remark; // Store the confirmation remark
-        $order->save();
-
-        // ✅ Loop through order items and update product stock
-        foreach ($order->orderDetails as $orderItem) {
-            $product = $orderItem->product;
-
-            if ($product) {
-                $newStock = max(0, $product->stock_quantity - $orderItem->quantity);
-
-                // Update stock
-                $product->stock_quantity = $newStock;
-                $product->save();
-
-                Log::info("📉 Updated stock for Product ID {$product->id}: {$newStock}");
-            }
-        }
-        // ✅ Send email based on status
-   // ✅ Send confirmation email to user
-   Mail::to($order->user->email)->send(new OrderStatusMail($order, 'confirmed'));
-
-
-        return response()->json([
-            'message' => 'Order confirmed, product stock updated successfully.',
-            'remark' => $order->remark
-        ]);
+    if (!$order) {
+        return response()->json(['error' => 'Order not found or not authorized.'], 404);
     }
+
+    $order->status_id = 3; // Confirmed status ID
+    $order->remark = 'Order Confirm'; // Automatically set the remark
+    $order->save();
+
+    foreach ($order->orderDetails as $orderItem) {
+        $product = $orderItem->product;
+
+        if ($product) {
+            $newStock = max(0, $product->stock_quantity - $orderItem->quantity);
+
+            // Update stock
+            $product->stock_quantity = $newStock;
+            $product->save();
+
+            Log::info("📉 Updated stock for Product ID {$product->id}: {$newStock}");
+        }
+    }
+
+    Mail::to($order->user->email)->send(new OrderStatusMail($order, 'confirmed'));
+
+    return response()->json([
+        'message' => 'Order confirmed, product stock updated successfully.',
+        'remark' => $order->remark
+    ]);
+}
+
 
 
     public function rejectOrder(Request $request, $id)

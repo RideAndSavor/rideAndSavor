@@ -64,6 +64,10 @@ class Shop extends Model
         static::creating(function ($shop) {
             $shop->slug = Str::slug($shop->name);
         });
+
+        static::updating(function ($shop) {
+            $shop->slug = Str::slug($shop->name);
+        });
     }
 
     // Define the relationship with the Address model
