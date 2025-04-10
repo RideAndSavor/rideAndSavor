@@ -80,26 +80,67 @@ class ProductController extends BaseController
     /**
      * Update product.
      */
+    // public function update(ProductRequest $request, $id): JsonResponse
+    // {
+
+    //     return $this->handleRequest(function () use ($request, $id) {
+    //         $validatedData = $request->validated();
+
+    //         // ✅ Update the product
+    //         $product = $this->productService->update($validatedData, $id);
+
+    //         // ✅ Update pivot table (shop_category)
+    //         $shop_id = $validatedData['shop_id'];
+    //         $category_id = $product->subcategory->category_id;
+    //         DB::table('shop_category')->updateOrInsert([
+    //             'shop_id' => $shop_id,
+    //             'category_id' => $category_id,
+    //         ]);
+
+    //         return response()->json(new ProductResource($product));
+    //     });
+    // }
+
+
     public function update(ProductRequest $request, $id): JsonResponse
-    {
+{
+    $folder_name = 'product/';
+    // dd($request->all());
 
-        return $this->handleRequest(function () use ($request, $id) {
-            $validatedData = $request->validated();
+    return $this->handleRequest(function () use ($request, $id, $folder_name) {
 
-            // ✅ Update the product
-            $product = $this->productService->update($validatedData, $id);
+        $validatedData = $request->validated();
+        // $validateData = $request->validated();
+            $image[] = $validatedData['upload_url'] ?? [];
+            unset($validatedData['upload_url']);
 
-            // ✅ Update pivot table (shop_category)
-            $shop_id = $validatedData['shop_id'];
-            $category_id = $product->subcategory->category_id;
-            DB::table('shop_category')->updateOrInsert([
-                'shop_id' => $shop_id,
-                'category_id' => $category_id,
-            ]);
+        $product = $this->productService->update($validatedData, $id);
 
-            return response()->json(new ProductResource($product));
-        });
-    }
+        $shop_id = $validatedData['shop_id'];
+        $category_id = $product->subcategory->category_id;
+
+        DB::table('shop_category')->updateOrInsert([
+            'shop_id' => $shop_id,
+            'category_id' => $category_id,
+        ]);
+
+        if ($request->has('image_ids_to_delete')) {
+            $imageIds = (array) $request->input('image_ids_to_delete'); // Cast to an array
+
+            foreach ($product->images()->whereIn('id', $imageIds)->get() as $image) {
+                $this->deleteImage($image->path);
+                $image->delete();
+            }
+        }
+
+        if ($request->hasFile('upload_url')) {
+            $this->createImageTest($product, $image, $folder_name, 'product');
+        }
+
+        return response()->json(new ProductResource($product));
+    });
+}
+
 
 
     /**

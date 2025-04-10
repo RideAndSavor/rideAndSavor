@@ -62,6 +62,9 @@ class Product extends Model
         static::creating(function ($product) {
             $product->slug = Str::slug($product->name . '-' . $product->shop_id);
         });
+        static::updating(function ($product) {
+            $product->slug = Str::slug($product->name . '-' . $product->shop_id);
+        });
     }
 
     public function shop()
