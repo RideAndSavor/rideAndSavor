@@ -25,7 +25,7 @@ class PaymentSuccessMail extends Mailable
     {
         // Access the total amount correctly
         $totalAmount = number_format($this->order->total_price, 2); // Assuming total_price is the correct amount field
-        $discountAmount = number_format($this->order->discount_price, 2); // Assuming discount_price is the correct amount field
+        $discountAmount = number_format($this->order->discount_percent, 2); // Assuming discount_percent is the correct amount field
         $finalAmount = number_format($this->order->final_price, 2); // Assuming final_price is the correct amount field
         $transactionId = $this->transaction->transaction_id;
         $status = $this->transaction->status;

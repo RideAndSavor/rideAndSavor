@@ -166,7 +166,7 @@
                         <td>{{ $detail->product->name }}</td>
                         <td>{{ $detail->quantity }}</td>
                         <td>${{ number_format($detail->unique_price, 2) }}</td>
-                        <td>${{ number_format($detail->discount_price, 2) }}</td>
+                        <td>${{ number_format($detail->discount_percent, 2) }}</td>
                         <td>${{ number_format($detail->final_price, 2) }}</td>
                     </tr>
                 @endforeach
@@ -181,7 +181,7 @@
                 </tr>
                 <tr>
                     <td><strong>Discount:</strong></td>
-                    <td>${{ number_format($order->discount_price, 2) }}</td>
+                    <td>${{ number_format($order->discount_percent, 2) }}</td>
                 </tr>
                 <tr>
                     <td><strong>Total:</strong></td>

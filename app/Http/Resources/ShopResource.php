@@ -26,18 +26,9 @@ class ShopResource extends JsonResource
             'open_time' => $this->open_time,
             'close_time' => $this->close_time,
             'status' => $this->status,
-            'images' => $this->images->pluck('upload_url'),
-
-            'address' => [
-                'id' => $this->address->id,
-                'city' => $this->address->street->ward->township->city->name,
-                'ward' => $this->address->street->ward->name,
-                'street' => $this->address->street->name,
-                'block_no' => $this->address->block_no,
-                'floor' => $this->address->floor,
-                'latitude' => $this->address->latitude,
-                'longitude' => $this->address->longitude,
-            ],
+            // 'images' => $this->images->pluck('upload_url'),
+            'images' => ImageResource::collection($this->whenLoaded('images')),
+            'address' => new AddressResource($this->whenLoaded('address')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
