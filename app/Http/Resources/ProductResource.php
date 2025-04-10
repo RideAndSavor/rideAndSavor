@@ -17,7 +17,7 @@ class ProductResource extends JsonResource
             'subcategory' => new SubcategoryResource($this->whenLoaded('subcategory')),
             'brand' => new BrandResource($this->whenLoaded('brand')),
             'original_price' => $this->original_price,
-            'discount_price' => $this->discount_price,
+            'discount_percent' => $this->discount_percent,
             'final_price' => $this->final_price,
             'stock_quantity' => $this->stock_quantity,
             'weight' => $this->weight,

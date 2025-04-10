@@ -16,7 +16,8 @@ class ShopService
 
     public function getAllShops()
     {
-        return $this->repository->all();
+        // return $this->repository->all('address.street.ward.township.city');
+        return $this->repository->all(['address', 'images']);
     }
 
 

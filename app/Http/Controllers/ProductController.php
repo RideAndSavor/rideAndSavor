@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Traits\ImageTrait;
-use Illuminate\Http\Request;
 use App\Services\ImageService;
 use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ProductRequest;
+use Illuminate\Support\Facades\Config;
 use App\Http\Resources\ProductResource;
 
 class ProductController extends BaseController
@@ -23,9 +25,6 @@ class ProductController extends BaseController
         $this->imageService = $imageService;
     }
 
-    /**
-     * Get all travel records.
-     */
     public function index(): JsonResponse
     {
         return $this->handleRequest(function () {
@@ -42,69 +41,80 @@ class ProductController extends BaseController
         });
     }
 
-
     public function store(ProductRequest $request): JsonResponse
     {
-        $folder_name = 'product/'; // Fixed typo
+        $folder_name = 'product/';
 
         return $this->handleRequest(function () use ($request, $folder_name) {
+            $shopId = Auth::user()->shop->id;
             $validateData = $request->validated();
             $image[] = $validateData['upload_url'] ?? [];
             unset($validateData['upload_url']);
 
-            // ✅ First, store the product item
-        $product = $this->productService->store($validateData);
-
-         // ✅ Retrieve category_id from subcategory relationship
-         $shop_id = $validateData['shop_id'];
-         $category_id = $product->subcategory->category_id; // ✅ Get category from subcategory
-
-         // ✅ Store shop and category in the pivot table
-         DB::table('shop_category')->updateOrInsert([
-             'shop_id' => $shop_id,
-             'category_id' => $category_id,
-        ]);
-
-           // ✅ Then, handle image upload
-            if ($request->hasFile('upload_url')) {
-                $this->createImageTest($product, $image, $folder_name, 'product');
+            $validateData['shop_id'] = $shopId;
+            if (isset($validateData['discount_percent']) && $validateData['discount_percent'] > 0) {
+                $validateData['final_price'] = $validateData['original_price'] * (1 - ($validateData['discount_percent'] / 100));
+            } else {
+                $validateData['final_price'] = $validateData['original_price'];
             }
 
-            return response()->json([
-                'product' => new ProductResource($product),
-            ], 201);
-        });
-    }
+            $product = $this->productService->store($validateData);
 
-
-    /**
-     * Update product.
-     */
-    public function update(ProductRequest $request, $id): JsonResponse
-    {
-
-        return $this->handleRequest(function () use ($request, $id) {
-            $validatedData = $request->validated();
-
-            // ✅ Update the product
-            $product = $this->productService->update($validatedData, $id);
-
-            // ✅ Update pivot table (shop_category)
-            $shop_id = $validatedData['shop_id'];
+            $shop_id = $validateData['shop_id'];
             $category_id = $product->subcategory->category_id;
             DB::table('shop_category')->updateOrInsert([
                 'shop_id' => $shop_id,
                 'category_id' => $category_id,
             ]);
 
-            return response()->json(new ProductResource($product));
+            if ($request->hasFile('upload_url')) {
+                $this->createImageTest($product, $image, $folder_name, 'product');
+            }
+
+            $product = $product->load('shop', 'subcategory', 'brand', 'images');
+            return response()->json([
+                'product' => new ProductResource($product),
+            ], 201);
         });
     }
 
+    public function update(ProductRequest $request, $id): JsonResponse
+    {
+        return $this->handleRequest(function () use ($request, $id) {
+            $shopId = Auth::user()->shop->id;
 
-    /**
-     * Delete product.
-     */
+            $product = $this->productService->getById($id);
+            $validatedData = $request->validated();
+            $image[] = $validatedData['upload_url'] ?? [];
+            unset($validatedData['upload_url']);
+
+            $validatedData['shop_id'] = $shopId;
+
+            if (isset($validatedData['discount_percent']) && $validatedData['discount_percent'] > 0) {
+                $validatedData['final_price'] = $validatedData['original_price'] * (1 - ($validatedData['discount_percent'] / 100));
+            } else {
+                $validatedData['final_price'] = $validatedData['original_price'];
+            }
+            $product = $this->productService->update($validatedData, $id);
+
+            $category_id = $product->subcategory->category_id;
+            DB::table('shop_category')->updateOrInsert([
+                'shop_id' => $shopId,
+                'category_id' => $category_id,
+            ]);
+
+            if ($request->hasFile('upload_url')) {
+                $this->createImageTest($product, $image, 'product/', 'product');
+            }
+
+            $product = $product->load('shop', 'subcategory', 'brand', 'images');
+
+            return response()->json([
+                'product' => new ProductResource($product),
+            ], 200);
+        });
+    }
+
     public function destroy($id): JsonResponse
     {
         return $this->handleRequest(function () use ($id) {

@@ -49,6 +49,7 @@ class ShopController extends BaseController
 
     public function store(ShopRequest $shopRequest)
     {
+        // dd($shopRequest->validated());
         $folder_name = 'shop/';
 
         return $this->handleRequest(function () use ($shopRequest, $folder_name) {
@@ -62,6 +63,7 @@ class ShopController extends BaseController
             if ($shopRequest->hasFile('upload_url')) {
                  $this->createImageTest($shop, $image, $folder_name, 'shop');
              }
+             $shop = $shop->load('images', 'address');
 
             return response()->json(new ShopResource($shop),Config::get('variable.CREATED'));
         });
@@ -81,6 +83,7 @@ class ShopController extends BaseController
             $shop->update($validateData);
 
             $this->updateImageTest($shop, $images, $deleteImageIds, $folder_name, 'shop');
+            $shop = $shop->load('images', 'address');
 
             return response()->json(new ShopResource($shop), Config::get('variable.OK'));
         });

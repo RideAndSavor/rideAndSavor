@@ -99,4 +99,8 @@ class Shop extends Model
     {
         return $this->hasOne(StripePaymentAccount::class, 'shop_id', 'id');
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
