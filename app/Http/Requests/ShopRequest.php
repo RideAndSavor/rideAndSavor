@@ -34,6 +34,8 @@ class ShopRequest extends FormRequest
             'status' => 'nullable|in:active,inactive,suspended',
             'upload_url' => 'nullable|array',
             'upload_url.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
+            'delete_image_ids' => 'nullable|array',
+            'delete_image_ids.*' => 'exists:images,id',
         ];
     }
 

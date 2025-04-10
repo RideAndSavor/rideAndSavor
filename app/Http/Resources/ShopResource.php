@@ -17,7 +17,6 @@ class ShopResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'address_id' => $this->address_id,
             'slug' => $this->slug,
             'description' => $this->description,
             'website_url' => $this->website_url,
@@ -27,7 +26,9 @@ class ShopResource extends JsonResource
             'open_time' => $this->open_time,
             'close_time' => $this->close_time,
             'status' => $this->status,
-            // 'images' => ImageResource::collection($this->whenLoaded('images')),
+            // 'images' => $this->images->pluck('upload_url'),
+            'images' => ImageResource::collection($this->whenLoaded('images')),
+            'address' => new AddressResource($this->whenLoaded('address')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

@@ -25,7 +25,7 @@ class CartSessionController extends Controller
         $shop_id = $product->shop_id;
         $image = $product->images->first() ? $product->images->first()->upload_url : null;
 
-        $discountPercentage = $product->discount_price ?? 0;
+        $discountPercentage = $product->discount_percent ?? 0;
         $discountAmount = ($unit_price * $quantity) * ($discountPercentage / 100);
         $afterDiscountPrice = ($unit_price * $quantity) - $discountAmount;
 
@@ -93,7 +93,7 @@ public function updateCartItem(Request $request)
 
     $product = Product::findOrFail($productId);
     $unit_price = $product->original_price;
-    $discountPercentage = $product->discount_price ?? 0; // Get discount percentage
+    $discountPercentage = $product->discount_percent ?? 0; // Get discount percentage
 
     // Calculate new quantity
     $newQuantity = ($operation === 'increase') ? $cartItem->quantity + 1 : $cartItem->quantity - 1;

@@ -9,7 +9,7 @@ class Pricing extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['product_id', 'base_price', 'discount_price', 'final_price'];
+    protected $fillable = ['product_id', 'base_price', 'discount_percent', 'final_price'];
 
     /**
      * Set final price automatically when setting base_price or discount_price.
@@ -19,7 +19,7 @@ class Pricing extends Model
         parent::boot();
 
         static::saving(function ($pricing) {
-            $pricing->final_price = $pricing->base_price - $pricing->discount_price;
+            $pricing->final_price = $pricing->base_price - $pricing->discount_percent;
         });
     }
 

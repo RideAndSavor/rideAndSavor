@@ -21,7 +21,7 @@ class Product extends Model
         'subcategory_id',
         'brand_id',
         'original_price',
-        'discount_price',
+        'discount_percent',
         'final_price',
         'stock_quantity',
         'weight',
@@ -39,7 +39,7 @@ class Product extends Model
             'subcategory_id' => IntegerField::new(),
             'brand_id' => IntegerField::new(),
             'original_price' => DecimalField::new(),
-            'discount_price' => DecimalField::new(),
+            'discount_percent' => DecimalField::new(),
             'final_price' => DecimalField::new(),
             'stock_quantity' => IntegerField::new(),
             'weight' => DecimalField::new(),
@@ -62,6 +62,7 @@ class Product extends Model
         static::creating(function ($product) {
             $product->slug = Str::slug($product->name . '-' . $product->shop_id);
         });
+
         static::updating(function ($product) {
             $product->slug = Str::slug($product->name . '-' . $product->shop_id);
         });
