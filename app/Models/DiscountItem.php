@@ -14,6 +14,13 @@ class DiscountItem extends Model
 {
     use HasFactory, Searchable;
 
+    protected $fillable = [
+        'percentage_id',
+        'name',
+        'start_date',
+        'end_date',
+    ];
+
     public function saveableFields($column): object
     {
         $arr = [
@@ -39,5 +46,10 @@ class DiscountItem extends Model
     public function percentage()
     {
         return $this->belongsTo(Percentage::class);
+    }
+
+    public function shop()
+    {
+        return $this->hasOne(\App\Models\Shop::class, 'discount_id');
     }
 }

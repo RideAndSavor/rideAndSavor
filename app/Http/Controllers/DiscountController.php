@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Contracts\LocationInterface;
-use App\Http\Resources\DiscountFoodResource;
-use App\Http\Resources\FoodResource;
-use App\Models\FoodRestaurant;
+use App\Models\Shop;
 use App\Models\Percentage;
+use App\Models\DiscountItem;
 use Illuminate\Http\Request;
+use App\Models\FoodRestaurant;
+use Illuminate\Support\Facades\DB;
+use App\Contracts\LocationInterface;
+use App\Http\Resources\FoodResource;
+use App\Http\Requests\DiscountItemRequest;
+use App\Http\Resources\DiscountFoodResource;
 
 class DiscountController extends Controller
 {
@@ -43,4 +47,44 @@ class DiscountController extends Controller
         }
         return DiscountFoodResource::collection($foodsDatas);
     }
+
+    public function storeForShop(DiscountItemRequest $request)
+    {
+        $validated = $request->validated();
+
+        DB::beginTransaction();
+
+        try {
+            // Validate shop exists
+            $shop = Shop::findOrFail($request->shop_id);
+
+            // Create DiscountItem
+            $discount = DiscountItem::create([
+                'percentage_id' => $validated['percentage_id'],
+                'name' => $validated['name'],
+                'start_date' => $validated['start_date'],
+                'end_date' => $validated['end_date'],
+            ]);
+
+            // Assign discount to shop
+            $shop->discount_id = $discount->id;
+            $shop->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Discount created and assigned to shop successfully.',
+                'discount' => $discount,
+                'shop' => $shop
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Failed to create discount for shop.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

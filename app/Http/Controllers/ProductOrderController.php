@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use Exception;
 use Stripe\Charge;
 use Stripe\Stripe;
+use App\Models\Shop;
 use App\Models\Order;
 use App\Models\Transaction;
 use App\Models\ProductOrder;
 use Illuminate\Http\Request;
+use App\Mail\OrderStatusMail;
 use App\Mail\PaymentSuccessMail;
 use App\Models\ProductOrderDetail;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +19,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\TransactionRequest;
 use App\Http\Controllers\StripeController;
-use App\Mail\OrderStatusMail;
 use Darryldecode\Cart\Facades\CartFacade as Cart;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
@@ -53,6 +54,20 @@ class ProductOrderController extends Controller
         }
 
         $finalPrice = $totalPrice - $totalDiscount;
+
+        // 🛍️ Shop-wide Discount Handling
+        $shopId = $cartItems->first()->attributes['shop_id'] ?? null;
+        $shopDiscountAmount = 0;
+
+        if ($shopId) {
+            $shop = Shop::with('discountItem.percentage')->find($shopId);
+
+            if ($shop && $shop->discountItem) {
+                $discountPercentage = $shop->discountItem->percentage->discount_percentage ?? 0; // Assuming 'percentage' relationship gives you actual value
+                $shopDiscountAmount = ($finalPrice * $discountPercentage) / 100;
+                $finalPrice -= $shopDiscountAmount;
+            }
+        }
 
         DB::beginTransaction();
         try {

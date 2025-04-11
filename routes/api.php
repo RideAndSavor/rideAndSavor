@@ -166,6 +166,9 @@ Route::middleware(['auth:api'])->group(function () {
     Route::resource('restaurantaddress', RestaurantAddressController::class);
     Route::resource('discountItem', DiscountItemController::class);
 
+    Route::post('/shop-discount', [DiscountController::class, 'storeForShop']);
+
+
     // Route::post('restaurants/{restaurant}/foods-with-ingredients', [RestaurantFoodController::class, 'storeFoodWithIngredients']);
     // Route::get('restaurants/{restaurant}/foods-with-ingredients_all', [RestaurantFoodController::class, 'showAllFoodIngredients']);
     // Route::get('restaurants/{restaurant}/foods-with-ingredients/{food}', [RestaurantFoodController::class, 'showFoodIngredient']);
