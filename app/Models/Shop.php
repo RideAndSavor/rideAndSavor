@@ -26,6 +26,7 @@ class Shop extends Model
         'close_time',
         'status',
         'user_id',
+        'discount_id',
     ];
 
     protected $casts = [
@@ -48,6 +49,8 @@ class Shop extends Model
             'open_time' => StringField::new(),
             'close_time' => StringField::new(),
             'user_id' => IntegerField::new(),
+            'discount_id' => IntegerField::new(),
+            'slug' => StringField::new(),
         ];
 
         if (!array_key_exists($column, $arr)) {
@@ -94,11 +97,6 @@ class Shop extends Model
         return $this->morphMany(Images::class, 'imageable');
     }
 
-    public function shop()
-    {
-        return $this->hasOne(Shop::class);
-    }
-
     public function stripePaymentAccount()
     {
         return $this->hasOne(StripePaymentAccount::class, 'shop_id', 'id');
@@ -107,4 +105,10 @@ class Shop extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function discountItem()
+    {
+        return $this->belongsTo(\App\Models\DiscountItem::class, 'discount_id');
+    }
+
 }

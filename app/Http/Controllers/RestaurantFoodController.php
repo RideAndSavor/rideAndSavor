@@ -54,141 +54,141 @@ class RestaurantFoodController extends Controller
         return new FoodResource($relatedFood);
     }
 
-    public function storeFoodWithToppings1(RestaurantFoodToppingRequest $restaurantFoodToppingRequest, Restaurant $restaurant)
-    {
+    // public function storeFoodWithToppings1(RestaurantFoodToppingRequest $restaurantFoodToppingRequest, Restaurant $restaurant)
+    // {
 
-        // Validate the incoming request data
-        $validatedData = $restaurantFoodToppingRequest->validated();
-        // dd($validatedData);
-        DB::beginTransaction(); // Begin the database transaction
+    //     // Validate the incoming request data
+    //     $validatedData = $restaurantFoodToppingRequest->validated();
+    //     // dd($validatedData);
+    //     DB::beginTransaction(); // Begin the database transaction
 
-        try {
-            // Store the food details in the 'Food' table
-            $food = $this->foodRestaurantInterface->store('Food', $validatedData['food']);
-            // dd($food);
+    //     try {
+    //         // Store the food details in the 'Food' table
+    //         $food = $this->foodRestaurantInterface->store('Food', $validatedData['food']);
+    //         // dd($food);
 
-            // If there is an uploaded file, store the image
-            if ($restaurantFoodToppingRequest->hasFile('upload_url')) {
-                $this->storeImage($restaurantFoodToppingRequest, $food->id, $this->genre, $this->foodRestaurantInterface, $this->folder_name, $this->tableName);
-            }
+    //         // If there is an uploaded file, store the image
+    //         if ($restaurantFoodToppingRequest->hasFile('upload_url')) {
+    //             $this->storeImage($restaurantFoodToppingRequest, $food->id, $this->genre, $this->foodRestaurantInterface, $this->folder_name, $this->tableName);
+    //         }
 
-            // Store the toppings and get their IDs
-            $toppingIDs = [];
-            foreach ($validatedData['toppings'] as $toppingData) {
-                $topping = $this->foodRestaurantInterface->store('Topping', $toppingData);
-                $toppingIDs[] = $topping->id;
-            }
+    //         // Store the toppings and get their IDs
+    //         $toppingIDs = [];
+    //         foreach ($validatedData['toppings'] as $toppingData) {
+    //             $topping = $this->foodRestaurantInterface->store('Topping', $toppingData);
+    //             $toppingIDs[] = $topping->id;
+    //         }
 
-            // Attach the toppings to the food
-            $food->toppings()->attach($toppingIDs);
+    //         // Attach the toppings to the food
+    //         $food->toppings()->attach($toppingIDs);
 
-            // Attach the food to the restaurant with size and price details
-            foreach ($validatedData['food_restaurant'] as $sizeData) {
-                $restaurant->foods()->attach($food->id, [
-                    'price' => $sizeData['price'],
-                    'size_id' => $sizeData['size_id'],
-                    'taste_id' => $validatedData['taste_id'],
-                    'discount_item_id' => $validatedData['discount_item_id'] ?? null,
-                ]);
-            }
+    //         // Attach the food to the restaurant with size and price details
+    //         foreach ($validatedData['food_restaurant'] as $sizeData) {
+    //             $restaurant->foods()->attach($food->id, [
+    //                 'price' => $sizeData['price'],
+    //                 'size_id' => $sizeData['size_id'],
+    //                 'taste_id' => $validatedData['taste_id'],
+    //                 'discount_item_id' => $validatedData['discount_item_id'] ?? null,
+    //             ]);
+    //         }
 
-            DB::commit(); // Commit the transaction
-            return new FoodResource($food); // Return the newly created food resource
-        } catch (\Exception $e) {
-            DB::rollBack(); // Rollback the transaction in case of an error
-            return response()->json([
-                'message' => Config::get('variable.FAIL_TO_CREATE_FOODTOPPING'), // Return an error message
-                'error' => $e->getMessage() // Include the exception message for debugging
-            ], Config::get('variable.SERVER_ERROR'));
-        }
-    }
+    //         DB::commit(); // Commit the transaction
+    //         return new FoodResource($food); // Return the newly created food resource
+    //     } catch (\Exception $e) {
+    //         DB::rollBack(); // Rollback the transaction in case of an error
+    //         return response()->json([
+    //             'message' => Config::get('variable.FAIL_TO_CREATE_FOODTOPPING'), // Return an error message
+    //             'error' => $e->getMessage() // Include the exception message for debugging
+    //         ], Config::get('variable.SERVER_ERROR'));
+    //     }
+    // }
 
-    public function updateFoodTopping(
-        RestaurantFoodToppingRequest $restaurantFoodToppingRequest,
-        Restaurant $restaurant,
-        Food $food
-    ) {
-        $validatedData = $restaurantFoodToppingRequest->validated();
-        DB::beginTransaction();
+    // public function updateFoodTopping(
+    //     RestaurantFoodToppingRequest $restaurantFoodToppingRequest,
+    //     Restaurant $restaurant,
+    //     Food $food
+    // ) {
+    //     $validatedData = $restaurantFoodToppingRequest->validated();
+    //     DB::beginTransaction();
 
-        try {
-            // 1. Update Food Data
-            if (isset($validatedData['food'])) {
-                $foodData = [
-                    'name' => $validatedData['food']['food_name'],
-                    'sub_category_id' => $validatedData['food']['sub_category_id'] ?? null,
-                ];
-                $this->foodRestaurantInterface->update('Food', $foodData, $food->id);
-            }
+    //     try {
+    //         // 1. Update Food Data
+    //         if (isset($validatedData['food'])) {
+    //             $foodData = [
+    //                 'name' => $validatedData['food']['food_name'],
+    //                 'sub_category_id' => $validatedData['food']['sub_category_id'] ?? null,
+    //             ];
+    //             $this->foodRestaurantInterface->update('Food', $foodData, $food->id);
+    //         }
 
-            // 2. Update Image (Replace Old Image)
-            $existingImage = $food->images()->first();
+    //         // 2. Update Image (Replace Old Image)
+    //         $existingImage = $food->images()->first();
 
-            if ($restaurantFoodToppingRequest->hasFile('upload_url')) {
-                $image = $restaurantFoodToppingRequest->file('upload_url');
+    //         if ($restaurantFoodToppingRequest->hasFile('upload_url')) {
+    //             $image = $restaurantFoodToppingRequest->file('upload_url');
 
-                // Delete the old image file if it exists
-                if ($existingImage) {
-                    Storage::delete($existingImage->upload_url);
-                    $existingImage->delete();
-                }
+    //             // Delete the old image file if it exists
+    //             if ($existingImage) {
+    //                 Storage::delete($existingImage->upload_url);
+    //                 $existingImage->delete();
+    //             }
 
-                // Upload new image & store it
-                $this->updateImageTest($food, [$image], 'food/');
-            }
+    //             // Upload new image & store it
+    //             $this->updateImageTest($food, [$image], 'food/');
+    //         }
 
-            // 3. Update Food & Restaurant Relationship
-            $foodRestaurantData = [
-                'size_id' => $validatedData['food_restaurant']['size_id'],
-                'price' => $validatedData['food_restaurant']['price'],
-                'description' => $validatedData['food_restaurant']['description'],
-                'discount_item_id' => $validatedData['food_restaurant']['discount_item_id'] ?? null,
-                'taste_id' => $validatedData['food_restaurant']['taste_id'] ?? null,
-            ];
+    //         // 3. Update Food & Restaurant Relationship
+    //         $foodRestaurantData = [
+    //             'size_id' => $validatedData['food_restaurant']['size_id'],
+    //             'price' => $validatedData['food_restaurant']['price'],
+    //             'description' => $validatedData['food_restaurant']['description'],
+    //             'discount_item_id' => $validatedData['food_restaurant']['discount_item_id'] ?? null,
+    //             'taste_id' => $validatedData['food_restaurant']['taste_id'] ?? null,
+    //         ];
 
-            // Update pivot table
-            $food->restaurants()->updateExistingPivot($restaurant->id, $foodRestaurantData);
+    //         // Update pivot table
+    //         $food->restaurants()->updateExistingPivot($restaurant->id, $foodRestaurantData);
 
-            // 4. Update Toppings (Replace Old with New)
-            $newToppingIDs = [];
-            if (!empty($validatedData['toppings'])) {
-                foreach ($validatedData['toppings'] as $toppingData) {
-                    if (!empty($toppingData['id'])) {
-                        // Update existing topping
-                        $this->foodRestaurantInterface->update('Topping', [
-                            'name' => $toppingData['topping_name'],
-                            'price' => $toppingData['topping_price']
-                        ], $toppingData['id']);
-                        $newToppingIDs[] = $toppingData['id'];
-                    } else {
-                        // Create new topping
-                        $newTopping = $this->foodRestaurantInterface->store('Topping', [
-                            'name' => $toppingData['topping_name'],
-                            'price' => $toppingData['topping_price']
-                        ]);
-                        $newToppingIDs[] = $newTopping->id;
-                    }
-                }
-            }
-            $existingToppingIDs = $food->toppings()->pluck('toppings.id')->toArray();
+    //         // 4. Update Toppings (Replace Old with New)
+    //         $newToppingIDs = [];
+    //         if (!empty($validatedData['toppings'])) {
+    //             foreach ($validatedData['toppings'] as $toppingData) {
+    //                 if (!empty($toppingData['id'])) {
+    //                     // Update existing topping
+    //                     $this->foodRestaurantInterface->update('Topping', [
+    //                         'name' => $toppingData['topping_name'],
+    //                         'price' => $toppingData['topping_price']
+    //                     ], $toppingData['id']);
+    //                     $newToppingIDs[] = $toppingData['id'];
+    //                 } else {
+    //                     // Create new topping
+    //                     $newTopping = $this->foodRestaurantInterface->store('Topping', [
+    //                         'name' => $toppingData['topping_name'],
+    //                         'price' => $toppingData['topping_price']
+    //                     ]);
+    //                     $newToppingIDs[] = $newTopping->id;
+    //                 }
+    //             }
+    //         }
+    //         $existingToppingIDs = $food->toppings()->pluck('toppings.id')->toArray();
 
-            // 5. Remove Unused Toppings
-            $toppingsToDetach = array_diff($existingToppingIDs, $newToppingIDs);
-            $food->toppings()->detach($toppingsToDetach);
+    //         // 5. Remove Unused Toppings
+    //         $toppingsToDetach = array_diff($existingToppingIDs, $newToppingIDs);
+    //         $food->toppings()->detach($toppingsToDetach);
 
-            // Sync New Toppings
-            $food->toppings()->sync($newToppingIDs);
+    //         // Sync New Toppings
+    //         $food->toppings()->sync($newToppingIDs);
 
-            DB::commit();
-            return new FoodResource($food->fresh());
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => 'Failed to update food with toppings',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
+    //         DB::commit();
+    //         return new FoodResource($food->fresh());
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         return response()->json([
+    //             'message' => 'Failed to update food with toppings',
+    //             'error' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 
 
 
@@ -320,90 +320,90 @@ class RestaurantFoodController extends Controller
         }
     }
 
-    public function update(RestaurantFoodToppingRequest $request, $foodRestaurantId)
-    {
-        $folder_name = 'public/foods/';
-        $tableName = 'images';
-        $validatedData = $request->validated();
-        DB::beginTransaction();
+    // public function update(RestaurantFoodToppingRequest $request, $foodRestaurantId)
+    // {
+    //     $folder_name = 'public/foods/';
+    //     $tableName = 'images';
+    //     $validatedData = $request->validated();
+    //     DB::beginTransaction();
 
-        try {
-            $foodRestaurant = $this->foodRestaurantInterface->findById('FoodRestaurant', $foodRestaurantId);
-            $imageData = $this->foodRestaurantInterface->findWhere('Images', $foodRestaurant->food_id);
-            if (!$foodRestaurant) {
-                return response()->json(['message' => 'FoodRestaurant record not found!'], 404);
-            }
+    //     try {
+    //         $foodRestaurant = $this->foodRestaurantInterface->findById('FoodRestaurant', $foodRestaurantId);
+    //         $imageData = $this->foodRestaurantInterface->findWhere('Images', $foodRestaurant->food_id);
+    //         if (!$foodRestaurant) {
+    //             return response()->json(['message' => 'FoodRestaurant record not found!'], 404);
+    //         }
 
-            $foodRestaurantData = [
-                'restaurant_id' => $validatedData['food_restaurant']['restaurant_id'],
-                'size_id' => $validatedData['food_restaurant']['size_id'],
-                'price' => $validatedData['food_restaurant']['price'],
-                'description' => $validatedData['food_restaurant']['description'],
-                'taste_id' => $validatedData['food_restaurant']['taste_id'] ?? null,
-                'discount_item_id' => $validatedData['food_restaurant']['discount_item_id'] ?? null,
-            ];
-            $this->foodRestaurantInterface->update('FoodRestaurant', $foodRestaurantData, $foodRestaurant->id);
-            // Update food data
-            if ($validatedData['food']) {
-                $foodData = [
-                    'name' => $validatedData['food']['food_name'],
-                    'sub_category_id' => $validatedData['food']['sub_category_id'],
-                ];
-                $this->foodRestaurantInterface->update('Food', $foodData, $foodRestaurant->food_id);
-                $foodId = $foodRestaurant->food_id;
-            }
-            if ($request->hasFile('upload_url')) {
-                $this->updateImage($request, $imageData, $foodId, $this->genre, $this->foodRestaurantInterface, $folder_name, $tableName, $foodRestaurantId);
-            }
+    //         $foodRestaurantData = [
+    //             'restaurant_id' => $validatedData['food_restaurant']['restaurant_id'],
+    //             'size_id' => $validatedData['food_restaurant']['size_id'],
+    //             'price' => $validatedData['food_restaurant']['price'],
+    //             'description' => $validatedData['food_restaurant']['description'],
+    //             'taste_id' => $validatedData['food_restaurant']['taste_id'] ?? null,
+    //             'discount_item_id' => $validatedData['food_restaurant']['discount_item_id'] ?? null,
+    //         ];
+    //         $this->foodRestaurantInterface->update('FoodRestaurant', $foodRestaurantData, $foodRestaurant->id);
+    //         // Update food data
+    //         if ($validatedData['food']) {
+    //             $foodData = [
+    //                 'name' => $validatedData['food']['food_name'],
+    //                 'sub_category_id' => $validatedData['food']['sub_category_id'],
+    //             ];
+    //             $this->foodRestaurantInterface->update('Food', $foodData, $foodRestaurant->food_id);
+    //             $foodId = $foodRestaurant->food_id;
+    //         }
+    //         if ($request->hasFile('upload_url')) {
+    //             $this->updateImage($request, $imageData, $foodId, $this->genre, $this->foodRestaurantInterface, $folder_name, $tableName, $foodRestaurantId);
+    //         }
 
-            $food = $foodRestaurant->food;
-            $existingToppings = $food->toppings->keyBy('id');
-            $existingToppingIDs = $existingToppings->pluck('id')->toArray();
-            $newToppingIDs = [];
-            if ($request->has('toppings')) {
-                foreach ($request->input('toppings') as $toppingData) {
-                    if (isset($toppingData['id'])) {
-                        $this->foodRestaurantInterface->update('Topping', [
-                            'name' => $toppingData['topping_name'],
-                            'price' => $toppingData['topping_price']
-                        ], $toppingData['id']);
-                        $newToppingIDs[] = $toppingData['id'];
-                    } else {
-                        $newTopping = $this->foodRestaurantInterface->store('Topping', [
-                            'name' => $toppingData['topping_name'],
-                            'price' => $toppingData['topping_price']
-                        ]);
-                        $newToppingIDs[] = $newTopping->id;
-                        $food->toppings()->attach($newTopping->id);
-                    }
-                }
+    //         $food = $foodRestaurant->food;
+    //         $existingToppings = $food->toppings->keyBy('id');
+    //         $existingToppingIDs = $existingToppings->pluck('id')->toArray();
+    //         $newToppingIDs = [];
+    //         if ($request->has('toppings')) {
+    //             foreach ($request->input('toppings') as $toppingData) {
+    //                 if (isset($toppingData['id'])) {
+    //                     $this->foodRestaurantInterface->update('Topping', [
+    //                         'name' => $toppingData['topping_name'],
+    //                         'price' => $toppingData['topping_price']
+    //                     ], $toppingData['id']);
+    //                     $newToppingIDs[] = $toppingData['id'];
+    //                 } else {
+    //                     $newTopping = $this->foodRestaurantInterface->store('Topping', [
+    //                         'name' => $toppingData['topping_name'],
+    //                         'price' => $toppingData['topping_price']
+    //                     ]);
+    //                     $newToppingIDs[] = $newTopping->id;
+    //                     $food->toppings()->attach($newTopping->id);
+    //                 }
+    //             }
 
-            }
+    //         }
 
-            $extraToppingIDs = array_diff($existingToppingIDs, $newToppingIDs);
-            if (count($extraToppingIDs) > 0) {
-                foreach ($extraToppingIDs as $extraToppingID) {
-                    $this->foodRestaurantInterface->delete('Topping', $extraToppingID);
-                    $food->toppings()->detach($extraToppingID);
-                }
-            }
+    //         $extraToppingIDs = array_diff($existingToppingIDs, $newToppingIDs);
+    //         if (count($extraToppingIDs) > 0) {
+    //             foreach ($extraToppingIDs as $extraToppingID) {
+    //                 $this->foodRestaurantInterface->delete('Topping', $extraToppingID);
+    //                 $food->toppings()->detach($extraToppingID);
+    //             }
+    //         }
 
 
-            DB::commit();
+    //         DB::commit();
 
-            return response()->json([
-                'message' => Config::get('variable.FOOD_RESTAURANT_AND_TOPPING_UPDATE_SUCCESSFULLY')
-            ], Config::get('variable.OK'));
+    //         return response()->json([
+    //             'message' => Config::get('variable.FOOD_RESTAURANT_AND_TOPPING_UPDATE_SUCCESSFULLY')
+    //         ], Config::get('variable.OK'));
 
-        } catch (\Exception $e) {
-            DB::rollBack();
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
 
-            return response()->json([
-                'message' => Config::get('variable.FAIL_TO_UPDATE'),
-                'error' => $e->getMessage(),
-            ], Config::get('variable.CLIENT_ERROR'));
-        }
-    }
+    //         return response()->json([
+    //             'message' => Config::get('variable.FAIL_TO_UPDATE'),
+    //             'error' => $e->getMessage(),
+    //         ], Config::get('variable.CLIENT_ERROR'));
+    //     }
+    // }
 
     public function destroy($id, Request $request)
     {
