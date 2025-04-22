@@ -9,6 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "ext-zip": "*",
         "barryvdh/laravel-dompdf": "^2.2",
         "darryldecode/cart": "^4.2",
         "doctrine/dbal": "^4.0",

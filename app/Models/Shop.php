@@ -45,7 +45,7 @@ class Shop extends Model
             'phone_number' => StringField::new(),
             'email' => StringField::new(),
             'status' => StringField::new(),
-            'social_media_links' => StringField::new(), // This might need a JSON field handling
+            'social_media_links' => StringField::new(),
             'open_time' => StringField::new(),
             'close_time' => StringField::new(),
             'user_id' => IntegerField::new(),
