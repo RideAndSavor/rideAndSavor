@@ -14,6 +14,7 @@ use App\Contracts\CountryInterface;
 use App\Contracts\ElectronicInterface;
 use App\Contracts\ImageInterface;
 use App\Contracts\InventoryInterface;
+use App\Contracts\InvoiceInterface;
 use App\Contracts\NearbyTaxiInterface;
 use App\Contracts\ProductInterface;
 use App\Contracts\ShopInterface;
@@ -34,6 +35,7 @@ use App\Repositories\ElectronicRepository;
 use App\Repositories\ImageRepository;
 use App\Repositories\Interfaces\TaxiDriverInterface;
 use App\Repositories\InventoryRepository;
+use App\Repositories\InvoiceRepository;
 use App\Repositories\NearbyTaxiRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\TaxiDriverRepository;
@@ -62,6 +64,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(BiddingPriceByDriverInterface::class, BiddingPriceByDriverRepository::class);
         $this->app->bind(AcceptDriverInterface::class, AcceptDriverRepository::class);
         $this->app->bind(NearbyTaxiInterface::class, NearbyTaxiRepository::class);
+        $this->app->bind(InvoiceInterface::class, InvoiceRepository::class);
 
         $this->app->bind(ElectronicInterface::class, ElectronicRepository::class);
 

@@ -128,7 +128,12 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/success-payment', [ProductOrderController::class, 'successPayment']);
     Route::get('/order-notifications', [ProductOrderController::class, 'getOrderNotifications']);
     Route::post('/order/{id}/confirm', [ProductOrderController::class, 'confirmOrder']);
+
+    Route::get('/invoice/{orderId}', [InvoiceController::class, 'generateInvoiceForEachOrder']);
+    Route::get('/invoices/monthly/{year}/{month}', [InvoiceController::class, 'generateMonthlyInvoices']);
+
     Route::post('/order/{id}/reject', [ProductOrderController::class, 'rejectOrder']);
+
     Route::get('/state/{country_id}', [StateController::class, 'getStatesByCountry']);
     Route::get('/city/{state_id}', [CityController::class, 'getCitiesByState']);
     Route::get('/township/{city_id}', [TownshipController::class, 'getTownshipsByCity']);
@@ -254,8 +259,6 @@ Route::middleware(['auth:api', 'driver'])->group(function () {
 
 
 
-
-Route::get('/invoice/{orderId}', [InvoiceController::class, 'generateInvoice']);
 
 
 //end tzm
